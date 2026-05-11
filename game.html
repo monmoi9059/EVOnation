@@ -350,7 +350,7 @@
             
             armor: 0, visionMod: 1.0, clones: 0, scavenger: false,
 
-            cilia: 0, mito: 0, chloro: 0, virusTraits: 0, insectTraits: 0, reptileTraits: 0, mammalTraits: 0, crabTraits: 0, pisceanTraits: 0,
+            cilia: 0, mito: 0, chloro: 0, virusTraits: 0, insectTraits: 0, reptileTraits: 0, mammalTraits: 0, crabTraits: 0, pisceanTraits: 0, fungalTraits: 0, elementalTraits: 0, mechanicalTraits: 0, astralTraits: 0,
 
             damageFlash: 0, poisonFlash: 0, invulnTimer: 0,
             
@@ -364,7 +364,27 @@
             razorFeathers: false, vacuumPalms: false, springJoints: false, rattleTail: false, razorDorsal: false,
 
             mouth: null, armorPiercing: false, jawBoost: 0,
-            combo: 0, comboTimer: 0, frenzy: 0, frenzyTimer: 0
+            combo: 0, comboTimer: 0, frenzy: 0, frenzyTimer: 0,
+            // 60 New Visual Properties
+            glowingCore: false, plasmaMembrane: false, crystalArmor: false, thirdEye: false, sporeClouds: false,
+            flamingTrail: false, shadowForm: false, electricSpikes: false, bioLuminescence: false, acidPores: false,
+            bonePlates: false, razorScales: false, doubleTail: false, crownOfThorns: false, voidAura: false,
+            magmaBlood: false, iceCrystals: false, symbioticWorms: false, metallicSheen: false, gemHeart: false,
+
+            viralSpikes: false, plagueAura: false, antennae: false, compoundEyesExt: false, forkedTongue: false,
+            frill: false, whiskers: false, tuftedEars: false, heavyClaws: false, barnacles: false,
+            glowingLure: false, sailFin: false,
+
+            mushroomCap: false, myceliumNetwork: false, toxicSpores: false, hyphaeTendrils: false, decayAura: false,
+            puffball: false, fungalArmor: false, moldSpores: false,
+
+            flameBody: false, waterAura: false, earthSkin: false, airCurrents: false, lightningRod: false,
+            obsidianShards: false, frostArmor: false, magmaAura: false,
+
+            metalPlating: false, laserEye: false, thrusters: false, gearHeart: false, wireNerves: false, roboticJoints: false,
+
+            stardustTrail: false, nebulaAura: false, blackHoleMaw: false, solarFlare: false, cometTail: false, astralProjection: false,
+
         };
 
         // Input Setup
@@ -415,6 +435,28 @@
         }
 
         const mutations = [
+
+            { id: "v_glowingCore", name: "Radiant Core", desc: "Passively generates DNA and emits a bright glow.", apply: () => { player.photosynthesis += 0.02; player.glowingCore = true; } },
+            { id: "v_plasmaMembrane", name: "Plasma Membrane", desc: "Dodge chance +10% and turns you into a plasma ball.", apply: () => { player.blockChance += 0.1; player.plasmaMembrane = true; } },
+            { id: "v_crystalArmor", name: "Crystal Plating", desc: "Massive armor increase but slight speed reduction.", apply: () => { player.armor += 0.2; player.speed -= 0.5; player.crystalArmor = true; } },
+            { id: "v_thirdEye", name: "Pineal Eye", desc: "Increases vision range. Opens a giant third eye.", apply: () => { player.visionMod *= 0.8; player.thirdEye = true; } },
+            { id: "v_sporeClouds", name: "Spore Embalmer", desc: "Leaves a damaging spore cloud passively.", apply: () => { player.sporeClouds = true; } },
+            { id: "v_flamingTrail", name: "Combustion", desc: "Dashing leaves a trail of fire.", apply: () => { player.flamingTrail = true; } },
+            { id: "v_shadowForm", name: "Umbral Cloak", desc: "Become translucent. 15% dodge chance.", apply: () => { player.blockChance += 0.15; player.shadowForm = true; } },
+            { id: "v_electricSpikes", name: "Volt Spikes", desc: "Body grows static spikes. Damages attackers.", apply: () => { player.spikes += 1.0; player.electricSpikes = true; } },
+            { id: "v_bioLuminescence", name: "Bioluminescence", desc: "Mesmerizes prey, increasing grab range.", apply: () => { player.grabRange += 100; player.bioLuminescence = true; } },
+            { id: "v_acidPores", name: "Acidic Pores", desc: "Damage aura over time.", apply: () => { player.acidPores = true; } },
+            { id: "v_bonePlates", name: "Bone Exoskeleton", desc: "Armor +20%. Adds bone plates.", apply: () => { player.armor += 0.2; player.bonePlates = true; } },
+            { id: "v_razorScales", name: "Razor Scales", desc: "Dash deals more damage.", apply: () => { player.scuttleDamage = true; player.damage += 1; player.razorScales = true; } },
+            { id: "v_doubleTail", name: "Bifurcated Tail", desc: "Speed +1.5 and adds a second tail.", apply: () => { player.speed += 1.5; player.doubleTail = true; } },
+            { id: "v_crownOfThorns", name: "Crown of Thorns", desc: "Massive spike damage. Adds a thorny crown.", apply: () => { player.spikes += 2.0; player.crownOfThorns = true; } },
+            { id: "v_voidAura", name: "Void Presence", desc: "Slows nearby enemies and adds a dark aura.", apply: () => { player.voidAura = true; } },
+            { id: "v_magmaBlood", name: "Magma Blood", desc: "Regen +0.05. Lava flows inside you.", apply: () => { player.regen += 0.05; player.magmaBlood = true; } },
+            { id: "v_iceCrystals", name: "Frost Touch", desc: "Attacking freezes enemies.", apply: () => { player.iceCrystals = true; } },
+            { id: "v_symbioticWorms", name: "Symbiotic Worms", desc: "Lifesteal +0.5. Worms crawl on you.", apply: () => { player.lifesteal += 0.5; player.symbioticWorms = true; } },
+            { id: "v_metallicSheen", name: "Iron Skin", desc: "Armor +10% with a metallic look.", apply: () => { player.armor += 0.1; player.metallicSheen = true; } },
+            { id: "v_gemHeart", name: "Gem Heart", desc: "Max HP +50. A glowing gem heart appears.", apply: () => { player.maxHp += 50; player.hp += 50; player.gemHeart = true; } },
+
             { id: "spd", name: "Cilia Propulsion", desc: "Increases base movement speed.", apply: () => { player.speed += 1.0; player.cilia++; } },
             { id: "hp", name: "Thick Membrane", desc: "Increases Max HP by 15.", apply: () => { player.maxHp += 15; player.hp += 15; } },
             { id: "regen", name: "Mitochondria", desc: "Slowly regenerates HP over time.", apply: () => { player.regen += 0.03; player.mito++; } },
@@ -462,32 +504,79 @@
             virus: [
                 { name: "Viral Cloning", desc: "Spawns an additional infectious clone and boosts lifesteal.", apply: () => { player.clones += 1; player.lifesteal += 0.2; } },
                 { name: "Parasitic Siphon", desc: "Massively increases lifesteal from all damage dealt.", apply: () => { player.lifesteal += 1.5; } },
-                { name: "Toxic Membrane", desc: "Gain Toxin Immunity and reflect poison back to attackers.", apply: () => { player.toxinImmune = true; player.spikes += 0.5; } }
+                { name: "Toxic Membrane", desc: "Gain Toxin Immunity and reflect poison back to attackers.", apply: () => { player.toxinImmune = true; player.spikes += 0.5; } },
+                { name: "Viral Spikes", desc: "Damage +2 and grows infectious spikes.", apply: () => { player.damage += 2; player.viralSpikes = true; } },
+                { name: "Plague Aura", desc: "Poisons nearby enemies.", apply: () => { player.plagueAura = true; } }
             ],
             insect: [
                 { name: "Chitin Plating", desc: "Thickens your segmented armor (+20% damage reduction).", apply: () => player.armor += 0.20 },
                 { name: "Predatory Mandibles", desc: "Unlocks Venom Gland. Greatly increases your base damage.", apply: () => { if(!player.canShoot){player.canShoot=true; document.getElementById('shootHint').style.display='inline';} player.damage += 2; } },
-                { name: "Swarm Speed", desc: "Massively increases movement speed and adds defensive spikes.", apply: () => { player.speed += 2.0; player.spikes += 1.0; } }
+                { name: "Swarm Speed", desc: "Massively increases movement speed and adds defensive spikes.", apply: () => { player.speed += 2.0; player.spikes += 1.0; } },
+                { name: "Sensory Antennae", desc: "Vision +20% and grows antennae.", apply: () => { player.visionMod *= 0.8; player.antennae = true; } },
+                { name: "Faceted Eyes", desc: "Dodge chance +10% and extra eyes.", apply: () => { player.blockChance += 0.1; player.compoundEyesExt = true; } }
             ],
             reptile: [
                 { name: "Cold-blooded Strike", desc: "Unlocks Dash. Massive damage boost to all attacks.", apply: () => { if(!player.dashUnlocked){player.dashUnlocked=true; document.getElementById('dashHint').style.display='inline';} player.damage += 3.5; } },
                 { name: "Regenerative Scales", desc: "Massively increases your passive HP regeneration.", apply: () => player.regen += 0.1 },
-                { name: "Apex Mass", desc: "Grow instantly larger, increasing base mass and Max HP.", apply: () => { player.mass += 150; player.maxHp += 40; player.hp += 40; } }
+                { name: "Apex Mass", desc: "Grow instantly larger, increasing base mass and Max HP.", apply: () => { player.mass += 150; player.maxHp += 40; player.hp += 40; } },
+                { name: "Forked Tongue", desc: "Lifesteal +0.2 and gains a tongue.", apply: () => { player.lifesteal += 0.2; player.forkedTongue = true; } },
+                { name: "Intimidating Frill", desc: "Enemies hesitate. Adds a neck frill.", apply: () => { player.armor += 0.1; player.frill = true; } }
             ],
             mammal: [
                 { name: "Warm-blooded", desc: "Massively increases Max Stamina and Stamina Regeneration.", apply: () => { player.maxStamina += 150; player.stamina += 150; } },
                 { name: "Vocal Cords", desc: "Unlocks Shockwave (Right Click). Shockwave cooldown is reduced.", apply: () => { if(!player.canShock){player.canShock=true; document.getElementById('shockHint').style.display='inline';} else { player.shockCooldown = Math.max(20, player.shockCooldown - 20); } } },
-                { name: "Titan Fur", desc: "Massive boost to Max HP and gives slight armor.", apply: () => { player.maxHp += 100; player.hp += 100; player.armor += 0.1; } }
+                { name: "Titan Fur", desc: "Massive boost to Max HP and gives slight armor.", apply: () => { player.maxHp += 100; player.hp += 100; player.armor += 0.1; } },
+                { name: "Whiskers", desc: "Grab range +50.", apply: () => { player.grabRange += 50; player.whiskers = true; } },
+                { name: "Tufted Ears", desc: "Speed +1. Adds ears.", apply: () => { player.speed += 1; player.tuftedEars = true; } }
             ],
             crustacean: [
                 { name: "Pincer Snap", desc: "Mutate claws that auto-snap at close enemies for huge damage.", apply: () => { player.pincers = true; } },
                 { name: "Carapace Deflection", desc: "20% chance to completely deflect and block incoming damage.", apply: () => { player.blockChance += 0.2; } },
-                { name: "Sniper Claws", desc: "Your venom projectiles now pierce through multiple enemies.", req: () => player.canShoot, apply: () => player.piercing = true }
+                { name: "Sniper Claws", desc: "Your venom projectiles now pierce through multiple enemies.", req: () => player.canShoot, apply: () => player.piercing = true },
+                { name: "Titan Claws", desc: "Damage +3. Adds heavy claws.", apply: () => { player.damage += 3; player.heavyClaws = true; } },
+                { name: "Barnacled Shell", desc: "Armor +15%. Grows barnacles.", apply: () => { player.armor += 0.15; player.barnacles = true; } }
             ],
             piscean: [
                 { name: "Streamlined Scales", desc: "Hydrodynamic scales. +Speed, +Damage reduction.", apply: () => { player.speed += 1.5; player.armor += 0.1; } },
                 { name: "Lateral Line", desc: "Senses vibrations in water. Huge vision increase.", apply: () => { player.visionMod *= 0.7; } },
-                { name: "Schooling Instinct", desc: "Spawns two rapid-attack clone fish.", apply: () => { player.clones += 2; player.damage += 1.0; } }
+                { name: "Schooling Instinct", desc: "Spawns two rapid-attack clone fish.", apply: () => { player.clones += 2; player.damage += 1.0; } },
+                { name: "Abyssal Lure", desc: "Attracts food. Adds glowing lure.", apply: () => { player.grabRange += 30; player.glowingLure = true; } },
+                { name: "Dorsal Sail", desc: "Speed +2. Adds a sail fin.", apply: () => { player.speed += 2; player.sailFin = true; } }
+            ],
+            fungal: [
+                { name: "Mushroom Cap", desc: "Regen +0.05. Adds mushroom cap.", apply: () => { player.regen += 0.05; player.mushroomCap = true; } },
+                { name: "Mycelium Threads", desc: "Grabs DNA from afar.", apply: () => { player.grabRange += 80; player.myceliumNetwork = true; } },
+                { name: "Toxic Spores", desc: "Damage +2. Emits toxic spores.", apply: () => { player.damage += 2; player.toxicSpores = true; } },
+                { name: "Hyphae Tendrils", desc: "Lifesteal +0.5. Grows tendrils.", apply: () => { player.lifesteal += 0.5; player.hyphaeTendrils = true; } },
+                { name: "Decay Aura", desc: "Damages nearby enemies heavily.", apply: () => { player.decayAura = true; } },
+                { name: "Puffball Body", desc: "Block chance +15%. Turns into puffball.", apply: () => { player.blockChance += 0.15; player.puffball = true; } },
+                { name: "Fungal Armor", desc: "Armor +15%. Adds fungal plates.", apply: () => { player.armor += 0.15; player.fungalArmor = true; } },
+                { name: "Black Mold", desc: "Stamina regen increased. Black mold pattern.", apply: () => { player.stamina += 50; player.moldSpores = true; } }
+            ],
+            elemental: [
+                { name: "Flame Body", desc: "Burns enemies you touch.", apply: () => { player.damage += 1.5; player.flameBody = true; } },
+                { name: "Aqua Aura", desc: "Regen +0.1. Covered in water.", apply: () => { player.regen += 0.1; player.waterAura = true; } },
+                { name: "Earth Skin", desc: "Armor +25%. Skin of rock.", apply: () => { player.armor += 0.25; player.earthSkin = true; } },
+                { name: "Wind Currents", desc: "Speed +3. Surrounded by air.", apply: () => { player.speed += 3; player.airCurrents = true; } },
+                { name: "Lightning Rod", desc: "Shock damage +5. Emits lightning.", apply: () => { player.damage += 2; player.lightningRod = true; } },
+                { name: "Obsidian Shards", desc: "Spikes +2.0. Sharp obsidian.", apply: () => { player.spikes += 2; player.obsidianShards = true; } },
+                { name: "Frost Armor", desc: "Armor +10%. Frost effect.", apply: () => { player.armor += 0.1; player.frostArmor = true; } },
+                { name: "Magma Aura", desc: "Damage over time. Magma effect.", apply: () => { player.damage += 1; player.magmaAura = true; } }
+            ],
+            mechanical: [
+                { name: "Steel Plating", desc: "Armor +30%. Metal plates.", apply: () => { player.armor += 0.3; player.metalPlating = true; } },
+                { name: "Laser Eye", desc: "Shoots piercing lasers.", apply: () => { player.piercing = true; player.laserEye = true; } },
+                { name: "Jet Thrusters", desc: "Dash is massive. Adds thrusters.", apply: () => { player.springJoints = true; player.thrusters = true; } },
+                { name: "Clockwork Heart", desc: "Max Stamina +200. Exposed gears.", apply: () => { player.maxStamina += 200; player.gearHeart = true; } },
+                { name: "Synthetic Nerves", desc: "Abilities recharge fast.", apply: () => { player.fourArmed = true; player.wireNerves = true; } },
+                { name: "Robotic Joints", desc: "Speed +2. Mechanical limbs.", apply: () => { player.speed += 2; player.roboticJoints = true; } }
+            ],
+            astral: [
+                { name: "Stardust Trail", desc: "Leaves glowing trail.", apply: () => { player.speed += 1; player.stardustTrail = true; } },
+                { name: "Nebula Aura", desc: "Dodge chance +20%.", apply: () => { player.blockChance += 0.2; player.nebulaAura = true; } },
+                { name: "Solar Flare", desc: "Shockwave massive. Sun aura.", apply: () => { player.solarFlare = true; } },
+                { name: "Comet Tail", desc: "Dash deals heavy damage.", apply: () => { player.scuttleDamage = true; player.cometTail = true; } },
+                { name: "Astral Projection", desc: "Spawns 2 clones. Ghostly aura.", apply: () => { player.clones += 2; player.astralProjection = true; } }
             ]
         };
 
@@ -594,6 +683,7 @@
                     { name: "Crushing Jaws", family: "Carnivore", desc: "Bone-crushing teeth. +Base Damage. Killing enemies grants a brief speed burst.", color: "#ff3333", apply: () => { player.damage += 2.0; player.mouth = "jaws"; } },
                     { name: "Piercing Beak", family: "Avian", desc: "A sharp beak that cracks shells. Your attacks ignore armor, dealing bonus damage to armored foes.", color: "#ffcc00", apply: () => { player.armorPiercing = true; player.mouth = "beak"; } },
                     { name: "Filter Baleen", family: "Filter Feeder", desc: "Massive bristles that passively vacuum nearby food chunks and golden cells towards you.", color: "#88ccff", apply: () => { player.grabRange += 200; player.mouth = "baleen"; } },
+                    { name: "Singularity Maw", family: "Cosmic", desc: "A void mouth that vacuums everything.", color: "#8800ff", apply: () => { player.grabRange += 300; player.mouth = "blackhole"; player.blackHoleMaw = true; } },
                     { name: "Parasitic Leech", family: "Parasite", desc: "A terrifying sucker mouth. Massive boost to passive Lifesteal and HP Regeneration.", color: "#aa22ff", apply: () => { player.lifesteal += 1.5; player.regen += 0.05; player.mouth = "leech"; } }
                 ];
                 
@@ -612,6 +702,8 @@
                     { name: "Brawler Arms", family: "Arms", desc: "Develop strong limbs. +Huge Damage, increases resource grab range.", color: "#ff8855", apply: () => { player.damage += 3.0; player.grabRange += 100; player.appendage = "arms"; updateEnvironment("The Shallows"); } },
                     { name: "Muscular Legs", family: "Legs", desc: "Built for endurance. +Huge Stamina, unlocks/upgrades Dash.", color: "#bb8855", apply: () => { player.maxStamina += 150; player.stamina += 150; if(!player.dashUnlocked){player.dashUnlocked=true; document.getElementById('dashHint').style.display='inline';} player.appendage = "legs"; updateEnvironment("The Surface"); } },
                     { name: "Serpentine Body", family: "Slithery", desc: "Sinuous and regenerative. +Regen, +Lifesteal.", color: "#55cc88", apply: () => { player.regen += 0.1; player.lifesteal += 0.5; player.appendage = "slithery"; updateEnvironment("The Abyss"); } },
+                    { name: "Eldritch Tentacles", family: "Tentacles", desc: "Grabs food from massive distance. +Lifesteal.", color: "#aa00ff", apply: () => { player.grabRange += 200; player.lifesteal += 1.0; player.appendage = "tentacles"; updateEnvironment("The Abyss"); } },
+                    { name: "Spider Legs", family: "Arachnid", desc: "Huge dodge chance. +Speed.", color: "#333333", apply: () => { player.speed += 2.0; player.blockChance += 0.25; player.appendage = "spiderlegs"; updateEnvironment("The Canopy"); } },
                     { name: "Aquatic Fins", family: "Fins", desc: "Masters of the water. +Massive Speed, +Frenzy gain.", color: "#33bbff", apply: () => { player.speed += 4.0; player.appendage = "fins"; updateEnvironment("The Open Ocean"); } }
                 ];
                 
@@ -625,7 +717,7 @@
                 document.getElementById('overlayTitle').style.color = "#ffcc00";
                 document.getElementById('overlaySub').innerText = "Choose a phylogenetic path! Your species develops a random trait based on your choice.";
                 
-                let allFamilies = ["virus", "insect", "reptile", "mammal", "crustacean", "piscean"];
+                let allFamilies = ["virus", "insect", "reptile", "mammal", "crustacean", "piscean", "fungal", "elemental", "mechanical", "astral"];
                 let chosenFamilies = allFamilies.sort(() => 0.5 - Math.random()).slice(0, 3);
                 
                 chosenFamilies.forEach(familyKey => {
@@ -639,6 +731,10 @@
                     else if(familyKey === 'mammal') {fName="Mammalian"; fColor="#bb6633"}
                     else if(familyKey === 'crustacean') {fName="Crustacean"; fColor="#ff5533"}
                     else if(familyKey === 'piscean') {fName="Piscean"; fColor="#33aaff"}
+                    else if(familyKey === 'fungal') {fName="Fungal"; fColor="#88aa66"}
+                    else if(familyKey === 'elemental') {fName="Elemental"; fColor="#ffaa00"}
+                    else if(familyKey === 'mechanical') {fName="Mechanical"; fColor="#aaaaaa"}
+                    else if(familyKey === 'astral') {fName="Astral"; fColor="#aaaaff"}
 
                     picks.push({ ...mut, family: fName, color: fColor, applyTrait: () => { player.color = fColor; player[familyKey+"Traits"]++; mut.apply(); } });
                 });
@@ -782,6 +878,20 @@
             } else {
                 player.speedBoost *= 0.8; 
                 player.stamina = Math.min(player.maxStamina, player.stamina + 0.5); 
+            }
+
+
+            if (player.doubleTail && (moved || player.tail.length > 0)) {
+                // Actually the tail array handles one chain, drawing handles double visually, let's just make it visually double in draw logic
+            }
+            if (player.sporeClouds && Math.random() < 0.1) {
+                particles.push({x: player.x, y: player.y, vx: 0, vy: 0, life: 2, color: "#88aa66", size: 5/cameraZoom});
+            }
+            if (player.flamingTrail && player.isDashing > 0) {
+                particles.push({x: player.x, y: player.y, vx: 0, vy: 0, life: 1, color: "#ff4400", size: 4/cameraZoom});
+            }
+            if (player.stardustTrail && moved) {
+                if(Math.random() < 0.3) particles.push({x: player.x, y: player.y, vx: (Math.random()-0.5), vy: (Math.random()-0.5), life: 1.5, color: "#ffffff", size: 2/cameraZoom});
             }
 
             let maxTail = player.appendage === "slithery" ? (player.elongation ? 50 : 25) : 12;
@@ -1513,13 +1623,22 @@
                         }
                     }
 
-                    ctx.beginPath();
-                    ctx.arc(tx, ty, Math.max(2, tSize), 0, Math.PI*2);
                     let tGrad = ctx.createRadialGradient(tx - tSize*0.3, ty - tSize*0.3, tSize*0.1, tx, ty, tSize);
                     tGrad.addColorStop(0, adjustColor(player.color, 30));
                     tGrad.addColorStop(1, adjustColor(player.color, -40));
-                    ctx.fillStyle = tGrad;
-                    ctx.fill();
+if (player.doubleTail) {
+                        ctx.beginPath();
+                        ctx.arc(tx, ty + player.size*0.5, Math.max(2, tSize), 0, Math.PI*2);
+                        ctx.fillStyle = tGrad; ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(tx, ty - player.size*0.5, Math.max(2, tSize), 0, Math.PI*2);
+                        ctx.fillStyle = tGrad; ctx.fill();
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(tx, ty, Math.max(2, tSize), 0, Math.PI*2);
+                        ctx.fillStyle = tGrad;
+                        ctx.fill();
+                    }
 
                     if (player.appendage === "slithery" && i % 2 === 0 && !player.rattleTail || (player.rattleTail && i !== player.tail.length - 1)) {
                         ctx.beginPath();
@@ -1776,6 +1895,71 @@
                 ctx.stroke();
             }
 
+
+            if (player.appendage === "tentacles") {
+                const drawTentacle = (angleOffset, lengthMult) => {
+                    let tAngle = aimAngle + angleOffset;
+                    let tLen = player.size * 3 * lengthMult;
+                    let segments = 8;
+                    ctx.beginPath();
+                    ctx.moveTo(player.x + Math.cos(tAngle)*player.size*0.5, player.y + Math.sin(tAngle)*player.size*0.5);
+                    for(let s=1; s<=segments; s++) {
+                        let segRatio = s / segments;
+                        let wobble = Math.sin(time*5 + s + angleOffset*5) * player.size * 0.8;
+                        let px = player.x + Math.cos(tAngle)*player.size*0.5 + Math.cos(tAngle)*tLen*segRatio + Math.cos(tAngle + Math.PI/2)*wobble;
+                        let py = player.y + Math.sin(tAngle)*player.size*0.5 + Math.sin(tAngle)*tLen*segRatio + Math.sin(tAngle + Math.PI/2)*wobble;
+                        ctx.lineTo(px, py);
+                    }
+                    ctx.strokeStyle = player.color;
+                    ctx.lineWidth = player.size * 0.6;
+                    ctx.lineCap = "round";
+                    ctx.stroke();
+
+                    ctx.strokeStyle = "#4400aa";
+                    ctx.lineWidth = player.size * 0.2;
+                    ctx.stroke();
+                };
+
+                drawTentacle(0.5, 1.0);
+                drawTentacle(-0.5, 1.0);
+                drawTentacle(1.2, 0.7);
+                drawTentacle(-1.2, 0.7);
+                drawTentacle(2.0, 0.5);
+                drawTentacle(-2.0, 0.5);
+            }
+
+            if (player.appendage === "spiderlegs") {
+                const drawSpiderLeg = (angleOffset, phase) => {
+                    let lAngle = aimAngle + angleOffset;
+                    let walk = Math.sin(time*15 + phase) * 0.6;
+                    lAngle += walk;
+
+                    let jointX = player.x + Math.cos(lAngle)*player.size*1.8;
+                    let jointY = player.y + Math.sin(lAngle)*player.size*1.8;
+
+                    let tipX = jointX + Math.cos(lAngle + (angleOffset > 0 ? 1 : -1))*player.size*2.0;
+                    let tipY = jointY + Math.sin(lAngle + (angleOffset > 0 ? 1 : -1))*player.size*2.0;
+
+                    ctx.beginPath();
+                    ctx.moveTo(player.x + Math.cos(aimAngle+angleOffset)*player.size*0.8, player.y + Math.sin(aimAngle+angleOffset)*player.size*0.8);
+                    ctx.lineTo(jointX, jointY);
+                    ctx.lineTo(tipX, tipY);
+                    ctx.strokeStyle = "#222";
+                    ctx.lineWidth = player.size * 0.4;
+                    ctx.lineJoin = "round";
+                    ctx.stroke();
+
+                    ctx.strokeStyle = player.color;
+                    ctx.lineWidth = player.size * 0.1;
+                    ctx.stroke();
+                };
+
+                drawSpiderLeg(0.5, 0); drawSpiderLeg(-0.5, 0);
+                drawSpiderLeg(1.0, Math.PI); drawSpiderLeg(-1.0, Math.PI);
+                drawSpiderLeg(1.5, 0); drawSpiderLeg(-1.5, 0);
+                drawSpiderLeg(2.0, Math.PI); drawSpiderLeg(-2.0, Math.PI);
+            }
+
             // --- COMPLEX PLAYER BODY BLOCK ---
             ctx.save();
             ctx.translate(player.x, player.y);
@@ -1892,6 +2076,361 @@
                 ctx.lineTo(-r*0.8, -r*0.6);
                 ctx.fillStyle = darkColor; ctx.fill();
                 ctx.strokeStyle = lightColor; ctx.lineWidth = 2; ctx.stroke();
+            }
+
+
+            if (player.glowingCore) {
+                ctx.beginPath(); ctx.arc(0, 0, r * 0.5, 0, Math.PI*2);
+                ctx.fillStyle = "#ffffff"; ctx.shadowBlur = 20; ctx.shadowColor = "#ffffff"; ctx.fill(); ctx.shadowBlur = 0;
+            }
+            if (player.plasmaMembrane) {
+                ctx.beginPath(); ctx.arc(0, 0, r * 1.3, 0, Math.PI*2);
+                ctx.strokeStyle = "rgba(0, 255, 255, 0.5)"; ctx.lineWidth = 4 / cameraZoom; ctx.stroke();
+            }
+            if (player.crystalArmor) {
+                ctx.fillStyle = "rgba(0, 200, 255, 0.6)"; ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2 / cameraZoom;
+                for(let i=0; i<6; i++) {
+                    let a = (i/6)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(a-0.2)*r*0.8, Math.sin(a-0.2)*r*0.8); ctx.lineTo(Math.cos(a)*r*1.1, Math.sin(a)*r*1.1); ctx.lineTo(Math.cos(a+0.2)*r*0.8, Math.sin(a+0.2)*r*0.8); ctx.closePath(); ctx.fill(); ctx.stroke();
+                }
+            }
+            if (player.thirdEye) {
+                ctx.beginPath(); ctx.arc(0, -r*0.2, r*0.3, 0, Math.PI*2); ctx.fillStyle = "#fff"; ctx.fill();
+                ctx.beginPath(); ctx.arc(0, -r*0.2, r*0.15, 0, Math.PI*2); ctx.fillStyle = "#f0f"; ctx.fill();
+            }
+            if (player.electricSpikes) {
+                ctx.strokeStyle = "#ffff00"; ctx.lineWidth = 2/cameraZoom;
+                for(let i=0; i<8; i++) {
+                    let a = (i/8)*Math.PI*2 + Math.random();
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r); ctx.lineTo(Math.cos(a)*r*1.5 + (Math.random()-0.5)*r, Math.sin(a)*r*1.5 + (Math.random()-0.5)*r); ctx.stroke();
+                }
+            }
+            if (player.bioLuminescence) {
+                ctx.beginPath(); ctx.arc(0, 0, r*1.5, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.5);
+                grad.addColorStop(0, "rgba(0, 255, 100, 0.4)"); grad.addColorStop(1, "rgba(0, 255, 100, 0)");
+                ctx.fillStyle = grad; ctx.fill();
+            }
+            if (player.acidPores) {
+                ctx.fillStyle = "#00ff00";
+                for(let i=0; i<10; i++) {
+                    let a = (i/10)*Math.PI*2;
+                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.6, Math.sin(a)*r*0.6, 4/cameraZoom, 0, Math.PI*2); ctx.fill();
+                }
+            }
+            if (player.bonePlates) {
+                ctx.fillStyle = "#eeeeee"; ctx.strokeStyle = "#555555"; ctx.lineWidth = 2/cameraZoom;
+                ctx.beginPath(); ctx.arc(0, 0, r*0.7, 0, Math.PI); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(0, r*0.2, r*0.5, 0, Math.PI); ctx.fill(); ctx.stroke();
+            }
+            if (player.crownOfThorns) {
+                ctx.strokeStyle = "#442200"; ctx.lineWidth = 4/cameraZoom;
+                ctx.beginPath(); ctx.arc(0, 0, r*1.1, 0, Math.PI*2); ctx.stroke();
+                ctx.fillStyle = "#442200";
+                for(let i=0; i<12; i++) {
+                    let a = (i/12)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.1)*r*1.1, Math.sin(a-0.1)*r*1.1); ctx.lineTo(Math.cos(a)*r*1.5, Math.sin(a)*r*1.5); ctx.lineTo(Math.cos(a+0.1)*r*1.1, Math.sin(a+0.1)*r*1.1); ctx.fill();
+                }
+            }
+            if (player.voidAura) {
+                ctx.beginPath(); ctx.arc(0, 0, r*2, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*2);
+                grad.addColorStop(0, "rgba(30, 0, 50, 0.5)"); grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+                ctx.fillStyle = grad; ctx.fill();
+            }
+            if (player.magmaBlood) {
+                ctx.strokeStyle = "#ff4400"; ctx.lineWidth = 3/cameraZoom;
+                ctx.beginPath(); ctx.moveTo(-r*0.5, -r*0.5); ctx.lineTo(r*0.5, r*0.5); ctx.moveTo(r*0.5, -r*0.5); ctx.lineTo(-r*0.5, r*0.5); ctx.stroke();
+            }
+            if (player.iceCrystals) {
+                ctx.fillStyle = "rgba(100, 200, 255, 0.8)";
+                for(let i=0; i<5; i++) {
+                    let a = (i/5)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r*0.5, Math.sin(a)*r*0.5); ctx.lineTo(Math.cos(a)*r*1.2, Math.sin(a)*r*1.2); ctx.lineTo(Math.cos(a+0.2)*r*0.8, Math.sin(a+0.2)*r*0.8); ctx.fill();
+                }
+            }
+            if (player.symbioticWorms) {
+                ctx.strokeStyle = "#ffaaee"; ctx.lineWidth = 3/cameraZoom;
+                for(let i=0; i<4; i++) {
+                    let a = (i/4)*Math.PI*2 + time;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r*0.8, Math.sin(a)*r*0.8); ctx.quadraticCurveTo(Math.cos(a+0.5)*r*1.2, Math.sin(a+0.5)*r*1.2, Math.cos(a+1.0)*r*0.9, Math.sin(a+1.0)*r*0.9); ctx.stroke();
+                }
+            }
+            if (player.metallicSheen) {
+                let grad = ctx.createLinearGradient(-r, -r, r, r);
+                grad.addColorStop(0, "rgba(255,255,255,0.6)"); grad.addColorStop(0.5, "rgba(255,255,255,0)"); grad.addColorStop(1, "rgba(0,0,0,0.4)");
+                ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+            }
+            if (player.gemHeart) {
+                ctx.fillStyle = "#ff0055";
+                ctx.beginPath(); ctx.moveTo(0, r*0.3); ctx.lineTo(r*0.4, -r*0.1); ctx.lineTo(0, -r*0.4); ctx.lineTo(-r*0.4, -r*0.1); ctx.closePath();
+                ctx.shadowBlur = 10; ctx.shadowColor = "#ff0055"; ctx.fill(); ctx.shadowBlur = 0;
+            }
+
+            // Phylogenetics
+            if (player.viralSpikes) {
+                ctx.fillStyle = "#aa00ff";
+                for(let i=0; i<8; i++) {
+                    let a = (i/8)*Math.PI*2;
+                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*1.1, Math.sin(a)*r*1.1, r*0.2, 0, Math.PI*2); ctx.fill();
+                }
+            }
+            if (player.plagueAura) {
+                ctx.beginPath(); ctx.arc(0, 0, r*1.8, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.8);
+                grad.addColorStop(0, "rgba(100, 255, 0, 0.3)"); grad.addColorStop(1, "rgba(100, 255, 0, 0)");
+                ctx.fillStyle = grad; ctx.fill();
+            }
+            if (player.antennae) {
+                ctx.strokeStyle = player.color; ctx.lineWidth = 3/cameraZoom;
+                ctx.beginPath(); ctx.moveTo(Math.cos(-0.5)*r, Math.sin(-0.5)*r); ctx.quadraticCurveTo(Math.cos(-0.8)*r*2, Math.sin(-0.8)*r*2, Math.cos(-0.2)*r*2.5, Math.sin(-0.2)*r*2.5); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(Math.cos(0.5)*r, Math.sin(0.5)*r); ctx.quadraticCurveTo(Math.cos(0.8)*r*2, Math.sin(0.8)*r*2, Math.cos(0.2)*r*2.5, Math.sin(0.2)*r*2.5); ctx.stroke();
+            }
+            if (player.compoundEyesExt) {
+                ctx.fillStyle = "#ffaa00";
+                ctx.beginPath(); ctx.arc(r*0.4, -r*0.6, r*0.15, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(r*0.4, r*0.6, r*0.15, 0, Math.PI*2); ctx.fill();
+            }
+            if (player.frill) {
+                ctx.fillStyle = player.color; ctx.strokeStyle = "#111"; ctx.lineWidth = 2/cameraZoom;
+                for(let i=0; i<5; i++) {
+                    let a = -1.5 + (i/4)*3.0;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.2)*r, Math.sin(a-0.2)*r); ctx.lineTo(Math.cos(a)*r*1.8, Math.sin(a)*r*1.8); ctx.lineTo(Math.cos(a+0.2)*r, Math.sin(a+0.2)*r); ctx.fill(); ctx.stroke();
+                }
+            }
+            if (player.whiskers) {
+                ctx.strokeStyle = "#fff"; ctx.lineWidth = 1/cameraZoom;
+                ctx.beginPath(); ctx.moveTo(r*0.8, -r*0.2); ctx.lineTo(r*1.5, -r*0.6); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(r*0.8, -r*0.1); ctx.lineTo(r*1.6, -r*0.1); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(r*0.8, r*0.2); ctx.lineTo(r*1.5, r*0.6); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(r*0.8, r*0.1); ctx.lineTo(r*1.6, r*0.1); ctx.stroke();
+            }
+            if (player.tuftedEars) {
+                ctx.fillStyle = player.color;
+                ctx.beginPath(); ctx.moveTo(Math.cos(-1.0)*r, Math.sin(-1.0)*r); ctx.lineTo(Math.cos(-1.2)*r*1.5, Math.sin(-1.2)*r*1.5); ctx.lineTo(Math.cos(-0.8)*r, Math.sin(-0.8)*r); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(Math.cos(1.0)*r, Math.sin(1.0)*r); ctx.lineTo(Math.cos(1.2)*r*1.5, Math.sin(1.2)*r*1.5); ctx.lineTo(Math.cos(0.8)*r, Math.sin(0.8)*r); ctx.fill();
+            }
+            if (player.heavyClaws && player.appendage !== "arms") {
+                ctx.fillStyle = "#ff5533";
+                ctx.beginPath(); ctx.arc(Math.cos(-0.8)*r*1.2, Math.sin(-0.8)*r*1.2, r*0.4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(Math.cos(0.8)*r*1.2, Math.sin(0.8)*r*1.2, r*0.4, 0, Math.PI*2); ctx.fill();
+            }
+            if (player.barnacles) {
+                ctx.fillStyle = "#bbbbcc"; ctx.strokeStyle = "#555566"; ctx.lineWidth = 1/cameraZoom;
+                for(let i=0; i<5; i++) {
+                    let a = (i/5)*Math.PI*2 + 0.5;
+                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.8, Math.sin(a)*r*0.8, r*0.15, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.8, Math.sin(a)*r*0.8, r*0.05, 0, Math.PI*2); ctx.fillStyle="#333"; ctx.fill(); ctx.fillStyle="#bbbbcc";
+                }
+            }
+            if (player.glowingLure) {
+                ctx.strokeStyle = player.color; ctx.lineWidth = 3/cameraZoom;
+                ctx.beginPath(); ctx.moveTo(r*0.8, 0); ctx.quadraticCurveTo(r*1.5, -r*1.0, r*2.0, 0); ctx.stroke();
+                ctx.beginPath(); ctx.arc(r*2.0, 0, r*0.2, 0, Math.PI*2); ctx.fillStyle = "#00ffff"; ctx.shadowBlur = 15; ctx.shadowColor = "#00ffff"; ctx.fill(); ctx.shadowBlur = 0;
+            }
+            if (player.sailFin) {
+                ctx.fillStyle = player.color; ctx.strokeStyle = "#111"; ctx.lineWidth = 2/cameraZoom;
+                ctx.beginPath(); ctx.moveTo(-r*0.8, 0); ctx.lineTo(0, -r*1.5); ctx.lineTo(r*0.5, 0); ctx.fill(); ctx.stroke();
+            }
+
+            // Fungal
+            if (player.mushroomCap) {
+                ctx.fillStyle = "#cc4444";
+                ctx.beginPath(); ctx.arc(0, 0, r*1.2, Math.PI, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath(); ctx.arc(-r*0.5, -r*0.5, r*0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(r*0.4, -r*0.8, r*0.15, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(r*0.6, -r*0.3, r*0.2, 0, Math.PI*2); ctx.fill();
+            }
+            if (player.myceliumNetwork) {
+                ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1/cameraZoom;
+                for(let i=0; i<10; i++) {
+                    let a = (i/10)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
+                    ctx.lineTo(Math.cos(a)*r*1.8 + Math.random()*r, Math.sin(a)*r*1.8 + Math.random()*r); ctx.stroke();
+                }
+            }
+            if (player.toxicSpores) {
+                ctx.fillStyle = "rgba(0, 255, 0, 0.5)";
+                for(let i=0; i<8; i++) {
+                    let a = Math.random()*Math.PI*2;
+                    let dist = Math.random()*r*1.5;
+                    ctx.beginPath(); ctx.arc(Math.cos(a)*dist, Math.sin(a)*dist, r*0.1 + Math.random()*r*0.1, 0, Math.PI*2); ctx.fill();
+                }
+            }
+            if (player.hyphaeTendrils) {
+                ctx.strokeStyle = "#aaaaaa"; ctx.lineWidth = 2/cameraZoom;
+                for(let i=0; i<6; i++) {
+                    let a = (i/6)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
+                    ctx.quadraticCurveTo(Math.cos(a+0.5)*r*1.5, Math.sin(a+0.5)*r*1.5, Math.cos(a)*r*2.0, Math.sin(a)*r*2.0); ctx.stroke();
+                }
+            }
+            if (player.decayAura) {
+                ctx.beginPath(); ctx.arc(0, 0, r*1.6, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.6);
+                grad.addColorStop(0, "rgba(50, 50, 0, 0.4)"); grad.addColorStop(1, "rgba(50, 50, 0, 0)");
+                ctx.fillStyle = grad; ctx.fill();
+            }
+            if (player.puffball) {
+                ctx.fillStyle = "rgba(200, 200, 180, 0.8)";
+                ctx.beginPath(); ctx.arc(0, 0, r*1.1, 0, Math.PI*2); ctx.fill();
+            }
+            if (player.fungalArmor) {
+                ctx.fillStyle = "#889977"; ctx.strokeStyle = "#445533"; ctx.lineWidth = 2/cameraZoom;
+                for(let i=0; i<6; i++) {
+                    let a = (i/6)*Math.PI*2;
+                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.8, Math.sin(a)*r*0.8, r*0.3, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                }
+            }
+            if (player.moldSpores) {
+                ctx.fillStyle = "#111111";
+                for(let i=0; i<15; i++) {
+                    let a = Math.random()*Math.PI*2;
+                    let dist = Math.random()*r*0.8;
+                    ctx.beginPath(); ctx.arc(Math.cos(a)*dist, Math.sin(a)*dist, 2/cameraZoom, 0, Math.PI*2); ctx.fill();
+                }
+            }
+
+            // Elemental
+            if (player.flameBody) {
+                ctx.fillStyle = "rgba(255, 100, 0, 0.6)";
+                for(let i=0; i<8; i++) {
+                    let a = (i/8)*Math.PI*2 + time;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.2)*r*0.9, Math.sin(a-0.2)*r*0.9);
+                    ctx.lineTo(Math.cos(a)*r*1.6, Math.sin(a)*r*1.6);
+                    ctx.lineTo(Math.cos(a+0.2)*r*0.9, Math.sin(a+0.2)*r*0.9); ctx.fill();
+                }
+            }
+            if (player.waterAura) {
+                ctx.beginPath(); ctx.arc(0, 0, r*1.3, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.3);
+                grad.addColorStop(0, "rgba(0, 100, 255, 0.5)"); grad.addColorStop(1, "rgba(0, 100, 255, 0)");
+                ctx.fillStyle = grad; ctx.fill();
+            }
+            if (player.earthSkin) {
+                ctx.fillStyle = "#554433"; ctx.strokeStyle = "#332211"; ctx.lineWidth = 2/cameraZoom;
+                for(let i=0; i<8; i++) {
+                    let a = (i/8)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.3)*r*0.8, Math.sin(a-0.3)*r*0.8);
+                    ctx.lineTo(Math.cos(a)*r*1.0, Math.sin(a)*r*1.0);
+                    ctx.lineTo(Math.cos(a+0.3)*r*0.8, Math.sin(a+0.3)*r*0.8); ctx.fill(); ctx.stroke();
+                }
+            }
+            if (player.airCurrents) {
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"; ctx.lineWidth = 2/cameraZoom;
+                for(let i=0; i<3; i++) {
+                    let a = time*2 + (i/3)*Math.PI*2;
+                    ctx.beginPath(); ctx.arc(0, 0, r*(1.2 + i*0.2), a, a + Math.PI); ctx.stroke();
+                }
+            }
+            if (player.lightningRod) {
+                ctx.strokeStyle = "#ffff00"; ctx.lineWidth = 2/cameraZoom;
+                for(let i=0; i<4; i++) {
+                    let a = Math.random()*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
+                    ctx.lineTo(Math.cos(a)*r*1.3 + (Math.random()-0.5)*r*0.5, Math.sin(a)*r*1.3 + (Math.random()-0.5)*r*0.5);
+                    ctx.lineTo(Math.cos(a)*r*1.8, Math.sin(a)*r*1.8); ctx.stroke();
+                }
+            }
+            if (player.obsidianShards) {
+                ctx.fillStyle = "#111111"; ctx.strokeStyle = "#333333"; ctx.lineWidth = 1/cameraZoom;
+                for(let i=0; i<6; i++) {
+                    let a = (i/6)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.1)*r, Math.sin(a-0.1)*r);
+                    ctx.lineTo(Math.cos(a)*r*1.8, Math.sin(a)*r*1.8);
+                    ctx.lineTo(Math.cos(a+0.1)*r, Math.sin(a+0.1)*r); ctx.fill(); ctx.stroke();
+                }
+            }
+            if (player.frostArmor) {
+                ctx.fillStyle = "rgba(200, 255, 255, 0.4)"; ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1/cameraZoom;
+                ctx.beginPath(); ctx.arc(0, 0, r*1.1, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+            }
+            if (player.magmaAura) {
+                ctx.beginPath(); ctx.arc(0, 0, r*1.4, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.4);
+                grad.addColorStop(0, "rgba(255, 50, 0, 0.5)"); grad.addColorStop(1, "rgba(255, 50, 0, 0)");
+                ctx.fillStyle = grad; ctx.fill();
+            }
+
+            // Mechanical
+            if (player.metalPlating) {
+                ctx.fillStyle = "#888888"; ctx.strokeStyle = "#222222"; ctx.lineWidth = 2/cameraZoom;
+                ctx.beginPath(); ctx.moveTo(-r*0.6, -r*0.6); ctx.lineTo(r*0.6, -r*0.6); ctx.lineTo(r*0.6, r*0.6); ctx.lineTo(-r*0.6, r*0.6); ctx.closePath(); ctx.fill(); ctx.stroke();
+            }
+            if (player.laserEye) {
+                ctx.beginPath(); ctx.arc(r*0.5, 0, r*0.3, 0, Math.PI*2); ctx.fillStyle = "#222"; ctx.fill();
+                ctx.beginPath(); ctx.arc(r*0.5, 0, r*0.15, 0, Math.PI*2); ctx.fillStyle = "#ff0000"; ctx.shadowBlur = 10; ctx.shadowColor = "#ff0000"; ctx.fill(); ctx.shadowBlur = 0;
+            }
+            if (player.thrusters) {
+                ctx.fillStyle = "#555"; ctx.beginPath(); ctx.moveTo(-r*0.8, -r*0.3); ctx.lineTo(-r*1.2, -r*0.4); ctx.lineTo(-r*1.2, r*0.4); ctx.lineTo(-r*0.8, r*0.3); ctx.fill();
+                if (player.isDashing > 0) {
+                    ctx.fillStyle = "#00ffff"; ctx.beginPath(); ctx.moveTo(-r*1.2, -r*0.3); ctx.lineTo(-r*2.0, 0); ctx.lineTo(-r*1.2, r*0.3); ctx.fill();
+                }
+            }
+            if (player.gearHeart) {
+                ctx.strokeStyle = "#aa8800"; ctx.lineWidth = 3/cameraZoom;
+                ctx.beginPath(); ctx.arc(0, 0, r*0.3, 0, Math.PI*2); ctx.stroke();
+                for(let i=0; i<6; i++) {
+                    let a = (i/6)*Math.PI*2 + time;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r*0.3, Math.sin(a)*r*0.3); ctx.lineTo(Math.cos(a)*r*0.4, Math.sin(a)*r*0.4); ctx.stroke();
+                }
+            }
+            if (player.wireNerves) {
+                ctx.strokeStyle = "#00ffff"; ctx.lineWidth = 1/cameraZoom;
+                for(let i=0; i<8; i++) {
+                    let a = (i/8)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(a)*r*0.9, Math.sin(a)*r*0.9); ctx.stroke();
+                }
+            }
+            if (player.roboticJoints) {
+                ctx.fillStyle = "#333";
+                ctx.beginPath(); ctx.arc(0, -r*0.8, r*0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(0, r*0.8, r*0.2, 0, Math.PI*2); ctx.fill();
+            }
+
+            // Astral
+            if (player.stardustTrail) {
+                // Drawn via global particles, but we can add a visual body effect
+                ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+                for(let i=0; i<10; i++) {
+                    let a = Math.random()*Math.PI*2;
+                    let dist = r + Math.random()*r*0.5;
+                    ctx.beginPath(); ctx.arc(Math.cos(a)*dist, Math.sin(a)*dist, 1.5/cameraZoom, 0, Math.PI*2); ctx.fill();
+                }
+            }
+            if (player.nebulaAura) {
+                ctx.beginPath(); ctx.arc(0, 0, r*1.5, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.5);
+                grad.addColorStop(0, "rgba(200, 0, 255, 0.4)"); grad.addColorStop(1, "rgba(0, 0, 255, 0)");
+                ctx.fillStyle = grad; ctx.fill();
+            }
+            if (player.solarFlare) {
+                ctx.fillStyle = "rgba(255, 200, 0, 0.5)";
+                for(let i=0; i<12; i++) {
+                    let a = (i/12)*Math.PI*2 + time*2;
+                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.1)*r, Math.sin(a-0.1)*r);
+                    ctx.lineTo(Math.cos(a)*r*1.5, Math.sin(a)*r*1.5);
+                    ctx.lineTo(Math.cos(a+0.1)*r, Math.sin(a+0.1)*r); ctx.fill();
+                }
+            }
+            if (player.cometTail) {
+                let grad = ctx.createLinearGradient(0, 0, -r*2, 0);
+                grad.addColorStop(0, "rgba(0, 255, 255, 0.8)"); grad.addColorStop(1, "rgba(0, 255, 255, 0)");
+                ctx.beginPath(); ctx.moveTo(0, -r*0.5); ctx.lineTo(-r*2, 0); ctx.lineTo(0, r*0.5); ctx.fillStyle = grad; ctx.fill();
+            }
+            if (player.astralProjection) {
+                ctx.beginPath(); ctx.arc(0, 0, r*1.2, 0, Math.PI*2);
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.5)"; ctx.lineWidth = 2/cameraZoom; ctx.stroke();
+            }
+
+            // Mouths (Black Hole)
+            if (player.mouth === "blackhole") {
+                let mX = r * (player.appendage ? 1.1 : 0.8);
+                ctx.beginPath(); ctx.arc(mX, 0, r*0.5, 0, Math.PI*2);
+                ctx.fillStyle = "#000000"; ctx.fill();
+                ctx.strokeStyle = "#aa00ff"; ctx.lineWidth = 4/cameraZoom; ctx.stroke();
+                ctx.shadowBlur = 15; ctx.shadowColor = "#aa00ff"; ctx.stroke(); ctx.shadowBlur = 0;
             }
 
             // Organelles
