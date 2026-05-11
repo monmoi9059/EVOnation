@@ -1568,7 +1568,7 @@
                     }
                 }
 
-                drawVolumetricBlob(ctx, e.x, e.y, e.size, eColor, time * 2 + e.wobble, e.type, false, aimAngle, e.isAlpha);
+                drawVolumetricBlob(ctx, e.x, e.y, e.size, eColor, time * 2 + e.wobble, e.type, aimAngle, e.isAlpha);
 
                 if (e.type === "armored") {
                     ctx.lineWidth = 6 / cameraZoom;
@@ -2569,7 +2569,7 @@ if (player.doubleTail) {
                 let cx = player.x + Math.cos(cloneAngle) * (player.size + 40);
                 let cy = player.y + Math.sin(cloneAngle) * (player.size + 40);
                 let cAimAngle = Math.atan2(mouse.worldY - cy, mouse.worldX - cx);
-                drawVolumetricBlob(ctx, cx, cy, player.size*0.5, player.color, time*3, "player", false, cAimAngle);
+                drawVolumetricBlob(ctx, cx, cy, player.size*0.5, player.color, time*3, "player", cAimAngle);
             }
 
             // Orbitals
