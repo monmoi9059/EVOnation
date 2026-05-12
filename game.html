@@ -189,51 +189,62 @@
         }
 
         // Procedural complex body paths
-        function buildPlayerBodyPath(ctx, p, r, wobble) {
-            if (!p.appendage) {
-                let points = 16;
-                for (let i = 0; i < points; i++) {
-                    let angle = (i / points) * Math.PI * 2;
-                    let currentR = r + Math.sin(wobble * 3 + i * 2) * (r * 0.08);
-                    let px = Math.cos(angle) * currentR;
-                    let py = Math.sin(angle) * currentR;
-                    if (i === 0) ctx.moveTo(px, py);
-                    else ctx.lineTo(px, py);
+        function buildPlayerBodyPath(ctx, p, r, wobble, stageIdx = 0, offsetX = 0, offsetY = 0) {
+            let cx = offsetX;
+            let cy = offsetY;
+
+            // Unicellular and Multicellular base shapes
+            if (stageIdx <= 1) {
+                if (!p.appendage) {
+                    let points = 16;
+                    for (let i = 0; i < points; i++) {
+                        let angle = (i / points) * Math.PI * 2;
+                        let currentR = r + Math.sin(wobble * 3 + i * 2) * (r * 0.08);
+                        let px = cx + Math.cos(angle) * currentR;
+                        let py = cy + Math.sin(angle) * currentR;
+                        if (i === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.closePath();
+                    return;
                 }
-                ctx.closePath();
-                return;
+            } else {
+                // Complex organisms have distinct structural torsos
+                // Draw a more segmented / elongated shape
+                ctx.ellipse(cx, cy, r * 1.3 + Math.abs(wobble), r * 0.9 + Math.abs(wobble), 0, 0, Math.PI * 2);
+                return; // Base structural shape overrides specific appendage blob shapes for complex orgs
             }
 
             if (p.appendage === "fins") {
-                ctx.moveTo(r*1.8 + wobble, 0); 
-                ctx.quadraticCurveTo(r*0.5, -r*1.3 - wobble, -r*1.2, -r*0.4);
-                ctx.lineTo(-r*1.2, r*0.4);
-                ctx.quadraticCurveTo(r*0.5, r*1.3 + wobble, r*1.8 + wobble, 0);
+                ctx.moveTo(cx + r*1.8 + wobble, cy);
+                ctx.quadraticCurveTo(cx + r*0.5, cy - r*1.3 - wobble, cx - r*1.2, cy - r*0.4);
+                ctx.lineTo(cx - r*1.2, cy + r*0.4);
+                ctx.quadraticCurveTo(cx + r*0.5, cy + r*1.3 + wobble, cx + r*1.8 + wobble, cy);
             } else if (p.appendage === "slithery") {
-                ctx.moveTo(r*1.5 + wobble, 0);
-                ctx.lineTo(r*0.5, -r*0.9 - wobble);
-                ctx.lineTo(-r*0.5, -r*0.6);
-                ctx.lineTo(-r*0.5, r*0.6);
-                ctx.lineTo(r*0.5, r*0.9 + wobble);
+                ctx.moveTo(cx + r*1.5 + wobble, cy);
+                ctx.lineTo(cx + r*0.5, cy - r*0.9 - wobble);
+                ctx.lineTo(cx - r*0.5, cy - r*0.6);
+                ctx.lineTo(cx - r*0.5, cy + r*0.6);
+                ctx.lineTo(cx + r*0.5, cy + r*0.9 + wobble);
                 ctx.closePath();
             } else if (p.appendage === "wings") {
-                ctx.moveTo(r*1.5 + wobble, 0);
-                ctx.quadraticCurveTo(r*0.5, -r*1.2 - wobble, -r*1.2, -r*0.4);
-                ctx.lineTo(-r*1.2, r*0.4);
-                ctx.quadraticCurveTo(r*0.5, r*1.2 + wobble, r*1.5 + wobble, 0);
+                ctx.moveTo(cx + r*1.5 + wobble, cy);
+                ctx.quadraticCurveTo(cx + r*0.5, cy - r*1.2 - wobble, cx - r*1.2, cy - r*0.4);
+                ctx.lineTo(cx - r*1.2, cy + r*0.4);
+                ctx.quadraticCurveTo(cx + r*0.5, cy + r*1.2 + wobble, cx + r*1.5 + wobble, cy);
             } else if (p.appendage === "arms") {
-                ctx.moveTo(r*0.9 + wobble, 0);
-                ctx.quadraticCurveTo(r*0.8, -r*1.4 - wobble, -r*0.5, -r*1.2);
-                ctx.lineTo(-r*0.8, -r*0.5);
-                ctx.lineTo(-r*0.8, r*0.5);
-                ctx.lineTo(-r*0.5, r*1.2);
-                ctx.quadraticCurveTo(r*0.8, r*1.4 + wobble, r*0.9 + wobble, 0);
+                ctx.moveTo(cx + r*0.9 + wobble, cy);
+                ctx.quadraticCurveTo(cx + r*0.8, cy - r*1.4 - wobble, cx - r*0.5, cy - r*1.2);
+                ctx.lineTo(cx - r*0.8, cy - r*0.5);
+                ctx.lineTo(cx - r*0.8, cy + r*0.5);
+                ctx.lineTo(cx - r*0.5, cy + r*1.2);
+                ctx.quadraticCurveTo(cx + r*0.8, cy + r*1.4 + wobble, cx + r*0.9 + wobble, cy);
             } else if (p.appendage === "legs") {
-                ctx.moveTo(r*1.3 + wobble, -r*0.5);
-                ctx.lineTo(-r*1.0, -r*0.7 - wobble);
-                ctx.quadraticCurveTo(-r*1.4, 0, -r*1.0, r*0.7 + wobble);
-                ctx.lineTo(r*1.3 + wobble, r*0.5);
-                ctx.quadraticCurveTo(r*1.6, 0, r*1.3 + wobble, -r*0.5);
+                ctx.moveTo(cx + r*1.3 + wobble, cy - r*0.5);
+                ctx.lineTo(cx - r*1.0, cy - r*0.7 - wobble);
+                ctx.quadraticCurveTo(cx - r*1.4, cy, cx - r*1.0, cy + r*0.7 + wobble);
+                ctx.lineTo(cx + r*1.3 + wobble, cy + r*0.5);
+                ctx.quadraticCurveTo(cx + r*1.6, cy, cx + r*1.3 + wobble, cy - r*0.5);
             }
         }
 
@@ -759,7 +770,11 @@
                     "Apex Predator", "Leviathan", "Eldritch Entity", 
                     "Cosmic Terror", "Galactic Devourer", "Universal Mind"
                 ];
-                let stageIdx = Math.floor(player.level / 10);
+                let stageIdx = 0;
+                if (player.level >= 5 && player.level < 15) stageIdx = 1; // Multicellular at level 5
+                else if (player.level >= 15) {
+                    stageIdx = Math.floor((player.level - 15) / 10) + 2; // Complex Organism at 15
+                }
                 if (stageIdx >= stageNames.length) stageIdx = stageNames.length - 1;
                 player.stage = stageNames[stageIdx];
                 
@@ -1424,6 +1439,31 @@
             document.getElementById('stageName').innerText = player.stage;
         }
 
+
+        function getPlayerAttachPoint(p, angleOffset, radiusOffset) {
+            let r = p.size;
+            let attachAngle = aimAngle + angleOffset;
+            let baseX = Math.cos(attachAngle) * r;
+            let baseY = Math.sin(attachAngle) * r;
+
+            // For complex organisms (Level 15+) we squish X and stretch Y relative to facing direction
+            if (p.level >= 15 && p === player) {
+                // To do this properly relative to aimAngle, we calculate offset in local unrotated coordinates,
+                // scale them, then rotate by aimAngle.
+                // Local angle is just angleOffset
+                let localX = Math.cos(angleOffset) * r * 0.9;
+                let localY = Math.sin(angleOffset) * r * 1.3;
+
+                baseX = Math.cos(aimAngle) * localX - Math.sin(aimAngle) * localY;
+                baseY = Math.sin(aimAngle) * localX + Math.cos(aimAngle) * localY;
+            }
+
+            return {
+                x: p.x + baseX + Math.cos(attachAngle) * radiusOffset,
+                y: p.y + baseY + Math.sin(attachAngle) * radiusOffset
+            };
+        }
+
         function draw() {
             let bgGrad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width);
             if (environment === "The Canopy") {
@@ -1591,15 +1631,25 @@
             // --- PLAYER RENDERING SECTION ---
             let aimAngle = Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
 
+            let stageIdx_app = 0;
+            if (player.level >= 5 && player.level < 15) stageIdx_app = 1;
+            else if (player.level >= 15) {
+                stageIdx_app = Math.floor((player.level - 15) / 10) + 2;
+            }
+
+            let torsoOffsetX_app = stageIdx_app >= 2 ? -player.size * 0.4 : 0;
+            let tCX = player.x + Math.cos(aimAngle) * torsoOffsetX_app;
+            let tCY = player.y + Math.sin(aimAngle) * torsoOffsetX_app;
+
             if(player.tail.length > 0) {
                 for(let i=player.tail.length-1; i>=0; i--) {
-                    let tx = player.tail[i].x;
-                    let ty = player.tail[i].y;
+                    let tx = player.tail[i].x + Math.cos(aimAngle) * torsoOffsetX_app;
+                    let ty = player.tail[i].y + Math.sin(aimAngle) * torsoOffsetX_app;
                     let tSize = player.size * (1 - (i / player.tail.length)); 
                     
                     if (player.appendage === "slithery") {
-                        let prevX = i === 0 ? player.x : player.tail[i-1].x;
-                        let prevY = i === 0 ? player.y : player.tail[i-1].y;
+                        let prevX = i === 0 ? tCX : (player.tail[i-1].x + Math.cos(aimAngle) * torsoOffsetX_app);
+                        let prevY = i === 0 ? tCY : (player.tail[i-1].y + Math.sin(aimAngle) * torsoOffsetX_app);
                         let tAngle = Math.atan2(ty - prevY, tx - prevX);
                         let wobble = Math.sin(time * 8 - i * 0.4) * (player.size * 0.5);
                         tx += Math.cos(tAngle + Math.PI/2) * wobble;
@@ -1659,8 +1709,8 @@ if (player.doubleTail) {
                 
                 const drawWing = (sideMult) => {
                     let wAngle = aimAngle + (Math.PI/2 + 0.3) * sideMult;
-                    let pivotX = player.x + Math.cos(wAngle) * player.size * 0.5;
-                    let pivotY = player.y + Math.sin(wAngle) * player.size * 0.5;
+                    let pivotX = tCX + Math.cos(wAngle) * player.size * 0.5;
+                    let pivotY = tCY + Math.sin(wAngle) * player.size * 0.5;
                     
                     let targetX = pivotX + Math.cos(wAngle - flap * sideMult * 0.5) * wSize;
                     let targetY = pivotY + Math.sin(wAngle - flap * sideMult * 0.5) * wSize;
@@ -1701,8 +1751,8 @@ if (player.doubleTail) {
                 
                 const drawArm = (sideMult) => {
                     let aAngle = aimAngle + 0.6 * sideMult;
-                    let shoulderX = player.x + Math.cos(aAngle) * player.size * 0.8;
-                    let shoulderY = player.y + Math.sin(aAngle) * player.size * 0.8;
+                    let pt = getPlayerAttachPoint(player, (Math.PI/2 + 0.2) * sideMult + w * 0.5, player.size * -0.2);
+                    let shoulderX = pt.x; let shoulderY = pt.y;
                     
                     let fistX = shoulderX + Math.cos(aimAngle + 0.2 * sideMult) * aSize;
                     let fistY = shoulderY + Math.sin(aimAngle + 0.2 * sideMult) * aSize;
@@ -1761,8 +1811,8 @@ if (player.doubleTail) {
                     let w = Math.sin(walkTime + pairOffset * Math.PI) * 0.8 * sideMult;
                     let lAngle = aimAngle + (Math.PI/2 + 0.4) * sideMult + w;
                     
-                    let hipX = player.x + Math.cos(lAngle) * player.size * 0.7;
-                    let hipY = player.y + Math.sin(lAngle) * player.size * 0.7;
+                    let pt = getPlayerAttachPoint(player, (Math.PI/2 + 0.4) * sideMult + w, player.size * -0.3); // 0.7 is -0.3 offset
+                    let hipX = pt.x; let hipY = pt.y;
                     
                     let footX = hipX + Math.cos(lAngle) * player.size * 2.5;
                     let footY = hipY + Math.sin(lAngle) * player.size * 2.5;
@@ -1802,20 +1852,20 @@ if (player.doubleTail) {
             if (player.appendage === "fins") {
                 const drawFin = (sideMult) => {
                     let fAngle = aimAngle + (Math.PI/2) * sideMult;
-                    let base1X = player.x + Math.cos(aimAngle - 0.5 * sideMult) * player.size * 0.8;
-                    let base1Y = player.y + Math.sin(aimAngle - 0.5 * sideMult) * player.size * 0.8;
-                    let base2X = player.x + Math.cos(aimAngle + 0.8 * sideMult) * player.size * 0.8;
-                    let base2Y = player.y + Math.sin(aimAngle + 0.8 * sideMult) * player.size * 0.8;
+                    let base1X = tCX + Math.cos(aimAngle - 0.5 * sideMult) * player.size * 0.8;
+                    let base1Y = tCY + Math.sin(aimAngle - 0.5 * sideMult) * player.size * 0.8;
+                    let base2X = tCX + Math.cos(aimAngle + 0.8 * sideMult) * player.size * 0.8;
+                    let base2Y = tCY + Math.sin(aimAngle + 0.8 * sideMult) * player.size * 0.8;
                     
-                    let tipX = player.x + Math.cos(fAngle - 0.4*sideMult) * player.size * 3.0;
-                    let tipY = player.y + Math.sin(fAngle - 0.4*sideMult) * player.size * 3.0;
+                    let tipX = tCX + Math.cos(fAngle - 0.4*sideMult) * player.size * 3.0;
+                    let tipY = tCY + Math.sin(fAngle - 0.4*sideMult) * player.size * 3.0;
 
                     ctx.beginPath();
                     ctx.moveTo(base1X, base1Y);
                     ctx.quadraticCurveTo(tipX + Math.cos(aimAngle)*player.size, tipY + Math.sin(aimAngle)*player.size, tipX, tipY);
-                    ctx.quadraticCurveTo(player.x + Math.cos(fAngle + 0.5*sideMult)*player.size*2.0, player.y + Math.sin(fAngle + 0.5*sideMult)*player.size*2.0, base2X, base2Y);
+                    ctx.quadraticCurveTo(tCX + Math.cos(fAngle + 0.5*sideMult)*player.size*2.0, tCY + Math.sin(fAngle + 0.5*sideMult)*player.size*2.0, base2X, base2Y);
                     
-                    let finGrad = ctx.createLinearGradient(player.x, player.y, tipX, tipY);
+                    let finGrad = ctx.createLinearGradient(tCX, tCY, tipX, tipY);
                     finGrad.addColorStop(0, adjustColor(player.color, -20));
                     finGrad.addColorStop(1, player.razorDorsal ? "#ffffff" : adjustColor(player.color, 40));
                     ctx.fillStyle = finGrad;
@@ -1851,19 +1901,19 @@ if (player.doubleTail) {
                     ctx.strokeStyle = "rgba(0,0,0,0.5)"; 
                     ctx.lineWidth = 8 / cameraZoom;
                     ctx.beginPath();
-                    ctx.moveTo(player.x, player.y);
-                    ctx.lineTo(player.x + Math.cos(aimAngle + offset)*(lSize + Math.sin(time*10)*5), player.y + Math.sin(aimAngle + offset)*(lSize + Math.sin(time*10)*5));
-                    ctx.moveTo(player.x, player.y);
-                    ctx.lineTo(player.x + Math.cos(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5), player.y + Math.sin(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5));
+                    ctx.moveTo(tCX, tCY);
+                    ctx.lineTo(tCX + Math.cos(aimAngle + offset)*(lSize + Math.sin(time*10)*5), tCY + Math.sin(aimAngle + offset)*(lSize + Math.sin(time*10)*5));
+                    ctx.moveTo(tCX, tCY);
+                    ctx.lineTo(tCX + Math.cos(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5), tCY + Math.sin(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5));
                     ctx.stroke();
 
                     ctx.strokeStyle = adjustColor(player.color, 20); 
                     ctx.lineWidth = 6 / cameraZoom;
                     ctx.beginPath();
-                    ctx.moveTo(player.x, player.y);
-                    ctx.lineTo(player.x + Math.cos(aimAngle + offset)*(lSize + Math.sin(time*10)*5), player.y + Math.sin(aimAngle + offset)*(lSize + Math.sin(time*10)*5));
-                    ctx.moveTo(player.x, player.y);
-                    ctx.lineTo(player.x + Math.cos(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5), player.y + Math.sin(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5));
+                    ctx.moveTo(tCX, tCY);
+                    ctx.lineTo(tCX + Math.cos(aimAngle + offset)*(lSize + Math.sin(time*10)*5), tCY + Math.sin(aimAngle + offset)*(lSize + Math.sin(time*10)*5));
+                    ctx.moveTo(tCX, tCY);
+                    ctx.lineTo(tCX + Math.cos(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5), tCY + Math.sin(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5));
                     ctx.stroke();
                 }
             }
@@ -1874,23 +1924,23 @@ if (player.doubleTail) {
                 let cWidth = 20 / cameraZoom;
 
                 ctx.fillStyle = "rgba(0,0,0,0.4)";
-                ctx.beginPath(); ctx.arc(player.x + Math.cos(aimAngle - 0.5)*cSize + 5, player.y + Math.sin(aimAngle - 0.5)*cSize + 5, cWidth, aimAngle - 1.5 - snapAnim, aimAngle + 0.5 + snapAnim); ctx.fill();
-                ctx.beginPath(); ctx.arc(player.x + Math.cos(aimAngle + 0.5)*cSize + 5, player.y + Math.sin(aimAngle + 0.5)*cSize + 5, cWidth, aimAngle - 0.5 - snapAnim, aimAngle + 1.5 + snapAnim); ctx.fill();
+                ctx.beginPath(); ctx.arc(tCX + Math.cos(aimAngle - 0.5)*cSize + 5, tCY + Math.sin(aimAngle - 0.5)*cSize + 5, cWidth, aimAngle - 1.5 - snapAnim, aimAngle + 0.5 + snapAnim); ctx.fill();
+                ctx.beginPath(); ctx.arc(tCX + Math.cos(aimAngle + 0.5)*cSize + 5, tCY + Math.sin(aimAngle + 0.5)*cSize + 5, cWidth, aimAngle - 0.5 - snapAnim, aimAngle + 1.5 + snapAnim); ctx.fill();
 
-                let clawGrad = ctx.createRadialGradient(player.x, player.y, player.size, player.x + Math.cos(aimAngle)*cSize, player.y + Math.sin(aimAngle)*cSize, cWidth*2);
+                let clawGrad = ctx.createRadialGradient(tCX, tCY, player.size, tCX + Math.cos(aimAngle)*cSize, tCY + Math.sin(aimAngle)*cSize, cWidth*2);
                 clawGrad.addColorStop(0, "#aa2211");
                 clawGrad.addColorStop(1, "#ff5533");
                 ctx.fillStyle = clawGrad;
 
                 ctx.beginPath();
-                ctx.arc(player.x + Math.cos(aimAngle - 0.5)*cSize, player.y + Math.sin(aimAngle - 0.5)*cSize, cWidth, aimAngle - 1.5 - snapAnim, aimAngle + 0.5 + snapAnim);
+                ctx.arc(tCX + Math.cos(aimAngle - 0.5)*cSize, tCY + Math.sin(aimAngle - 0.5)*cSize, cWidth, aimAngle - 1.5 - snapAnim, aimAngle + 0.5 + snapAnim);
                 ctx.fill();
                 ctx.strokeStyle = "#ffaaaa";
                 ctx.lineWidth = 2 / cameraZoom;
                 ctx.stroke();
                 
                 ctx.beginPath();
-                ctx.arc(player.x + Math.cos(aimAngle + 0.5)*cSize, player.y + Math.sin(aimAngle + 0.5)*cSize, cWidth, aimAngle - 0.5 - snapAnim, aimAngle + 1.5 + snapAnim);
+                ctx.arc(tCX + Math.cos(aimAngle + 0.5)*cSize, tCY + Math.sin(aimAngle + 0.5)*cSize, cWidth, aimAngle - 0.5 - snapAnim, aimAngle + 1.5 + snapAnim);
                 ctx.fill();
                 ctx.stroke();
             }
@@ -1902,12 +1952,12 @@ if (player.doubleTail) {
                     let tLen = player.size * 3 * lengthMult;
                     let segments = 8;
                     ctx.beginPath();
-                    ctx.moveTo(player.x + Math.cos(tAngle)*player.size*0.5, player.y + Math.sin(tAngle)*player.size*0.5);
+                    ctx.moveTo(tCX + Math.cos(tAngle)*player.size*0.5, tCY + Math.sin(tAngle)*player.size*0.5);
                     for(let s=1; s<=segments; s++) {
                         let segRatio = s / segments;
                         let wobble = Math.sin(time*5 + s + angleOffset*5) * player.size * 0.8;
-                        let px = player.x + Math.cos(tAngle)*player.size*0.5 + Math.cos(tAngle)*tLen*segRatio + Math.cos(tAngle + Math.PI/2)*wobble;
-                        let py = player.y + Math.sin(tAngle)*player.size*0.5 + Math.sin(tAngle)*tLen*segRatio + Math.sin(tAngle + Math.PI/2)*wobble;
+                        let px = tCX + Math.cos(tAngle)*player.size*0.5 + Math.cos(tAngle)*tLen*segRatio + Math.cos(tAngle + Math.PI/2)*wobble;
+                        let py = tCY + Math.sin(tAngle)*player.size*0.5 + Math.sin(tAngle)*tLen*segRatio + Math.sin(tAngle + Math.PI/2)*wobble;
                         ctx.lineTo(px, py);
                     }
                     ctx.strokeStyle = player.color;
@@ -1934,14 +1984,14 @@ if (player.doubleTail) {
                     let walk = Math.sin(time*15 + phase) * 0.6;
                     lAngle += walk;
 
-                    let jointX = player.x + Math.cos(lAngle)*player.size*1.8;
-                    let jointY = player.y + Math.sin(lAngle)*player.size*1.8;
+                    let jointX = tCX + Math.cos(lAngle)*player.size*1.8;
+                    let jointY = tCY + Math.sin(lAngle)*player.size*1.8;
 
                     let tipX = jointX + Math.cos(lAngle + (angleOffset > 0 ? 1 : -1))*player.size*2.0;
                     let tipY = jointY + Math.sin(lAngle + (angleOffset > 0 ? 1 : -1))*player.size*2.0;
 
                     ctx.beginPath();
-                    ctx.moveTo(player.x + Math.cos(aimAngle+angleOffset)*player.size*0.8, player.y + Math.sin(aimAngle+angleOffset)*player.size*0.8);
+                    ctx.moveTo(tCX + Math.cos(aimAngle+angleOffset)*player.size*0.8, tCY + Math.sin(aimAngle+angleOffset)*player.size*0.8);
                     ctx.lineTo(jointX, jointY);
                     ctx.lineTo(tipX, tipY);
                     ctx.strokeStyle = "#222";
@@ -1965,9 +2015,20 @@ if (player.doubleTail) {
             ctx.translate(player.x, player.y);
             ctx.rotate(aimAngle);
 
+            let stageIdx = 0;
+            if (player.level >= 5 && player.level < 15) stageIdx = 1;
+            else if (player.level >= 15) {
+                stageIdx = Math.floor((player.level - 15) / 10) + 2;
+            }
+
             let wobble = Math.sin(time * 5) * (player.size * 0.08);
             let r = player.size;
             
+            let torsoOffsetX = stageIdx >= 2 ? -r * 0.4 : 0;
+            let torsoOffsetY = 0;
+            let headOffsetX = stageIdx >= 2 ? r * 0.8 : 0;
+            let headOffsetY = 0;
+
             if (player.cilia > 0) {
                 ctx.beginPath();
                 let ciliaCount = 12 + player.cilia * 6;
@@ -1997,15 +2058,15 @@ if (player.doubleTail) {
             // Body Shadow
             ctx.save();
             ctx.translate(r*0.2, r*0.3);
-            ctx.beginPath(); buildPlayerBodyPath(ctx, player, r*0.9, wobble);
+            ctx.beginPath(); buildPlayerBodyPath(ctx, player, r*0.9, wobble, stageIdx, torsoOffsetX, torsoOffsetY);
             ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.fill();
             ctx.restore();
 
             // Body Fill
-            ctx.beginPath(); buildPlayerBodyPath(ctx, player, r, wobble);
+            ctx.beginPath(); buildPlayerBodyPath(ctx, player, r, wobble, stageIdx, torsoOffsetX, torsoOffsetY);
             let lightColor = adjustColor(player.color, 40);
             let darkColor = adjustColor(player.color, -50);
-            let bodyGrad = ctx.createRadialGradient(-r*0.3, -r*0.3, r*0.1, 0, 0, r*1.5);
+            let bodyGrad = ctx.createRadialGradient(torsoOffsetX - r*0.3, torsoOffsetY - r*0.3, r*0.1, torsoOffsetX, torsoOffsetY, r*1.5);
             bodyGrad.addColorStop(0, lightColor);
             bodyGrad.addColorStop(0.4, player.color);
             bodyGrad.addColorStop(1, darkColor);
@@ -2032,82 +2093,109 @@ if (player.doubleTail) {
                 ctx.lineWidth = 2; ctx.strokeStyle = lightColor; ctx.stroke();
             }
 
-            // Eyes
+            // Eyes & Head Features
+            // Render a distinct head structure for complex organisms (Stage 2+)
+            if (stageIdx >= 2) {
+                ctx.beginPath();
+                ctx.ellipse(headOffsetX, headOffsetY, r * 0.7, r * 0.6, 0, 0, Math.PI*2);
+                let headGrad = ctx.createRadialGradient(headOffsetX - r*0.1, headOffsetY - r*0.1, r*0.1, headOffsetX, headOffsetY, r);
+                headGrad.addColorStop(0, lightColor);
+                headGrad.addColorStop(0.5, player.color);
+                headGrad.addColorStop(1, darkColor);
+                ctx.fillStyle = headGrad;
+                ctx.fill();
+                ctx.lineWidth = 2; ctx.strokeStyle = lightColor; ctx.stroke();
+            }
+
             let eyeR = r * 0.25;
             let pupilR = eyeR * 0.5;
-            let eyeX = r * 0.4; 
-            let eyeYOffset = r * 0.35;
-            if (player.appendage === "slithery") { eyeX = r*0.5; eyeYOffset = r*0.45; }
-            if (player.appendage === "wings") { eyeX = r*0.7; eyeYOffset = r*0.35; }
-            if (player.appendage === "arms") { eyeX = r*0.5; eyeYOffset = r*0.6; }
-            if (player.appendage === "legs") { eyeX = r*0.6; eyeYOffset = r*0.45; }
-            if (player.appendage === "fins") { eyeX = r*0.7; eyeYOffset = r*0.4; }
+            let eyeX = headOffsetX + r * 0.4;
+            let eyeYOffset = headOffsetY + r * 0.35;
+
+            if (stageIdx <= 1) { // Basic offset logic for simpler organisms
+                if (player.appendage === "slithery") { eyeX = r*0.5; eyeYOffset = r*0.45; }
+                if (player.appendage === "wings") { eyeX = r*0.7; eyeYOffset = r*0.35; }
+                if (player.appendage === "arms") { eyeX = r*0.5; eyeYOffset = r*0.6; }
+                if (player.appendage === "legs") { eyeX = r*0.6; eyeYOffset = r*0.45; }
+                if (player.appendage === "fins") { eyeX = r*0.7; eyeYOffset = r*0.4; }
+
+                // Keep head offset in sync if needed for future proofing
+                eyeX += headOffsetX;
+                eyeYOffset += headOffsetY;
+            } else {
+                // Complex organisms have specifically placed eyes on the drawn head
+                eyeX = headOffsetX + r * 0.4;
+                eyeYOffset = headOffsetY + r * 0.3;
+            }
 
             ctx.fillStyle = player.predatorTraits > 0 ? "#ffdddd" : "#ffffff";
-            ctx.beginPath(); ctx.arc(eyeX, -eyeYOffset, eyeR, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(eyeX, eyeYOffset, eyeR, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(eyeX, headOffsetY - eyeYOffset, eyeR, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(eyeX, headOffsetY + eyeYOffset, eyeR, 0, Math.PI*2); ctx.fill();
             
             ctx.fillStyle = player.reptileTraits > 0 ? "#ffaa00" : (player.predatorTraits > 0 ? "#880000" : "#111111");
             ctx.beginPath(); 
             if (player.reptileTraits > 0) {
-                ctx.ellipse(eyeX + pupilR*0.5, -eyeYOffset, pupilR*0.5, pupilR*1.2, 0, 0, Math.PI*2);
-                ctx.ellipse(eyeX + pupilR*0.5, eyeYOffset, pupilR*0.5, pupilR*1.2, 0, 0, Math.PI*2);
+                ctx.ellipse(eyeX + pupilR*0.5, headOffsetY - eyeYOffset, pupilR*0.5, pupilR*1.2, 0, 0, Math.PI*2);
+                ctx.ellipse(eyeX + pupilR*0.5, headOffsetY + eyeYOffset, pupilR*0.5, pupilR*1.2, 0, 0, Math.PI*2);
             } else {
-                ctx.arc(eyeX + pupilR*0.5, -eyeYOffset, pupilR, 0, Math.PI*2);
-                ctx.arc(eyeX + pupilR*0.5, eyeYOffset, pupilR, 0, Math.PI*2);
+                ctx.arc(eyeX + pupilR*0.5, headOffsetY - eyeYOffset, pupilR, 0, Math.PI*2);
+                ctx.arc(eyeX + pupilR*0.5, headOffsetY + eyeYOffset, pupilR, 0, Math.PI*2);
             }
             ctx.fill();
 
             ctx.fillStyle = "#ffffff";
-            ctx.beginPath(); ctx.arc(eyeX + pupilR*0.5 - pupilR*0.3, -eyeYOffset - pupilR*0.3, pupilR*0.3, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(eyeX + pupilR*0.5 - pupilR*0.3, eyeYOffset - pupilR*0.3, pupilR*0.3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(eyeX + pupilR*0.5 - pupilR*0.3, headOffsetY - eyeYOffset - pupilR*0.3, pupilR*0.3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(eyeX + pupilR*0.5 - pupilR*0.3, headOffsetY + eyeYOffset - pupilR*0.3, pupilR*0.3, 0, Math.PI*2); ctx.fill();
 
             if (player.predatorTraits > 0) {
                 ctx.lineWidth = eyeR * 0.4; ctx.strokeStyle = "#330000"; ctx.lineCap = "round";
-                ctx.beginPath(); ctx.moveTo(eyeX - eyeR*0.5, -eyeYOffset - eyeR*0.8); ctx.lineTo(eyeX + eyeR*1.2, -eyeYOffset - eyeR*0.2); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(eyeX - eyeR*0.5, eyeYOffset + eyeR*0.8); ctx.lineTo(eyeX + eyeR*1.2, eyeYOffset + eyeR*0.2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(eyeX - eyeR*0.5, headOffsetY - eyeYOffset - eyeR*0.8); ctx.lineTo(eyeX + eyeR*1.2, headOffsetY - eyeYOffset - eyeR*0.2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(eyeX - eyeR*0.5, headOffsetY + eyeYOffset + eyeR*0.8); ctx.lineTo(eyeX + eyeR*1.2, headOffsetY + eyeYOffset + eyeR*0.2); ctx.stroke();
             }
 
             // Dorsal Fin for Shark
             if (player.appendage === "fins") {
                 ctx.beginPath();
-                ctx.moveTo(r*0.2, -r*0.8);
-                ctx.lineTo(-r*0.5, -r*2.0);
-                ctx.lineTo(-r*0.8, -r*0.6);
+                ctx.moveTo(torsoOffsetX + r*0.2, torsoOffsetY - r*0.8);
+                ctx.lineTo(torsoOffsetX - r*0.5, torsoOffsetY - r*2.0);
+                ctx.lineTo(torsoOffsetX - r*0.8, torsoOffsetY - r*0.6);
                 ctx.fillStyle = darkColor; ctx.fill();
                 ctx.strokeStyle = lightColor; ctx.lineWidth = 2; ctx.stroke();
             }
 
 
             if (player.glowingCore) {
-                ctx.beginPath(); ctx.arc(0, 0, r * 0.5, 0, Math.PI*2);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.5, 0, Math.PI*2);
                 ctx.fillStyle = "#ffffff"; ctx.shadowBlur = 20; ctx.shadowColor = "#ffffff"; ctx.fill(); ctx.shadowBlur = 0;
             }
             if (player.plasmaMembrane) {
-                ctx.beginPath(); ctx.arc(0, 0, r * 1.3, 0, Math.PI*2);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 1.3, 0, Math.PI*2);
                 ctx.strokeStyle = "rgba(0, 255, 255, 0.5)"; ctx.lineWidth = 4 / cameraZoom; ctx.stroke();
             }
             if (player.crystalArmor) {
                 ctx.fillStyle = "rgba(0, 200, 255, 0.6)"; ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2 / cameraZoom;
                 for(let i=0; i<6; i++) {
                     let a = (i/6)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(a-0.2)*r*0.8, Math.sin(a-0.2)*r*0.8); ctx.lineTo(Math.cos(a)*r*1.1, Math.sin(a)*r*1.1); ctx.lineTo(Math.cos(a+0.2)*r*0.8, Math.sin(a+0.2)*r*0.8); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX, torsoOffsetY); ctx.lineTo(torsoOffsetX + Math.cos(a-0.2)*r*0.8, torsoOffsetY + Math.sin(a-0.2)*r*0.8); ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.1, torsoOffsetY + Math.sin(a)*r*1.1); ctx.lineTo(torsoOffsetX + Math.cos(a+0.2)*r*0.8, torsoOffsetY + Math.sin(a+0.2)*r*0.8); ctx.closePath(); ctx.fill(); ctx.stroke();
                 }
             }
             if (player.thirdEye) {
-                ctx.beginPath(); ctx.arc(0, -r*0.2, r*0.3, 0, Math.PI*2); ctx.fillStyle = "#fff"; ctx.fill();
-                ctx.beginPath(); ctx.arc(0, -r*0.2, r*0.15, 0, Math.PI*2); ctx.fillStyle = "#f0f"; ctx.fill();
+                // Centered on head
+                let tX = headOffsetX + r * 0.1;
+                let tY = headOffsetY;
+                ctx.beginPath(); ctx.arc(tX, tY, r*0.3, 0, Math.PI*2); ctx.fillStyle = "#fff"; ctx.fill();
+                ctx.beginPath(); ctx.arc(tX, tY, r*0.15, 0, Math.PI*2); ctx.fillStyle = "#f0f"; ctx.fill();
             }
             if (player.electricSpikes) {
                 ctx.strokeStyle = "#ffff00"; ctx.lineWidth = 2/cameraZoom;
                 for(let i=0; i<8; i++) {
                     let a = (i/8)*Math.PI*2 + Math.random();
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r); ctx.lineTo(Math.cos(a)*r*1.5 + (Math.random()-0.5)*r, Math.sin(a)*r*1.5 + (Math.random()-0.5)*r); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r, torsoOffsetY + Math.sin(a)*r); ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.5 + (Math.random()-0.5)*r, torsoOffsetY + Math.sin(a)*r*1.5 + (Math.random()-0.5)*r); ctx.stroke();
                 }
             }
             if (player.bioLuminescence) {
-                ctx.beginPath(); ctx.arc(0, 0, r*1.5, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.5);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.5, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.5);
                 grad.addColorStop(0, "rgba(0, 255, 100, 0.4)"); grad.addColorStop(1, "rgba(0, 255, 100, 0)");
                 ctx.fillStyle = grad; ctx.fill();
             }
@@ -2115,55 +2203,55 @@ if (player.doubleTail) {
                 ctx.fillStyle = "#00ff00";
                 for(let i=0; i<10; i++) {
                     let a = (i/10)*Math.PI*2;
-                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.6, Math.sin(a)*r*0.6, 4/cameraZoom, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*r*0.6, torsoOffsetY + Math.sin(a)*r*0.6, 4/cameraZoom, 0, Math.PI*2); ctx.fill();
                 }
             }
             if (player.bonePlates) {
                 ctx.fillStyle = "#eeeeee"; ctx.strokeStyle = "#555555"; ctx.lineWidth = 2/cameraZoom;
-                ctx.beginPath(); ctx.arc(0, 0, r*0.7, 0, Math.PI); ctx.fill(); ctx.stroke();
-                ctx.beginPath(); ctx.arc(0, r*0.2, r*0.5, 0, Math.PI); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*0.7, 0, Math.PI); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY + r*0.2, r*0.5, 0, Math.PI); ctx.fill(); ctx.stroke();
             }
             if (player.crownOfThorns) {
                 ctx.strokeStyle = "#442200"; ctx.lineWidth = 4/cameraZoom;
-                ctx.beginPath(); ctx.arc(0, 0, r*1.1, 0, Math.PI*2); ctx.stroke();
+                ctx.beginPath(); ctx.arc(headOffsetX, headOffsetY, r*1.1, 0, Math.PI*2); ctx.stroke();
                 ctx.fillStyle = "#442200";
                 for(let i=0; i<12; i++) {
                     let a = (i/12)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.1)*r*1.1, Math.sin(a-0.1)*r*1.1); ctx.lineTo(Math.cos(a)*r*1.5, Math.sin(a)*r*1.5); ctx.lineTo(Math.cos(a+0.1)*r*1.1, Math.sin(a+0.1)*r*1.1); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(headOffsetX + Math.cos(a-0.1)*r*1.1, headOffsetY + Math.sin(a-0.1)*r*1.1); ctx.lineTo(headOffsetX + Math.cos(a)*r*1.5, headOffsetY + Math.sin(a)*r*1.5); ctx.lineTo(headOffsetX + Math.cos(a+0.1)*r*1.1, headOffsetY + Math.sin(a+0.1)*r*1.1); ctx.fill();
                 }
             }
             if (player.voidAura) {
-                ctx.beginPath(); ctx.arc(0, 0, r*2, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*2);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*2, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*2);
                 grad.addColorStop(0, "rgba(30, 0, 50, 0.5)"); grad.addColorStop(1, "rgba(0, 0, 0, 0)");
                 ctx.fillStyle = grad; ctx.fill();
             }
             if (player.magmaBlood) {
                 ctx.strokeStyle = "#ff4400"; ctx.lineWidth = 3/cameraZoom;
-                ctx.beginPath(); ctx.moveTo(-r*0.5, -r*0.5); ctx.lineTo(r*0.5, r*0.5); ctx.moveTo(r*0.5, -r*0.5); ctx.lineTo(-r*0.5, r*0.5); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(torsoOffsetX - r*0.5, torsoOffsetY - r*0.5); ctx.lineTo(torsoOffsetX + r*0.5, torsoOffsetY + r*0.5); ctx.moveTo(torsoOffsetX + r*0.5, torsoOffsetY - r*0.5); ctx.lineTo(torsoOffsetX - r*0.5, torsoOffsetY + r*0.5); ctx.stroke();
             }
             if (player.iceCrystals) {
                 ctx.fillStyle = "rgba(100, 200, 255, 0.8)";
                 for(let i=0; i<5; i++) {
                     let a = (i/5)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r*0.5, Math.sin(a)*r*0.5); ctx.lineTo(Math.cos(a)*r*1.2, Math.sin(a)*r*1.2); ctx.lineTo(Math.cos(a+0.2)*r*0.8, Math.sin(a+0.2)*r*0.8); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r*0.5, torsoOffsetY + Math.sin(a)*r*0.5); ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.2, torsoOffsetY + Math.sin(a)*r*1.2); ctx.lineTo(torsoOffsetX + Math.cos(a+0.2)*r*0.8, torsoOffsetY + Math.sin(a+0.2)*r*0.8); ctx.fill();
                 }
             }
             if (player.symbioticWorms) {
                 ctx.strokeStyle = "#ffaaee"; ctx.lineWidth = 3/cameraZoom;
                 for(let i=0; i<4; i++) {
                     let a = (i/4)*Math.PI*2 + time;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r*0.8, Math.sin(a)*r*0.8); ctx.quadraticCurveTo(Math.cos(a+0.5)*r*1.2, Math.sin(a+0.5)*r*1.2, Math.cos(a+1.0)*r*0.9, Math.sin(a+1.0)*r*0.9); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r*0.8, torsoOffsetY + Math.sin(a)*r*0.8); ctx.quadraticCurveTo(torsoOffsetX + Math.cos(a+0.5)*r*1.2, torsoOffsetY + Math.sin(a+0.5)*r*1.2, torsoOffsetX + Math.cos(a+1.0)*r*0.9, torsoOffsetY + Math.sin(a+1.0)*r*0.9); ctx.stroke();
                 }
             }
             if (player.metallicSheen) {
-                let grad = ctx.createLinearGradient(-r, -r, r, r);
+                let grad = ctx.createLinearGradient(torsoOffsetX - r, torsoOffsetY - r, torsoOffsetX + r, torsoOffsetY + r);
                 grad.addColorStop(0, "rgba(255,255,255,0.6)"); grad.addColorStop(0.5, "rgba(255,255,255,0)"); grad.addColorStop(1, "rgba(0,0,0,0.4)");
-                ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
             }
             if (player.gemHeart) {
                 ctx.fillStyle = "#ff0055";
-                ctx.beginPath(); ctx.moveTo(0, r*0.3); ctx.lineTo(r*0.4, -r*0.1); ctx.lineTo(0, -r*0.4); ctx.lineTo(-r*0.4, -r*0.1); ctx.closePath();
+                ctx.beginPath(); ctx.moveTo(torsoOffsetX, torsoOffsetY + r*0.3); ctx.lineTo(torsoOffsetX + r*0.4, torsoOffsetY - r*0.1); ctx.lineTo(torsoOffsetX, torsoOffsetY - r*0.4); ctx.lineTo(torsoOffsetX - r*0.4, torsoOffsetY - r*0.1); ctx.closePath();
                 ctx.shadowBlur = 10; ctx.shadowColor = "#ff0055"; ctx.fill(); ctx.shadowBlur = 0;
             }
 
@@ -2172,82 +2260,82 @@ if (player.doubleTail) {
                 ctx.fillStyle = "#aa00ff";
                 for(let i=0; i<8; i++) {
                     let a = (i/8)*Math.PI*2;
-                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*1.1, Math.sin(a)*r*1.1, r*0.2, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*r*1.1, torsoOffsetY + Math.sin(a)*r*1.1, r*0.2, 0, Math.PI*2); ctx.fill();
                 }
             }
             if (player.plagueAura) {
-                ctx.beginPath(); ctx.arc(0, 0, r*1.8, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.8);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.8, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.8);
                 grad.addColorStop(0, "rgba(100, 255, 0, 0.3)"); grad.addColorStop(1, "rgba(100, 255, 0, 0)");
                 ctx.fillStyle = grad; ctx.fill();
             }
             if (player.antennae) {
                 ctx.strokeStyle = player.color; ctx.lineWidth = 3/cameraZoom;
-                ctx.beginPath(); ctx.moveTo(Math.cos(-0.5)*r, Math.sin(-0.5)*r); ctx.quadraticCurveTo(Math.cos(-0.8)*r*2, Math.sin(-0.8)*r*2, Math.cos(-0.2)*r*2.5, Math.sin(-0.2)*r*2.5); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(Math.cos(0.5)*r, Math.sin(0.5)*r); ctx.quadraticCurveTo(Math.cos(0.8)*r*2, Math.sin(0.8)*r*2, Math.cos(0.2)*r*2.5, Math.sin(0.2)*r*2.5); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(headOffsetX + Math.cos(-0.5)*r, headOffsetY + Math.sin(-0.5)*r); ctx.quadraticCurveTo(headOffsetX + Math.cos(-0.8)*r*2, headOffsetY + Math.sin(-0.8)*r*2, headOffsetX + Math.cos(-0.2)*r*2.5, headOffsetY + Math.sin(-0.2)*r*2.5); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(headOffsetX + Math.cos(0.5)*r, headOffsetY + Math.sin(0.5)*r); ctx.quadraticCurveTo(headOffsetX + Math.cos(0.8)*r*2, headOffsetY + Math.sin(0.8)*r*2, headOffsetX + Math.cos(0.2)*r*2.5, headOffsetY + Math.sin(0.2)*r*2.5); ctx.stroke();
             }
             if (player.compoundEyesExt) {
                 ctx.fillStyle = "#ffaa00";
-                ctx.beginPath(); ctx.arc(r*0.4, -r*0.6, r*0.15, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(r*0.4, r*0.6, r*0.15, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(headOffsetX + r*0.4, headOffsetY - r*0.6, r*0.15, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(headOffsetX + r*0.4, headOffsetY + r*0.6, r*0.15, 0, Math.PI*2); ctx.fill();
             }
             if (player.frill) {
                 ctx.fillStyle = player.color; ctx.strokeStyle = "#111"; ctx.lineWidth = 2/cameraZoom;
                 for(let i=0; i<5; i++) {
                     let a = -1.5 + (i/4)*3.0;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.2)*r, Math.sin(a-0.2)*r); ctx.lineTo(Math.cos(a)*r*1.8, Math.sin(a)*r*1.8); ctx.lineTo(Math.cos(a+0.2)*r, Math.sin(a+0.2)*r); ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(headOffsetX + Math.cos(a-0.2)*r, headOffsetY + Math.sin(a-0.2)*r); ctx.lineTo(headOffsetX + Math.cos(a)*r*1.8, headOffsetY + Math.sin(a)*r*1.8); ctx.lineTo(headOffsetX + Math.cos(a+0.2)*r, headOffsetY + Math.sin(a+0.2)*r); ctx.fill(); ctx.stroke();
                 }
             }
             if (player.whiskers) {
                 ctx.strokeStyle = "#fff"; ctx.lineWidth = 1/cameraZoom;
-                ctx.beginPath(); ctx.moveTo(r*0.8, -r*0.2); ctx.lineTo(r*1.5, -r*0.6); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(r*0.8, -r*0.1); ctx.lineTo(r*1.6, -r*0.1); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(r*0.8, r*0.2); ctx.lineTo(r*1.5, r*0.6); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(r*0.8, r*0.1); ctx.lineTo(r*1.6, r*0.1); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(headOffsetX + r*0.8, headOffsetY - r*0.2); ctx.lineTo(headOffsetX + r*1.5, headOffsetY - r*0.6); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(headOffsetX + r*0.8, headOffsetY - r*0.1); ctx.lineTo(headOffsetX + r*1.6, headOffsetY - r*0.1); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(headOffsetX + r*0.8, headOffsetY + r*0.2); ctx.lineTo(headOffsetX + r*1.5, headOffsetY + r*0.6); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(headOffsetX + r*0.8, headOffsetY + r*0.1); ctx.lineTo(headOffsetX + r*1.6, headOffsetY + r*0.1); ctx.stroke();
             }
             if (player.tuftedEars) {
                 ctx.fillStyle = player.color;
-                ctx.beginPath(); ctx.moveTo(Math.cos(-1.0)*r, Math.sin(-1.0)*r); ctx.lineTo(Math.cos(-1.2)*r*1.5, Math.sin(-1.2)*r*1.5); ctx.lineTo(Math.cos(-0.8)*r, Math.sin(-0.8)*r); ctx.fill();
-                ctx.beginPath(); ctx.moveTo(Math.cos(1.0)*r, Math.sin(1.0)*r); ctx.lineTo(Math.cos(1.2)*r*1.5, Math.sin(1.2)*r*1.5); ctx.lineTo(Math.cos(0.8)*r, Math.sin(0.8)*r); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(headOffsetX + Math.cos(-1.0)*r, headOffsetY + Math.sin(-1.0)*r); ctx.lineTo(headOffsetX + Math.cos(-1.2)*r*1.5, headOffsetY + Math.sin(-1.2)*r*1.5); ctx.lineTo(headOffsetX + Math.cos(-0.8)*r, headOffsetY + Math.sin(-0.8)*r); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(headOffsetX + Math.cos(1.0)*r, headOffsetY + Math.sin(1.0)*r); ctx.lineTo(headOffsetX + Math.cos(1.2)*r*1.5, headOffsetY + Math.sin(1.2)*r*1.5); ctx.lineTo(headOffsetX + Math.cos(0.8)*r, headOffsetY + Math.sin(0.8)*r); ctx.fill();
             }
             if (player.heavyClaws && player.appendage !== "arms") {
                 ctx.fillStyle = "#ff5533";
-                ctx.beginPath(); ctx.arc(Math.cos(-0.8)*r*1.2, Math.sin(-0.8)*r*1.2, r*0.4, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(Math.cos(0.8)*r*1.2, Math.sin(0.8)*r*1.2, r*0.4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(-0.8)*r*1.2, torsoOffsetY + Math.sin(-0.8)*r*1.2, r*0.4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(0.8)*r*1.2, torsoOffsetY + Math.sin(0.8)*r*1.2, r*0.4, 0, Math.PI*2); ctx.fill();
             }
             if (player.barnacles) {
                 ctx.fillStyle = "#bbbbcc"; ctx.strokeStyle = "#555566"; ctx.lineWidth = 1/cameraZoom;
                 for(let i=0; i<5; i++) {
                     let a = (i/5)*Math.PI*2 + 0.5;
-                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.8, Math.sin(a)*r*0.8, r*0.15, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.8, Math.sin(a)*r*0.8, r*0.05, 0, Math.PI*2); ctx.fillStyle="#333"; ctx.fill(); ctx.fillStyle="#bbbbcc";
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*r*0.8, torsoOffsetY + Math.sin(a)*r*0.8, r*0.15, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*r*0.8, torsoOffsetY + Math.sin(a)*r*0.8, r*0.05, 0, Math.PI*2); ctx.fillStyle="#333"; ctx.fill(); ctx.fillStyle="#bbbbcc";
                 }
             }
             if (player.glowingLure) {
                 ctx.strokeStyle = player.color; ctx.lineWidth = 3/cameraZoom;
-                ctx.beginPath(); ctx.moveTo(r*0.8, 0); ctx.quadraticCurveTo(r*1.5, -r*1.0, r*2.0, 0); ctx.stroke();
-                ctx.beginPath(); ctx.arc(r*2.0, 0, r*0.2, 0, Math.PI*2); ctx.fillStyle = "#00ffff"; ctx.shadowBlur = 15; ctx.shadowColor = "#00ffff"; ctx.fill(); ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.moveTo(headOffsetX + r*0.8, headOffsetY); ctx.quadraticCurveTo(headOffsetX + r*1.5, headOffsetY - r*1.0, headOffsetX + r*2.0, headOffsetY); ctx.stroke();
+                ctx.beginPath(); ctx.arc(headOffsetX + r*2.0, headOffsetY, r*0.2, 0, Math.PI*2); ctx.fillStyle = "#00ffff"; ctx.shadowBlur = 15; ctx.shadowColor = "#00ffff"; ctx.fill(); ctx.shadowBlur = 0;
             }
             if (player.sailFin) {
                 ctx.fillStyle = player.color; ctx.strokeStyle = "#111"; ctx.lineWidth = 2/cameraZoom;
-                ctx.beginPath(); ctx.moveTo(-r*0.8, 0); ctx.lineTo(0, -r*1.5); ctx.lineTo(r*0.5, 0); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(torsoOffsetX - r*0.8, torsoOffsetY); ctx.lineTo(torsoOffsetX, torsoOffsetY - r*1.5); ctx.lineTo(torsoOffsetX + r*0.5, torsoOffsetY); ctx.fill(); ctx.stroke();
             }
 
             // Fungal
             if (player.mushroomCap) {
                 ctx.fillStyle = "#cc4444";
-                ctx.beginPath(); ctx.arc(0, 0, r*1.2, Math.PI, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.2, Math.PI, Math.PI*2); ctx.fill();
                 ctx.fillStyle = "#ffffff";
-                ctx.beginPath(); ctx.arc(-r*0.5, -r*0.5, r*0.2, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(r*0.4, -r*0.8, r*0.15, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(r*0.6, -r*0.3, r*0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX - r*0.5, torsoOffsetY - r*0.5, r*0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX + r*0.4, torsoOffsetY - r*0.8, r*0.15, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX + r*0.6, torsoOffsetY - r*0.3, r*0.2, 0, Math.PI*2); ctx.fill();
             }
             if (player.myceliumNetwork) {
                 ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1/cameraZoom;
                 for(let i=0; i<10; i++) {
                     let a = (i/10)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
-                    ctx.lineTo(Math.cos(a)*r*1.8 + Math.random()*r, Math.sin(a)*r*1.8 + Math.random()*r); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r, torsoOffsetY + Math.sin(a)*r);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.8 + Math.random()*r, torsoOffsetY + Math.sin(a)*r*1.8 + Math.random()*r); ctx.stroke();
                 }
             }
             if (player.toxicSpores) {
@@ -2255,32 +2343,32 @@ if (player.doubleTail) {
                 for(let i=0; i<8; i++) {
                     let a = Math.random()*Math.PI*2;
                     let dist = Math.random()*r*1.5;
-                    ctx.beginPath(); ctx.arc(Math.cos(a)*dist, Math.sin(a)*dist, r*0.1 + Math.random()*r*0.1, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*dist, torsoOffsetY + Math.sin(a)*dist, r*0.1 + Math.random()*r*0.1, 0, Math.PI*2); ctx.fill();
                 }
             }
             if (player.hyphaeTendrils) {
                 ctx.strokeStyle = "#aaaaaa"; ctx.lineWidth = 2/cameraZoom;
                 for(let i=0; i<6; i++) {
                     let a = (i/6)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
-                    ctx.quadraticCurveTo(Math.cos(a+0.5)*r*1.5, Math.sin(a+0.5)*r*1.5, Math.cos(a)*r*2.0, Math.sin(a)*r*2.0); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r, torsoOffsetY + Math.sin(a)*r);
+                    ctx.quadraticCurveTo(torsoOffsetX + Math.cos(a+0.5)*r*1.5, torsoOffsetY + Math.sin(a+0.5)*r*1.5, torsoOffsetX + Math.cos(a)*r*2.0, torsoOffsetY + Math.sin(a)*r*2.0); ctx.stroke();
                 }
             }
             if (player.decayAura) {
-                ctx.beginPath(); ctx.arc(0, 0, r*1.6, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.6);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.6, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.6);
                 grad.addColorStop(0, "rgba(50, 50, 0, 0.4)"); grad.addColorStop(1, "rgba(50, 50, 0, 0)");
                 ctx.fillStyle = grad; ctx.fill();
             }
             if (player.puffball) {
                 ctx.fillStyle = "rgba(200, 200, 180, 0.8)";
-                ctx.beginPath(); ctx.arc(0, 0, r*1.1, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.1, 0, Math.PI*2); ctx.fill();
             }
             if (player.fungalArmor) {
                 ctx.fillStyle = "#889977"; ctx.strokeStyle = "#445533"; ctx.lineWidth = 2/cameraZoom;
                 for(let i=0; i<6; i++) {
                     let a = (i/6)*Math.PI*2;
-                    ctx.beginPath(); ctx.arc(Math.cos(a)*r*0.8, Math.sin(a)*r*0.8, r*0.3, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*r*0.8, torsoOffsetY + Math.sin(a)*r*0.8, r*0.3, 0, Math.PI*2); ctx.fill(); ctx.stroke();
                 }
             }
             if (player.moldSpores) {
@@ -2288,7 +2376,7 @@ if (player.doubleTail) {
                 for(let i=0; i<15; i++) {
                     let a = Math.random()*Math.PI*2;
                     let dist = Math.random()*r*0.8;
-                    ctx.beginPath(); ctx.arc(Math.cos(a)*dist, Math.sin(a)*dist, 2/cameraZoom, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*dist, torsoOffsetY + Math.sin(a)*dist, 2/cameraZoom, 0, Math.PI*2); ctx.fill();
                 }
             }
 
@@ -2297,14 +2385,14 @@ if (player.doubleTail) {
                 ctx.fillStyle = "rgba(255, 100, 0, 0.6)";
                 for(let i=0; i<8; i++) {
                     let a = (i/8)*Math.PI*2 + time;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.2)*r*0.9, Math.sin(a-0.2)*r*0.9);
-                    ctx.lineTo(Math.cos(a)*r*1.6, Math.sin(a)*r*1.6);
-                    ctx.lineTo(Math.cos(a+0.2)*r*0.9, Math.sin(a+0.2)*r*0.9); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a-0.2)*r*0.9, torsoOffsetY + Math.sin(a-0.2)*r*0.9);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.6, torsoOffsetY + Math.sin(a)*r*1.6);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.2)*r*0.9, torsoOffsetY + Math.sin(a+0.2)*r*0.9); ctx.fill();
                 }
             }
             if (player.waterAura) {
-                ctx.beginPath(); ctx.arc(0, 0, r*1.3, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.3);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.3, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.3);
                 grad.addColorStop(0, "rgba(0, 100, 255, 0.5)"); grad.addColorStop(1, "rgba(0, 100, 255, 0)");
                 ctx.fillStyle = grad; ctx.fill();
             }
@@ -2312,43 +2400,43 @@ if (player.doubleTail) {
                 ctx.fillStyle = "#554433"; ctx.strokeStyle = "#332211"; ctx.lineWidth = 2/cameraZoom;
                 for(let i=0; i<8; i++) {
                     let a = (i/8)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.3)*r*0.8, Math.sin(a-0.3)*r*0.8);
-                    ctx.lineTo(Math.cos(a)*r*1.0, Math.sin(a)*r*1.0);
-                    ctx.lineTo(Math.cos(a+0.3)*r*0.8, Math.sin(a+0.3)*r*0.8); ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a-0.3)*r*0.8, torsoOffsetY + Math.sin(a-0.3)*r*0.8);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.0, torsoOffsetY + Math.sin(a)*r*1.0);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.3)*r*0.8, torsoOffsetY + Math.sin(a+0.3)*r*0.8); ctx.fill(); ctx.stroke();
                 }
             }
             if (player.airCurrents) {
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"; ctx.lineWidth = 2/cameraZoom;
                 for(let i=0; i<3; i++) {
                     let a = time*2 + (i/3)*Math.PI*2;
-                    ctx.beginPath(); ctx.arc(0, 0, r*(1.2 + i*0.2), a, a + Math.PI); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*(1.2 + i*0.2), a, a + Math.PI); ctx.stroke();
                 }
             }
             if (player.lightningRod) {
                 ctx.strokeStyle = "#ffff00"; ctx.lineWidth = 2/cameraZoom;
                 for(let i=0; i<4; i++) {
                     let a = Math.random()*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
-                    ctx.lineTo(Math.cos(a)*r*1.3 + (Math.random()-0.5)*r*0.5, Math.sin(a)*r*1.3 + (Math.random()-0.5)*r*0.5);
-                    ctx.lineTo(Math.cos(a)*r*1.8, Math.sin(a)*r*1.8); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r, torsoOffsetY + Math.sin(a)*r);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.3 + (Math.random()-0.5)*r*0.5, torsoOffsetY + Math.sin(a)*r*1.3 + (Math.random()-0.5)*r*0.5);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.8, torsoOffsetY + Math.sin(a)*r*1.8); ctx.stroke();
                 }
             }
             if (player.obsidianShards) {
                 ctx.fillStyle = "#111111"; ctx.strokeStyle = "#333333"; ctx.lineWidth = 1/cameraZoom;
                 for(let i=0; i<6; i++) {
                     let a = (i/6)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.1)*r, Math.sin(a-0.1)*r);
-                    ctx.lineTo(Math.cos(a)*r*1.8, Math.sin(a)*r*1.8);
-                    ctx.lineTo(Math.cos(a+0.1)*r, Math.sin(a+0.1)*r); ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a-0.1)*r, torsoOffsetY + Math.sin(a-0.1)*r);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.8, torsoOffsetY + Math.sin(a)*r*1.8);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.1)*r, torsoOffsetY + Math.sin(a+0.1)*r); ctx.fill(); ctx.stroke();
                 }
             }
             if (player.frostArmor) {
                 ctx.fillStyle = "rgba(200, 255, 255, 0.4)"; ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1/cameraZoom;
-                ctx.beginPath(); ctx.arc(0, 0, r*1.1, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.1, 0, Math.PI*2); ctx.fill(); ctx.stroke();
             }
             if (player.magmaAura) {
-                ctx.beginPath(); ctx.arc(0, 0, r*1.4, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.4);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.4, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.4);
                 grad.addColorStop(0, "rgba(255, 50, 0, 0.5)"); grad.addColorStop(1, "rgba(255, 50, 0, 0)");
                 ctx.fillStyle = grad; ctx.fill();
             }
@@ -2356,37 +2444,37 @@ if (player.doubleTail) {
             // Mechanical
             if (player.metalPlating) {
                 ctx.fillStyle = "#888888"; ctx.strokeStyle = "#222222"; ctx.lineWidth = 2/cameraZoom;
-                ctx.beginPath(); ctx.moveTo(-r*0.6, -r*0.6); ctx.lineTo(r*0.6, -r*0.6); ctx.lineTo(r*0.6, r*0.6); ctx.lineTo(-r*0.6, r*0.6); ctx.closePath(); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(torsoOffsetX - r*0.6, torsoOffsetY - r*0.6); ctx.lineTo(torsoOffsetX + r*0.6, torsoOffsetY - r*0.6); ctx.lineTo(torsoOffsetX + r*0.6, torsoOffsetY + r*0.6); ctx.lineTo(torsoOffsetX - r*0.6, torsoOffsetY + r*0.6); ctx.closePath(); ctx.fill(); ctx.stroke();
             }
             if (player.laserEye) {
-                ctx.beginPath(); ctx.arc(r*0.5, 0, r*0.3, 0, Math.PI*2); ctx.fillStyle = "#222"; ctx.fill();
-                ctx.beginPath(); ctx.arc(r*0.5, 0, r*0.15, 0, Math.PI*2); ctx.fillStyle = "#ff0000"; ctx.shadowBlur = 10; ctx.shadowColor = "#ff0000"; ctx.fill(); ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY, r*0.3, 0, Math.PI*2); ctx.fillStyle = "#222"; ctx.fill();
+                ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY, r*0.15, 0, Math.PI*2); ctx.fillStyle = "#ff0000"; ctx.shadowBlur = 10; ctx.shadowColor = "#ff0000"; ctx.fill(); ctx.shadowBlur = 0;
             }
             if (player.thrusters) {
-                ctx.fillStyle = "#555"; ctx.beginPath(); ctx.moveTo(-r*0.8, -r*0.3); ctx.lineTo(-r*1.2, -r*0.4); ctx.lineTo(-r*1.2, r*0.4); ctx.lineTo(-r*0.8, r*0.3); ctx.fill();
+                ctx.fillStyle = "#555"; ctx.beginPath(); ctx.moveTo(torsoOffsetX - r*0.8, torsoOffsetY - r*0.3); ctx.lineTo(torsoOffsetX - r*1.2, torsoOffsetY - r*0.4); ctx.lineTo(torsoOffsetX - r*1.2, torsoOffsetY + r*0.4); ctx.lineTo(torsoOffsetX - r*0.8, torsoOffsetY + r*0.3); ctx.fill();
                 if (player.isDashing > 0) {
-                    ctx.fillStyle = "#00ffff"; ctx.beginPath(); ctx.moveTo(-r*1.2, -r*0.3); ctx.lineTo(-r*2.0, 0); ctx.lineTo(-r*1.2, r*0.3); ctx.fill();
+                    ctx.fillStyle = "#00ffff"; ctx.beginPath(); ctx.moveTo(torsoOffsetX - r*1.2, torsoOffsetY - r*0.3); ctx.lineTo(torsoOffsetX - r*2.0, torsoOffsetY); ctx.lineTo(torsoOffsetX - r*1.2, torsoOffsetY + r*0.3); ctx.fill();
                 }
             }
             if (player.gearHeart) {
                 ctx.strokeStyle = "#aa8800"; ctx.lineWidth = 3/cameraZoom;
-                ctx.beginPath(); ctx.arc(0, 0, r*0.3, 0, Math.PI*2); ctx.stroke();
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*0.3, 0, Math.PI*2); ctx.stroke();
                 for(let i=0; i<6; i++) {
                     let a = (i/6)*Math.PI*2 + time;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r*0.3, Math.sin(a)*r*0.3); ctx.lineTo(Math.cos(a)*r*0.4, Math.sin(a)*r*0.4); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r*0.3, torsoOffsetY + Math.sin(a)*r*0.3); ctx.lineTo(torsoOffsetX + Math.cos(a)*r*0.4, torsoOffsetY + Math.sin(a)*r*0.4); ctx.stroke();
                 }
             }
             if (player.wireNerves) {
                 ctx.strokeStyle = "#00ffff"; ctx.lineWidth = 1/cameraZoom;
                 for(let i=0; i<8; i++) {
                     let a = (i/8)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Math.cos(a)*r*0.9, Math.sin(a)*r*0.9); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX, torsoOffsetY); ctx.lineTo(torsoOffsetX + Math.cos(a)*r*0.9, torsoOffsetY + Math.sin(a)*r*0.9); ctx.stroke();
                 }
             }
             if (player.roboticJoints) {
                 ctx.fillStyle = "#333";
-                ctx.beginPath(); ctx.arc(0, -r*0.8, r*0.2, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(0, r*0.8, r*0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX + r*0.8, torsoOffsetY + r*0.8, r*0.15, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(torsoOffsetX + r*0.8, torsoOffsetY - r*0.8, r*0.15, 0, Math.PI*2); ctx.fill();
             }
 
             // Astral
@@ -2396,12 +2484,12 @@ if (player.doubleTail) {
                 for(let i=0; i<10; i++) {
                     let a = Math.random()*Math.PI*2;
                     let dist = r + Math.random()*r*0.5;
-                    ctx.beginPath(); ctx.arc(Math.cos(a)*dist, Math.sin(a)*dist, 1.5/cameraZoom, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*dist, torsoOffsetY + Math.sin(a)*dist, 1.5/cameraZoom, 0, Math.PI*2); ctx.fill();
                 }
             }
             if (player.nebulaAura) {
-                ctx.beginPath(); ctx.arc(0, 0, r*1.5, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(0,0,r, 0,0,r*1.5);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.5, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.5);
                 grad.addColorStop(0, "rgba(200, 0, 255, 0.4)"); grad.addColorStop(1, "rgba(0, 0, 255, 0)");
                 ctx.fillStyle = grad; ctx.fill();
             }
@@ -2409,25 +2497,25 @@ if (player.doubleTail) {
                 ctx.fillStyle = "rgba(255, 200, 0, 0.5)";
                 for(let i=0; i<12; i++) {
                     let a = (i/12)*Math.PI*2 + time*2;
-                    ctx.beginPath(); ctx.moveTo(Math.cos(a-0.1)*r, Math.sin(a-0.1)*r);
-                    ctx.lineTo(Math.cos(a)*r*1.5, Math.sin(a)*r*1.5);
-                    ctx.lineTo(Math.cos(a+0.1)*r, Math.sin(a+0.1)*r); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a-0.1)*r, torsoOffsetY + Math.sin(a-0.1)*r);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.4 + Math.sin(time*10+i)*r*0.2, torsoOffsetY + Math.sin(a)*r*1.4 + Math.sin(time*10+i)*r*0.2);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.1)*r, torsoOffsetY + Math.sin(a+0.1)*r); ctx.fill();
                 }
             }
             if (player.cometTail) {
-                let grad = ctx.createLinearGradient(0, 0, -r*2, 0);
+                let grad = ctx.createLinearGradient(torsoOffsetX, torsoOffsetY, torsoOffsetX - r*2, torsoOffsetY);
                 grad.addColorStop(0, "rgba(0, 255, 255, 0.8)"); grad.addColorStop(1, "rgba(0, 255, 255, 0)");
-                ctx.beginPath(); ctx.moveTo(0, -r*0.5); ctx.lineTo(-r*2, 0); ctx.lineTo(0, r*0.5); ctx.fillStyle = grad; ctx.fill();
+                ctx.beginPath(); ctx.moveTo(torsoOffsetX, torsoOffsetY - r*0.5); ctx.lineTo(torsoOffsetX - r*2, torsoOffsetY); ctx.lineTo(torsoOffsetX, torsoOffsetY + r*0.5); ctx.fillStyle = grad; ctx.fill();
             }
             if (player.astralProjection) {
-                ctx.beginPath(); ctx.arc(0, 0, r*1.2, 0, Math.PI*2);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.2, 0, Math.PI*2);
                 ctx.strokeStyle = "rgba(255, 255, 255, 0.5)"; ctx.lineWidth = 2/cameraZoom; ctx.stroke();
             }
 
             // Mouths (Black Hole)
             if (player.mouth === "blackhole") {
-                let mX = r * (player.appendage ? 1.1 : 0.8);
-                ctx.beginPath(); ctx.arc(mX, 0, r*0.5, 0, Math.PI*2);
+                let mX = headOffsetX + r * (player.appendage ? 1.1 : 0.8);
+                ctx.beginPath(); ctx.arc(mX, headOffsetY, r*0.5, 0, Math.PI*2);
                 ctx.fillStyle = "#000000"; ctx.fill();
                 ctx.strokeStyle = "#aa00ff"; ctx.lineWidth = 4/cameraZoom; ctx.stroke();
                 ctx.shadowBlur = 15; ctx.shadowColor = "#aa00ff"; ctx.stroke(); ctx.shadowBlur = 0;
@@ -2437,39 +2525,39 @@ if (player.doubleTail) {
             for (let i = 0; i < player.mito; i++) {
                 let angle = (i * Math.PI * 2) / player.mito + time - aimAngle;
                 let dist = r * 0.5;
-                ctx.beginPath(); ctx.ellipse(Math.cos(angle)*dist, Math.sin(angle)*dist, 5, 2.5, angle, 0, Math.PI*2);
+                ctx.beginPath(); ctx.ellipse(torsoOffsetX + Math.cos(angle)*dist, torsoOffsetY + Math.sin(angle)*dist, 5, 2.5, angle, 0, Math.PI*2);
                 ctx.fillStyle = "#ff6600"; ctx.fill();
             }
             for (let i = 0; i < player.chloro; i++) {
                 let angle = (i * Math.PI * 2) / player.chloro - time - aimAngle;
                 let dist = r * 0.7;
-                ctx.beginPath(); ctx.arc(Math.cos(angle)*dist, Math.sin(angle)*dist, 3, 0, Math.PI*2);
+                ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(angle)*dist, torsoOffsetY + Math.sin(angle)*dist, 3, 0, Math.PI*2);
                 ctx.fillStyle = "#00ff00"; ctx.fill();
             }
 
             if (player.reptileTraits > 0 || player.virusTraits > 0 || player.level >= 10) {
-                ctx.beginPath(); ctx.arc(0, 0, r * 0.35, 0, Math.PI * 2);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.35, 0, Math.PI * 2);
                 if (player.reptileTraits > 0) {
                     ctx.fillStyle = "#ffaa00"; ctx.fill();
-                    ctx.beginPath(); ctx.ellipse(0, 0, r * 0.2, r * 0.06, 0, 0, Math.PI * 2);
+                    ctx.beginPath(); ctx.ellipse(torsoOffsetX, torsoOffsetY, r * 0.2, r * 0.06, 0, 0, Math.PI * 2);
                     ctx.fillStyle = "#000"; ctx.fill();
                 } else if (player.virusTraits > 0) {
                     ctx.fillStyle = "#aa00ff"; ctx.shadowBlur = 20; ctx.shadowColor = "#aa00ff"; ctx.fill(); ctx.shadowBlur = 0;
                 } else {
                     ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fill();
                 }
-                ctx.beginPath(); ctx.arc(0, 0, r * 0.4, 0, Math.PI * 2);
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.4, 0, Math.PI * 2);
                 ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 2 / cameraZoom; ctx.setLineDash([5 / cameraZoom, 5 / cameraZoom]);
                 ctx.stroke(); ctx.setLineDash([]);
             } else {
                 let nucleiCount = Math.min(player.level, 7); 
                 ctx.fillStyle = "rgba(255,255,255,0.9)";
                 ctx.beginPath();
-                if (nucleiCount === 1) { ctx.arc(0, 0, r * 0.4, 0, Math.PI * 2); }
+                if (nucleiCount === 1) { ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.4, 0, Math.PI * 2); }
                 else {
                     for (let i = 0; i < nucleiCount; i++) {
                         let nAngle = (i / nucleiCount) * Math.PI * 2 + time * (0.2 + i * 0.05);
-                        let nx = Math.cos(nAngle)*r*0.2, ny = Math.sin(nAngle)*r*0.2;
+                        let nx = torsoOffsetX + Math.cos(nAngle)*r*0.2, ny = torsoOffsetY + Math.sin(nAngle)*r*0.2;
                         ctx.moveTo(nx, ny); ctx.arc(nx, ny, r * 0.18, 0, Math.PI * 2);
                     }
                 }
@@ -2480,8 +2568,8 @@ if (player.doubleTail) {
                 ctx.beginPath();
                 for (let i = 0; i < 12; i++) {
                     let a = (i / 12) * Math.PI * 2 + time - aimAngle;
-                    ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
-                    ctx.lineTo(Math.cos(a)*(r + 4 + player.spikes * 2.5), Math.sin(a)*(r + 4 + player.spikes * 2.5));
+                    ctx.moveTo(torsoOffsetX + Math.cos(a)*r, torsoOffsetY + Math.sin(a)*r);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*(r + 4 + player.spikes * 2.5), torsoOffsetY + Math.sin(a)*(r + 4 + player.spikes * 2.5));
                 }
                 ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 3 / cameraZoom; ctx.stroke();
             }
@@ -2489,11 +2577,11 @@ if (player.doubleTail) {
             if (player.canShoot && player.insectTraits === 0) {
                 let sWidth = r * 0.5;
                 let front = player.appendage ? 1.4 : 1.0;
-                let sLen = r*front + 15;
+                let sLen = headOffsetX + r*front + 15;
                 ctx.beginPath();
-                ctx.moveTo(Math.cos(-0.4)*r*front, Math.sin(-0.4)*r*front);
-                ctx.quadraticCurveTo(sLen, 0, Math.cos(0.4)*r*front, Math.sin(0.4)*r*front);
-                let snoutGrad = ctx.createRadialGradient(0, 0, r*0.5, sLen, 0, sWidth);
+                ctx.moveTo(headOffsetX + Math.cos(-0.4)*r*front, headOffsetY + Math.sin(-0.4)*r*front);
+                ctx.quadraticCurveTo(sLen, headOffsetY, headOffsetX + Math.cos(0.4)*r*front, headOffsetY + Math.sin(0.4)*r*front);
+                let snoutGrad = ctx.createRadialGradient(headOffsetX, headOffsetY, r*0.5, sLen, headOffsetY, sWidth);
                 snoutGrad.addColorStop(0, player.color); snoutGrad.addColorStop(1, "#00ffcc");
                 ctx.fillStyle = snoutGrad; ctx.fill();
                 ctx.strokeStyle = adjustColor(player.color, -40); ctx.lineWidth = 2 / cameraZoom; ctx.stroke();
@@ -2505,14 +2593,14 @@ if (player.doubleTail) {
                 for(let i=0; i<spikeCount; i++) {
                     let a = (i / spikeCount) * Math.PI * 2 + time * 0.5 - aimAngle;
                     let len = r + 15 + player.virusTraits * 5;
-                    ctx.moveTo(Math.cos(a)*r*0.8, Math.sin(a)*r*0.8);
-                    ctx.lineTo(Math.cos(a)*len, Math.sin(a)*len);
+                    ctx.moveTo(torsoOffsetX + Math.cos(a)*r*0.8, torsoOffsetY + Math.sin(a)*r*0.8);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*len, torsoOffsetY + Math.sin(a)*len);
                 }
                 ctx.strokeStyle = "rgba(150, 50, 255, 0.8)"; ctx.lineWidth = 6 / cameraZoom; ctx.lineCap = "round"; ctx.stroke();
                 for(let i=0; i<spikeCount; i++) {
                     let a = (i / spikeCount) * Math.PI * 2 + time * 0.5 - aimAngle;
                     let len = r + 15 + player.virusTraits * 5;
-                    ctx.beginPath(); ctx.arc(Math.cos(a)*len, Math.sin(a)*len, 8 / cameraZoom, 0, Math.PI*2);
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*len, torsoOffsetY + Math.sin(a)*len, 8 / cameraZoom, 0, Math.PI*2);
                     ctx.fillStyle = "#ff55ff"; ctx.fill();
                 }
             }
@@ -2521,42 +2609,42 @@ if (player.doubleTail) {
                 ctx.beginPath();
                 for(let i=0; i<20; i++) {
                     let a = -0.8 + (i/19)*1.6;
-                    ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
-                    ctx.lineTo(Math.cos(a)*(r + 15 + Math.random()*10), Math.sin(a)*(r + 15 + Math.random()*10));
+                    ctx.moveTo(headOffsetX + Math.cos(a)*r, headOffsetY + Math.sin(a)*r);
+                    ctx.lineTo(headOffsetX + Math.cos(a)*(r + 15 + Math.random()*10), headOffsetY + Math.sin(a)*(r + 15 + Math.random()*10));
                 }
                 ctx.strokeStyle = "#bbcccc"; ctx.lineWidth = 3/cameraZoom; ctx.stroke();
             } else if (player.mouth === "beak") {
                 let front = player.appendage ? 1.4 : 1.0;
                 ctx.beginPath();
-                ctx.moveTo(Math.cos(-0.4)*r*front, Math.sin(-0.4)*r*front);
-                ctx.lineTo(r*front + 30, 0);
-                ctx.lineTo(Math.cos(0.4)*r*front, Math.sin(0.4)*r*front);
+                ctx.moveTo(headOffsetX + Math.cos(-0.4)*r*front, headOffsetY + Math.sin(-0.4)*r*front);
+                ctx.lineTo(headOffsetX + r*front + 30, headOffsetY);
+                ctx.lineTo(headOffsetX + Math.cos(0.4)*r*front, headOffsetY + Math.sin(0.4)*r*front);
                 ctx.fillStyle = "#ffaa00"; ctx.fill();
                 ctx.strokeStyle = "#aa5500"; ctx.lineWidth = 3/cameraZoom; ctx.lineJoin = "round"; ctx.stroke();
             } else if (player.mouth === "jaws") {
                 let chomp = Math.abs(Math.sin(time * 12)) * 10;
-                let mX = r * (player.appendage ? 1.1 : 0.7);
-                ctx.beginPath(); ctx.moveTo(mX + Math.cos(-0.7)*r, Math.sin(-0.7)*r);
+                let mX = headOffsetX + r * (player.appendage ? 1.1 : 0.7);
+                ctx.beginPath(); ctx.moveTo(mX + Math.cos(-0.7)*r, headOffsetY + Math.sin(-0.7)*r);
                 for(let i=0; i<=6; i++) {
                     let a = -0.7 + (i/6)*1.4;
                     let out = i%2===0 ? r*0.8 + chomp : r*0.3;
-                    ctx.lineTo(mX + Math.cos(a)*out, Math.sin(a)*out);
+                    ctx.lineTo(mX + Math.cos(a)*out, headOffsetY + Math.sin(a)*out);
                 }
                 ctx.fillStyle = "#ffffff"; ctx.fill();
                 ctx.strokeStyle = "#aa0000"; ctx.lineWidth = 3/cameraZoom; ctx.stroke();
             } else if (player.mouth === "leech") {
-                let mX = r * (player.appendage ? 1.2 : 0.9);
-                ctx.beginPath(); ctx.arc(mX, 0, r*0.6, 0, Math.PI*2);
+                let mX = headOffsetX + r * (player.appendage ? 1.2 : 0.9);
+                ctx.beginPath(); ctx.arc(mX, headOffsetY, r*0.6, 0, Math.PI*2);
                 ctx.fillStyle = "#882244"; ctx.fill();
                 ctx.strokeStyle = "#440011"; ctx.lineWidth = 4/cameraZoom; ctx.stroke();
-                ctx.beginPath(); ctx.arc(mX, 0, r*0.3, 0, Math.PI*2);
+                ctx.beginPath(); ctx.arc(mX, headOffsetY, r*0.3, 0, Math.PI*2);
                 ctx.fillStyle = "#110000"; ctx.fill();
                 ctx.fillStyle = "#ffffff";
                 for(let j=1; j<=2; j++) {
                     let tCount = j*6;
                     for(let i=0; i<tCount; i++) {
                         let a = (i/tCount)*Math.PI*2 + time*j;
-                        ctx.beginPath(); ctx.arc(mX + Math.cos(a)*r*0.2*j, Math.sin(a)*r*0.2*j, 3/cameraZoom, 0, Math.PI*2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(mX + Math.cos(a)*r*0.2*j, headOffsetY + Math.sin(a)*r*0.2*j, 3/cameraZoom, 0, Math.PI*2); ctx.fill();
                     }
                 }
             }

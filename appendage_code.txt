@@ -1,0 +1,371 @@
+// --- PLAYER RENDERING SECTION ---
+            let aimAngle = Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
+
+            if(player.tail.length > 0) {
+                for(let i=player.tail.length-1; i>=0; i--) {
+                    let tx = player.tail[i].x;
+                    let ty = player.tail[i].y;
+                    let tSize = player.size * (1 - (i / player.tail.length));
+
+                    if (player.appendage === "slithery") {
+                        let prevX = i === 0 ? player.x : player.tail[i-1].x;
+                        let prevY = i === 0 ? player.y : player.tail[i-1].y;
+                        let tAngle = Math.atan2(ty - prevY, tx - prevX);
+                        let wobble = Math.sin(time * 8 - i * 0.4) * (player.size * 0.5);
+                        tx += Math.cos(tAngle + Math.PI/2) * wobble;
+                        ty += Math.sin(tAngle + Math.PI/2) * wobble;
+                        tSize = player.size * 0.8 * (1 - (i / player.tail.length)*0.5);
+
+                        if (player.rattleTail && i === player.tail.length - 1) {
+                            ctx.beginPath();
+                            ctx.arc(tx, ty, player.size * 0.9, 0, Math.PI * 2);
+                            ctx.fillStyle = adjustColor(player.color, -50);
+                            ctx.fill();
+                            for (let s = 0; s < 6; s++) {
+                                let sAng = (s/6) * Math.PI*2 + time*2;
+                                ctx.beginPath();
+                                ctx.moveTo(tx + Math.cos(sAng)*player.size*0.9, ty + Math.sin(sAng)*player.size*0.9);
+                                ctx.lineTo(tx + Math.cos(sAng)*player.size*1.6, ty + Math.sin(sAng)*player.size*1.6);
+                                ctx.strokeStyle = "#ffffff";
+                                ctx.lineWidth = 4 / cameraZoom;
+                                ctx.stroke();
+                            }
+                        }
+                    }
+
+                    let tGrad = ctx.createRadialGradient(tx - tSize*0.3, ty - tSize*0.3, tSize*0.1, tx, ty, tSize);
+                    tGrad.addColorStop(0, adjustColor(player.color, 30));
+                    tGrad.addColorStop(1, adjustColor(player.color, -40));
+if (player.doubleTail) {
+                        ctx.beginPath();
+                        ctx.arc(tx, ty + player.size*0.5, Math.max(2, tSize), 0, Math.PI*2);
+                        ctx.fillStyle = tGrad; ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(tx, ty - player.size*0.5, Math.max(2, tSize), 0, Math.PI*2);
+                        ctx.fillStyle = tGrad; ctx.fill();
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(tx, ty, Math.max(2, tSize), 0, Math.PI*2);
+                        ctx.fillStyle = tGrad;
+                        ctx.fill();
+                    }
+
+                    if (player.appendage === "slithery" && i % 2 === 0 && !player.rattleTail || (player.rattleTail && i !== player.tail.length - 1)) {
+                        ctx.beginPath();
+                        ctx.arc(tx, ty, Math.max(2, tSize * 0.6), 0, Math.PI);
+                        ctx.strokeStyle = "rgba(0,0,0,0.3)";
+                        ctx.lineWidth = 2 / cameraZoom;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            let isInvuln = player.invulnTimer > 0 && Math.floor(time * 15) % 2 === 0;
+            if (isInvuln) ctx.globalAlpha = 0.4;
+
+            if (player.appendage === "wings") {
+                let flap = Math.sin(time * 12) * 0.5;
+                let wSize = player.size * 2.8;
+
+                const drawWing = (sideMult) => {
+                    let wAngle = aimAngle + (Math.PI/2 + 0.3) * sideMult;
+                    let pivotX = player.x + Math.cos(wAngle) * player.size * 0.5;
+                    let pivotY = player.y + Math.sin(wAngle) * player.size * 0.5;
+
+                    let targetX = pivotX + Math.cos(wAngle - flap * sideMult * 0.5) * wSize;
+                    let targetY = pivotY + Math.sin(wAngle - flap * sideMult * 0.5) * wSize;
+
+                    ctx.beginPath();
+                    ctx.moveTo(pivotX, pivotY);
+                    ctx.quadraticCurveTo(pivotX + Math.cos(wAngle - 1.0*sideMult)*wSize*1.2, pivotY + Math.sin(wAngle - 1.0*sideMult)*wSize*1.2, targetX, targetY);
+                    ctx.quadraticCurveTo(pivotX + Math.cos(wAngle + 0.5*sideMult)*wSize*0.5, pivotY + Math.sin(wAngle + 0.5*sideMult)*wSize*0.5, pivotX, pivotY);
+
+                    let wGrad = ctx.createLinearGradient(pivotX, pivotY, targetX, targetY);
+                    wGrad.addColorStop(0, adjustColor(player.color, -20));
+                    wGrad.addColorStop(1, adjustColor(player.color, 40));
+                    ctx.fillStyle = wGrad;
+                    ctx.fill();
+
+                    ctx.strokeStyle = adjustColor(player.color, -50);
+                    ctx.lineWidth = 3 / cameraZoom;
+                    ctx.stroke();
+
+                    if (player.razorFeathers) {
+                        ctx.beginPath();
+                        ctx.moveTo(targetX, targetY);
+                        ctx.lineTo(targetX + Math.cos(wAngle - flap*sideMult)*wSize*0.4, targetY + Math.sin(wAngle - flap*sideMult)*wSize*0.4);
+                        ctx.strokeStyle = "#ffffff";
+                        ctx.lineWidth = 4 / cameraZoom;
+                        ctx.stroke();
+                        ctx.shadowBlur = 10; ctx.shadowColor = "#ffffff"; ctx.stroke(); ctx.shadowBlur = 0;
+                    }
+                };
+
+                drawWing(1);
+                drawWing(-1);
+            }
+
+            if (player.appendage === "arms") {
+                let reach = Math.sin(time * 5) * (player.size * 0.3) + (player.isDashing > 0 ? player.size : 0);
+                let aSize = player.size * 2.2;
+
+                const drawArm = (sideMult) => {
+                    let aAngle = aimAngle + 0.6 * sideMult;
+                    let pt = getPlayerAttachPoint(player, (Math.PI/2 + 0.2) * sideMult + w * 0.5, player.size * -0.2);
+                    let shoulderX = pt.x; let shoulderY = pt.y;
+
+                    let fistX = shoulderX + Math.cos(aimAngle + 0.2 * sideMult) * aSize;
+                    let fistY = shoulderY + Math.sin(aimAngle + 0.2 * sideMult) * aSize;
+
+                    let elbowX = (shoulderX + fistX)/2 + Math.cos(aimAngle + Math.PI/2 * sideMult) * player.size;
+                    let elbowY = (shoulderY + fistY)/2 + Math.sin(aimAngle + Math.PI/2 * sideMult) * player.size;
+
+                    ctx.strokeStyle = "rgba(0,0,0,0.4)";
+                    ctx.lineWidth = player.size * 0.6;
+                    ctx.lineCap = "round"; ctx.lineJoin = "round";
+                    ctx.beginPath(); ctx.moveTo(shoulderX, shoulderY); ctx.lineTo(elbowX, elbowY); ctx.lineTo(fistX, fistY); ctx.stroke();
+
+                    ctx.strokeStyle = adjustColor(player.color, -10);
+                    ctx.lineWidth = player.size * 0.55;
+                    ctx.beginPath(); ctx.moveTo(shoulderX, shoulderY); ctx.lineTo(elbowX, elbowY); ctx.lineTo(fistX, fistY); ctx.stroke();
+
+                    ctx.strokeStyle = adjustColor(player.color, 30);
+                    ctx.lineWidth = player.size * 0.25;
+                    ctx.beginPath(); ctx.moveTo(shoulderX, shoulderY); ctx.lineTo(elbowX, elbowY); ctx.lineTo(fistX, fistY); ctx.stroke();
+
+                    let fGrad = ctx.createRadialGradient(fistX - player.size*0.1, fistY - player.size*0.1, 0, fistX, fistY, player.size*0.6);
+                    fGrad.addColorStop(0, adjustColor(player.color, 40));
+                    fGrad.addColorStop(1, player.haymaker ? "#ff4400" : adjustColor(player.color, -40));
+                    ctx.fillStyle = fGrad;
+                    ctx.beginPath(); ctx.arc(fistX, fistY, player.size*0.55, 0, Math.PI*2); ctx.fill();
+
+                    if (player.vacuumPalms) {
+                        ctx.beginPath();
+                        ctx.arc(fistX, fistY, player.size*0.3, 0, Math.PI*2);
+                        ctx.fillStyle = "rgba(0, 255, 255, 0.6)";
+                        ctx.fill();
+                        ctx.beginPath();
+                        ctx.arc(fistX, fistY, player.size*0.15, 0, Math.PI*2);
+                        ctx.fillStyle = "#ffffff";
+                        ctx.fill();
+                    }
+
+                    ctx.fillStyle = "#ffffff";
+                    for(let f=0; f<3; f++) {
+                        let fAng = aimAngle + (f-1)*0.4;
+                        ctx.beginPath();
+                        ctx.arc(fistX + Math.cos(fAng)*player.size*0.6, fistY + Math.sin(fAng)*player.size*0.6, player.size*0.15, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                };
+
+                drawArm(1);
+                drawArm(-1);
+            }
+
+            if (player.appendage === "legs") {
+                ctx.lineCap = "round"; ctx.lineJoin = "round";
+                let walkTime = time * 15;
+
+                const drawLeg = (sideMult, pairOffset) => {
+                    let w = Math.sin(walkTime + pairOffset * Math.PI) * 0.8 * sideMult;
+                    let lAngle = aimAngle + (Math.PI/2 + 0.4) * sideMult + w;
+
+                    let pt = getPlayerAttachPoint(player, (Math.PI/2 + 0.4) * sideMult + w, player.size * -0.3); // 0.7 is -0.3 offset
+                    let hipX = pt.x; let hipY = pt.y;
+
+                    let footX = hipX + Math.cos(lAngle) * player.size * 2.5;
+                    let footY = hipY + Math.sin(lAngle) * player.size * 2.5;
+
+                    let kneeX = (hipX + footX)/2 + Math.cos(lAngle + 1.0 * sideMult) * player.size * 1.5;
+                    let kneeY = (hipY + footY)/2 + Math.sin(lAngle + 1.0 * sideMult) * player.size * 1.5;
+
+                    ctx.strokeStyle = "rgba(0,0,0,0.5)";
+                    ctx.lineWidth = player.size * 0.4;
+                    ctx.beginPath(); ctx.moveTo(hipX, hipY); ctx.lineTo(kneeX, kneeY); ctx.lineTo(footX, footY); ctx.stroke();
+
+                    ctx.strokeStyle = adjustColor(player.color, -30);
+                    ctx.lineWidth = player.size * 0.35;
+                    ctx.beginPath(); ctx.moveTo(hipX, hipY); ctx.lineTo(kneeX, kneeY); ctx.lineTo(footX, footY); ctx.stroke();
+
+                    ctx.strokeStyle = adjustColor(player.color, 20);
+                    ctx.lineWidth = player.size * 0.15;
+                    ctx.beginPath(); ctx.moveTo(hipX, hipY); ctx.lineTo(kneeX, kneeY); ctx.lineTo(footX, footY); ctx.stroke();
+
+                    if (player.springJoints) {
+                        ctx.beginPath(); ctx.arc(kneeX, kneeY, player.size*0.3, 0, Math.PI*2);
+                        ctx.fillStyle = "#00ffff"; ctx.shadowBlur = 10; ctx.shadowColor = "#00ffff"; ctx.fill(); ctx.shadowBlur = 0;
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(footX, footY);
+                    ctx.lineTo(footX + Math.cos(lAngle)*player.size*0.8, footY + Math.sin(lAngle)*player.size*0.8);
+                    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = player.size*0.15; ctx.stroke();
+                };
+
+                drawLeg(1, 0);
+                drawLeg(-1, 0);
+                drawLeg(1, 1);
+                drawLeg(-1, 1);
+            }
+
+            if (player.appendage === "fins") {
+                const drawFin = (sideMult) => {
+                    let fAngle = aimAngle + (Math.PI/2) * sideMult;
+                    let base1X = player.x + Math.cos(aimAngle - 0.5 * sideMult) * player.size * 0.8;
+                    let base1Y = player.y + Math.sin(aimAngle - 0.5 * sideMult) * player.size * 0.8;
+                    let base2X = player.x + Math.cos(aimAngle + 0.8 * sideMult) * player.size * 0.8;
+                    let base2Y = player.y + Math.sin(aimAngle + 0.8 * sideMult) * player.size * 0.8;
+
+                    let tipX = player.x + Math.cos(fAngle - 0.4*sideMult) * player.size * 3.0;
+                    let tipY = player.y + Math.sin(fAngle - 0.4*sideMult) * player.size * 3.0;
+
+                    ctx.beginPath();
+                    ctx.moveTo(base1X, base1Y);
+                    ctx.quadraticCurveTo(tipX + Math.cos(aimAngle)*player.size, tipY + Math.sin(aimAngle)*player.size, tipX, tipY);
+                    ctx.quadraticCurveTo(player.x + Math.cos(fAngle + 0.5*sideMult)*player.size*2.0, player.y + Math.sin(fAngle + 0.5*sideMult)*player.size*2.0, base2X, base2Y);
+
+                    let finGrad = ctx.createLinearGradient(player.x, player.y, tipX, tipY);
+                    finGrad.addColorStop(0, adjustColor(player.color, -20));
+                    finGrad.addColorStop(1, player.razorDorsal ? "#ffffff" : adjustColor(player.color, 40));
+                    ctx.fillStyle = finGrad;
+                    ctx.fill();
+
+                    if (player.razorDorsal) {
+                        ctx.shadowBlur = 15; ctx.shadowColor = "#ffffff";
+                        ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 3/cameraZoom; ctx.stroke();
+                        ctx.shadowBlur = 0;
+                    } else {
+                        ctx.strokeStyle = "rgba(255,255,255,0.3)";
+                        ctx.lineWidth = 2/cameraZoom; ctx.stroke();
+                    }
+
+                    for(let r=0; r<4; r++) {
+                        ctx.beginPath(); ctx.moveTo((base1X+base2X)/2, (base1Y+base2Y)/2);
+                        ctx.lineTo(tipX - Math.cos(aimAngle)*player.size*r*0.3, tipY - Math.sin(aimAngle)*player.size*r*0.3);
+                        ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 2/cameraZoom; ctx.stroke();
+                    }
+                };
+
+                drawFin(1);
+                drawFin(-1);
+            }
+
+            if (player.crabTraits > 0) {
+                ctx.lineCap = "round";
+                ctx.lineJoin = "round";
+                for(let i=0; i<3; i++) {
+                    let offset = 1.0 + i*0.5;
+                    let lSize = player.size + 20;
+
+                    ctx.strokeStyle = "rgba(0,0,0,0.5)";
+                    ctx.lineWidth = 8 / cameraZoom;
+                    ctx.beginPath();
+                    ctx.moveTo(player.x, player.y);
+                    ctx.lineTo(player.x + Math.cos(aimAngle + offset)*(lSize + Math.sin(time*10)*5), player.y + Math.sin(aimAngle + offset)*(lSize + Math.sin(time*10)*5));
+                    ctx.moveTo(player.x, player.y);
+                    ctx.lineTo(player.x + Math.cos(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5), player.y + Math.sin(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5));
+                    ctx.stroke();
+
+                    ctx.strokeStyle = adjustColor(player.color, 20);
+                    ctx.lineWidth = 6 / cameraZoom;
+                    ctx.beginPath();
+                    ctx.moveTo(player.x, player.y);
+                    ctx.lineTo(player.x + Math.cos(aimAngle + offset)*(lSize + Math.sin(time*10)*5), player.y + Math.sin(aimAngle + offset)*(lSize + Math.sin(time*10)*5));
+                    ctx.moveTo(player.x, player.y);
+                    ctx.lineTo(player.x + Math.cos(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5), player.y + Math.sin(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5));
+                    ctx.stroke();
+                }
+            }
+
+            if (player.pincers) {
+                let snapAnim = player.pincerCooldown > 40 ? 0.4 : 0;
+                let cSize = player.size + 15;
+                let cWidth = 20 / cameraZoom;
+
+                ctx.fillStyle = "rgba(0,0,0,0.4)";
+                ctx.beginPath(); ctx.arc(player.x + Math.cos(aimAngle - 0.5)*cSize + 5, player.y + Math.sin(aimAngle - 0.5)*cSize + 5, cWidth, aimAngle - 1.5 - snapAnim, aimAngle + 0.5 + snapAnim); ctx.fill();
+                ctx.beginPath(); ctx.arc(player.x + Math.cos(aimAngle + 0.5)*cSize + 5, player.y + Math.sin(aimAngle + 0.5)*cSize + 5, cWidth, aimAngle - 0.5 - snapAnim, aimAngle + 1.5 + snapAnim); ctx.fill();
+
+                let clawGrad = ctx.createRadialGradient(player.x, player.y, player.size, player.x + Math.cos(aimAngle)*cSize, player.y + Math.sin(aimAngle)*cSize, cWidth*2);
+                clawGrad.addColorStop(0, "#aa2211");
+                clawGrad.addColorStop(1, "#ff5533");
+                ctx.fillStyle = clawGrad;
+
+                ctx.beginPath();
+                ctx.arc(player.x + Math.cos(aimAngle - 0.5)*cSize, player.y + Math.sin(aimAngle - 0.5)*cSize, cWidth, aimAngle - 1.5 - snapAnim, aimAngle + 0.5 + snapAnim);
+                ctx.fill();
+                ctx.strokeStyle = "#ffaaaa";
+                ctx.lineWidth = 2 / cameraZoom;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(player.x + Math.cos(aimAngle + 0.5)*cSize, player.y + Math.sin(aimAngle + 0.5)*cSize, cWidth, aimAngle - 0.5 - snapAnim, aimAngle + 1.5 + snapAnim);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+
+            if (player.appendage === "tentacles") {
+                const drawTentacle = (angleOffset, lengthMult) => {
+                    let tAngle = aimAngle + angleOffset;
+                    let tLen = player.size * 3 * lengthMult;
+                    let segments = 8;
+                    ctx.beginPath();
+                    ctx.moveTo(player.x + Math.cos(tAngle)*player.size*0.5, player.y + Math.sin(tAngle)*player.size*0.5);
+                    for(let s=1; s<=segments; s++) {
+                        let segRatio = s / segments;
+                        let wobble = Math.sin(time*5 + s + angleOffset*5) * player.size * 0.8;
+                        let px = player.x + Math.cos(tAngle)*player.size*0.5 + Math.cos(tAngle)*tLen*segRatio + Math.cos(tAngle + Math.PI/2)*wobble;
+                        let py = player.y + Math.sin(tAngle)*player.size*0.5 + Math.sin(tAngle)*tLen*segRatio + Math.sin(tAngle + Math.PI/2)*wobble;
+                        ctx.lineTo(px, py);
+                    }
+                    ctx.strokeStyle = player.color;
+                    ctx.lineWidth = player.size * 0.6;
+                    ctx.lineCap = "round";
+                    ctx.stroke();
+
+                    ctx.strokeStyle = "#4400aa";
+                    ctx.lineWidth = player.size * 0.2;
+                    ctx.stroke();
+                };
+
+                drawTentacle(0.5, 1.0);
+                drawTentacle(-0.5, 1.0);
+                drawTentacle(1.2, 0.7);
+                drawTentacle(-1.2, 0.7);
+                drawTentacle(2.0, 0.5);
+                drawTentacle(-2.0, 0.5);
+            }
+
+            if (player.appendage === "spiderlegs") {
+                const drawSpiderLeg = (angleOffset, phase) => {
+                    let lAngle = aimAngle + angleOffset;
+                    let walk = Math.sin(time*15 + phase) * 0.6;
+                    lAngle += walk;
+
+                    let jointX = player.x + Math.cos(lAngle)*player.size*1.8;
+                    let jointY = player.y + Math.sin(lAngle)*player.size*1.8;
+
+                    let tipX = jointX + Math.cos(lAngle + (angleOffset > 0 ? 1 : -1))*player.size*2.0;
+                    let tipY = jointY + Math.sin(lAngle + (angleOffset > 0 ? 1 : -1))*player.size*2.0;
+
+                    ctx.beginPath();
+                    ctx.moveTo(player.x + Math.cos(aimAngle+angleOffset)*player.size*0.8, player.y + Math.sin(aimAngle+angleOffset)*player.size*0.8);
+                    ctx.lineTo(jointX, jointY);
+                    ctx.lineTo(tipX, tipY);
+                    ctx.strokeStyle = "#222";
+                    ctx.lineWidth = player.size * 0.4;
+                    ctx.lineJoin = "round";
+                    ctx.stroke();
+
+                    ctx.strokeStyle = player.color;
+                    ctx.lineWidth = player.size * 0.1;
+                    ctx.stroke();
+                };
+
+                drawSpiderLeg(0.5, 0); drawSpiderLeg(-0.5, 0);
+                drawSpiderLeg(1.0, Math.PI); drawSpiderLeg(-1.0, Math.PI);
+                drawSpiderLeg(1.5, 0); drawSpiderLeg(-1.5, 0);
+                drawSpiderLeg(2.0, Math.PI); drawSpiderLeg(-2.0, Math.PI);
+            }
