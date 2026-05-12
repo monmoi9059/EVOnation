@@ -69,7 +69,7 @@
             display: flex;
             flex-direction: column;
         }
-        .btn:hover { 
+        .btn:hover, .btn.selected {
             background: #00ffcc; 
             color: #000; 
             transform: translateY(-5px);
@@ -114,10 +114,11 @@
     </div>
 
     <div id="controls">
-        WASD / Arrows to Move<br>
-        <span id="dashHint" style="display:none; color: #ffcc00;"><br>SPACE / SHIFT to Dash</span>
-        <span id="shootHint" style="display:none; color: #00ffcc;"><br>LEFT CLICK to Shoot Venom</span>
-        <span id="shockHint" style="display:none; color: #cc00ff;"><br>RIGHT CLICK for Shockwave</span>
+        WASD / Arrows / L-Stick to Move<br>
+        R-Stick to Aim<br>
+        <span id="dashHint" style="display:none; color: #ffcc00;"><br>SPACE / SHIFT (LT/RT) to Dash</span>
+        <span id="shootHint" style="display:none; color: #00ffcc;"><br>LEFT CLICK (RB/R2) to Shoot Venom</span>
+        <span id="shockHint" style="display:none; color: #cc00ff;"><br>RIGHT CLICK (LB/L2) for Shockwave</span>
     </div>
 
     <div id="overlay">
@@ -400,7 +401,7 @@
 
         // Input Setup
         let keys = {};
-        let mouse = { x: canvas.width/2, y: canvas.height/2, isDown: false, rightDown: false, worldX: 0, worldY: 0 };
+        let mouse = { x: canvas.width/2, y: canvas.height/2, isDown: false, rightDown: false, worldX: 0, worldY: 0, isGamepadAiming: false, gamepadAimAngle: 0 };
         window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
         window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
         window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
@@ -815,6 +816,61 @@
             choicesDiv.innerHTML = '<div class="btn" onclick="location.reload()">Reincarnate (Restart)</div>';
         }
 
+        let selectedBtnIndex = 0;
+        let gpUIPressed = false;
+
+        function updateUIWithGamepad() {
+            if (state !== "evolving" && state !== "dead") return;
+
+            let gp = navigator.getGamepads()[0];
+            if (!gp) return;
+
+            let choicesDiv = document.getElementById('choices');
+            let btns = Array.from(choicesDiv.getElementsByClassName('btn'));
+            if (btns.length === 0) return;
+
+            let gpAxisX = gp.axes[0];
+            let gpAxisY = gp.axes[1];
+            let dpadUp = gp.buttons[12] && gp.buttons[12].pressed;
+            let dpadDown = gp.buttons[13] && gp.buttons[13].pressed;
+            let dpadLeft = gp.buttons[14] && gp.buttons[14].pressed;
+            let dpadRight = gp.buttons[15] && gp.buttons[15].pressed;
+
+            let moveLeft = dpadLeft || gpAxisX < -0.5;
+            let moveRight = dpadRight || gpAxisX > 0.5;
+            let moveUp = dpadUp || gpAxisY < -0.5;
+            let moveDown = dpadDown || gpAxisY > 0.5;
+
+            if (moveLeft || moveRight || moveUp || moveDown) {
+                if (!gpUIPressed) {
+                    if (moveLeft || moveUp) {
+                        selectedBtnIndex = (selectedBtnIndex - 1 + btns.length) % btns.length;
+                    } else if (moveRight || moveDown) {
+                        selectedBtnIndex = (selectedBtnIndex + 1) % btns.length;
+                    }
+                    gpUIPressed = true;
+                }
+            } else {
+                gpUIPressed = false;
+            }
+
+            btns.forEach((btn, index) => {
+                if (index === selectedBtnIndex) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+
+            // A or X button
+            if ((gp.buttons[0] && gp.buttons[0].pressed) || (gp.buttons[2] && gp.buttons[2].pressed)) {
+                if (!gpUIPressed) {
+                    btns[selectedBtnIndex].click();
+                    gpUIPressed = true;
+                }
+            }
+        }
+
         function update() {
             if (state !== "playing") return;
             time += 0.05;
@@ -843,6 +899,35 @@
             mouse.worldX = (mouse.x - canvas.width / 2) / cameraZoom + player.x;
             mouse.worldY = (mouse.y - canvas.height / 2) / cameraZoom + player.y;
 
+            // Gamepad polling
+            let gpDash = false;
+            let gpShoot = false;
+            let gpShock = false;
+            let gpMoveX = 0;
+            let gpMoveY = 0;
+
+            let gp = navigator.getGamepads()[0];
+            if (gp) {
+                let gpDeadzone = 0.2;
+
+                // Left Stick Movement
+                if (Math.abs(gp.axes[0]) > gpDeadzone) gpMoveX = gp.axes[0];
+                if (Math.abs(gp.axes[1]) > gpDeadzone) gpMoveY = gp.axes[1];
+
+                // Right Stick Aiming
+                if (Math.abs(gp.axes[2]) > gpDeadzone || Math.abs(gp.axes[3]) > gpDeadzone) {
+                    mouse.isGamepadAiming = true;
+                    mouse.gamepadAimAngle = Math.atan2(gp.axes[3], gp.axes[2]);
+                } else {
+                    mouse.isGamepadAiming = false;
+                }
+
+                // Triggers and Bumpers
+                gpDash = (gp.buttons[6] && gp.buttons[6].pressed) || (gp.buttons[7] && gp.buttons[7].pressed);
+                gpShoot = gp.buttons[5] && gp.buttons[5].pressed; // RB
+                gpShock = gp.buttons[4] && gp.buttons[4].pressed; // LB
+            }
+
             // Player Movement
             let moved = false;
             let currentSpeed = player.speed + player.speedBoost;
@@ -854,10 +939,16 @@
                 if (player.jawBoost % 5 === 0) spawnParticles(player.x, player.y, "#ff3333", 1);
             }
 
-            if (keys['w'] || keys['arrowup']) { player.y -= currentSpeed; moved = true; }
-            if (keys['s'] || keys['arrowdown']) { player.y += currentSpeed; moved = true; }
-            if (keys['a'] || keys['arrowleft']) { player.x -= currentSpeed; moved = true; }
-            if (keys['d'] || keys['arrowright']) { player.x += currentSpeed; moved = true; }
+            if (gpMoveX !== 0 || gpMoveY !== 0) {
+                player.x += gpMoveX * currentSpeed;
+                player.y += gpMoveY * currentSpeed;
+                moved = true;
+            } else {
+                if (keys['w'] || keys['arrowup']) { player.y -= currentSpeed; moved = true; }
+                if (keys['s'] || keys['arrowdown']) { player.y += currentSpeed; moved = true; }
+                if (keys['a'] || keys['arrowleft']) { player.x -= currentSpeed; moved = true; }
+                if (keys['d'] || keys['arrowright']) { player.x += currentSpeed; moved = true; }
+            }
 
             if (!moved) {
                 player.roostTimer++;
@@ -871,7 +962,7 @@
                 player.invulnTimer = 5; 
             }
 
-            if (player.dashUnlocked && (keys[' '] || keys['shift']) && (player.stamina > 2 || isFrenzied) && moved) {
+            if (player.dashUnlocked && (keys[' '] || keys['shift'] || gpDash) && (player.stamina > 2 || isFrenzied) && moved) {
                 player.speedBoost = player.springJoints ? 8 : 4; 
                 if (!isFrenzied) player.stamina -= 1.5; 
                 
@@ -948,7 +1039,7 @@
             }
 
             if (player.pincers && player.pincerCooldown <= 0) {
-                let aimAngle = Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
+                let aimAngle = mouse.isGamepadAiming ? mouse.gamepadAimAngle : Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
                 let snapped = false;
                 for (let j = entities.length - 1; j >= 0; j--) {
                     let e = entities[j];
@@ -983,10 +1074,10 @@
             }
             if (player.pincerCooldown > 0) player.pincerCooldown--;
 
-            if (player.canShoot && mouse.isDown && player.shootCooldown <= 0 && (player.stamina >= 4 || isFrenzied)) {
+            if (player.canShoot && (mouse.isDown || gpShoot) && player.shootCooldown <= 0 && (player.stamina >= 4 || isFrenzied)) {
                 if (!isFrenzied) player.stamina -= 4;
                 player.shootCooldown = 15;
-                let angle = Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
+                let angle = mouse.isGamepadAiming ? mouse.gamepadAimAngle : Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
                 projectiles.push({
                     x: player.x + Math.cos(angle) * player.size, 
                     y: player.y + Math.sin(angle) * player.size,
@@ -1024,7 +1115,7 @@
             }
             if (player.shootCooldown > 0) player.shootCooldown--;
 
-            if (player.canShock && mouse.rightDown && player.shockCooldown <= 0 && player.stamina >= 35) {
+            if (player.canShock && (mouse.rightDown || gpShock) && player.shockCooldown <= 0 && player.stamina >= 35) {
                 player.stamina -= 35;
                 player.shockCooldown = 80;
                 let radius = player.size * 6;
@@ -2788,6 +2879,8 @@ if (player.doubleTail) {
             lastTime = timestamp;
             accumulator += dt;
             if (accumulator > 200) accumulator = 200;
+
+            updateUIWithGamepad();
 
             while (accumulator >= frameInterval) {
                 update();
