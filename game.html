@@ -780,7 +780,7 @@
                     else if(familyKey === 'mechanical') {fName="Mechanical"; fColor="#aaaaaa"}
                     else if(familyKey === 'astral') {fName="Astral"; fColor="#aaaaff"}
 
-                    picks.push({ ...mut, family: fName, color: fColor, applyTrait: () => { player.color = fColor; player[familyKey+"Traits"]++; mut.apply(); } });
+                    picks.push({ ...mut, family: fName, color: fColor, applyTrait: () => { player.color = fColor; if(familyKey==="crustacean") player.crabTraits++; else player[familyKey+"Traits"]++; mut.apply(); } });
                 });
 
             } else {
@@ -2104,7 +2104,7 @@ if (player.doubleTail) {
                 
                 const drawArm = (sideMult) => {
                     let aAngle = aimAngle + 0.6 * sideMult;
-                    let pt = getPlayerAttachPoint(player, aimAngle, (Math.PI/2 + 0.2) * sideMult + w * 0.5, player.size * -0.2);
+                    let pt = getPlayerAttachPoint(player, aimAngle, (Math.PI/2 + 0.2) * sideMult, player.size * -0.2);
                     let shoulderX = pt.x; let shoulderY = pt.y;
                     
                     let fistX = shoulderX + Math.cos(aimAngle + 0.2 * sideMult) * aSize;
