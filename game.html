@@ -363,7 +363,7 @@
             
             armor: 0, visionMod: 1.0, clones: 0, scavenger: false,
 
-            cilia: 0, mito: 0, chloro: 0, virusTraits: 0, insectTraits: 0, reptileTraits: 0, mammalTraits: 0, crabTraits: 0, pisceanTraits: 0, fungalTraits: 0, elementalTraits: 0, mechanicalTraits: 0, astralTraits: 0,
+            cilia: 0, mito: 0, chloro: 0, virusTraits: 0, insectTraits: 0, reptileTraits: 0, mammalTraits: 0, crabTraits: 0, pisceanTraits: 0, fungalTraits: 0, amphibianTraits: 0, echinodermTraits: 0, molluskTraits: 0,
 
             damageFlash: 0, poisonFlash: 0, invulnTimer: 0,
             
@@ -377,7 +377,7 @@
             jawsSerrated: false, jawsFrenzy: false,
             beakDrill: false, beakHook: false,
             baleenNet: false, baleenBlast: false,
-            bhEvent: false, bhHawk: false,
+            tsHyper: false, tsVortex: false,
             leechSwarm: false, leechTox: false,
             // Appendage Upgrades
             tentWhip: false, tentTox: false,
@@ -402,12 +402,12 @@
             mushroomCap: false, myceliumNetwork: false, toxicSpores: false, hyphaeTendrils: false, decayAura: false,
             puffball: false, fungalArmor: false, moldSpores: false,
 
-            flameBody: false, waterAura: false, earthSkin: false, airCurrents: false, lightningRod: false,
-            obsidianShards: false, frostArmor: false, magmaAura: false,
+            toxicSecretion: false, permeableSkin: false, vocalSac: false, webbedDigits: false, nictitatingMembrane: false,
+            poisonGlands: false, mucusCoating: false, aposematicColoring: false,
 
-            metalPlating: false, laserEye: false, thrusters: false, gearHeart: false, wireNerves: false, roboticJoints: false,
+            calcareousOssicles: false, tubeFeet: false, waterVascular: false, pedicellariae: false, radialSymmetry: false, mutableCollagen: false,
 
-            stardustTrail: false, nebulaAura: false, blackHoleMaw: false, solarFlare: false, cometTail: false, astralProjection: false,
+            mantleCavity: false, radula: false, siphonMaw: false, inkSac: false, chromatophores: false, jetPropulsion: false,
 
         };
 
@@ -530,8 +530,8 @@
             { id: "b_hook", name: "Hooked Beak", desc: "[Beak] Projectiles pull enemies toward you.", req: () => player.mouth === "beak" && !player.beakHook, apply: () => player.beakHook = true },
             { id: "bl_net", name: "Wide Net", desc: "[Baleen] Fire 5 jets instead of 3.", req: () => player.mouth === "baleen" && !player.baleenNet, apply: () => player.baleenNet = true },
             { id: "bl_blast", name: "Pressure Blast", desc: "[Baleen] Jets now stun enemies.", req: () => player.mouth === "baleen" && !player.baleenBlast, apply: () => player.baleenBlast = true },
-            { id: "bh_event", name: "Event Horizon", desc: "[Singularity] Projectiles are massive.", req: () => player.mouth === "blackhole" && !player.bhEvent, apply: () => player.bhEvent = true },
-            { id: "bh_hawk", name: "Hawking Radiation", desc: "[Singularity] Projectiles pull enemies towards the center.", req: () => player.mouth === "blackhole" && !player.bhHawk, apply: () => player.bhHawk = true },
+            { id: "ts_hyper", name: "Hyper-suction", desc: "[Siphon] Projectiles are massive.", req: () => player.mouth === "siphon" && !player.tsHyper, apply: () => player.tsHyper = true },
+            { id: "ts_vortex", name: "Vortex Currents", desc: "[Siphon] Projectiles pull enemies towards the center.", req: () => player.mouth === "siphon" && !player.tsVortex, apply: () => player.tsVortex = true },
             { id: "l_swarm", name: "Parasitic Swarm", desc: "[Leech] Fire 3 darts in a spread.", req: () => player.mouth === "leech" && !player.leechSwarm, apply: () => player.leechSwarm = true },
             { id: "l_tox", name: "Neurotoxin", desc: "[Leech] Darts stun enemies.", req: () => player.mouth === "leech" && !player.leechTox, apply: () => player.leechTox = true },
 
@@ -597,30 +597,30 @@
                 { name: "Fungal Armor", desc: "Armor +15%. Adds fungal plates.", apply: () => { player.armor += 0.15; player.fungalArmor = true; } },
                 { name: "Black Mold", desc: "Stamina regen increased. Black mold pattern.", apply: () => { player.stamina += 50; player.moldSpores = true; } }
             ],
-            elemental: [
-                { name: "Flame Body", desc: "Burns enemies you touch.", apply: () => { player.damage += 1.5; player.flameBody = true; } },
-                { name: "Aqua Aura", desc: "Regen +0.1. Covered in water.", apply: () => { player.regen += 0.1; player.waterAura = true; } },
-                { name: "Earth Skin", desc: "Armor +25%. Skin of rock.", apply: () => { player.armor += 0.25; player.earthSkin = true; } },
-                { name: "Wind Currents", desc: "Speed +3. Surrounded by air.", apply: () => { player.speed += 3; player.airCurrents = true; } },
-                { name: "Lightning Rod", desc: "Shock damage +5. Emits lightning.", apply: () => { player.damage += 2; player.lightningRod = true; } },
-                { name: "Obsidian Shards", desc: "Spikes +2.0. Sharp obsidian.", apply: () => { player.spikes += 2; player.obsidianShards = true; } },
-                { name: "Frost Armor", desc: "Armor +10%. Frost effect.", apply: () => { player.armor += 0.1; player.frostArmor = true; } },
-                { name: "Magma Aura", desc: "Damage over time. Magma effect.", apply: () => { player.damage += 1; player.magmaAura = true; } }
+            amphibian: [
+                { name: "Toxic Secretion", desc: "Poisonous skin burns enemies you touch.", apply: () => { player.damage += 1.5; player.toxicSecretion = true; } },
+                { name: "Permeable Skin", desc: "Regen +0.1. Rapidly absorbs water.", apply: () => { player.regen += 0.1; player.permeableSkin = true; } },
+                { name: "Vocal Sac", desc: "Shockwave massive. Croaking throat.", apply: () => { player.vocalSac = true; } },
+                { name: "Webbed Digits", desc: "Speed +3. Excellent in water.", apply: () => { player.speed += 3; player.webbedDigits = true; } },
+                { name: "Nictitating Membrane", desc: "Vision +20%. Extra eyelid.", apply: () => { player.visionMod *= 0.8; player.nictitatingMembrane = true; } },
+                { name: "Poison Glands", desc: "Spikes +2.0. Oozing poison.", apply: () => { player.spikes += 2; player.poisonGlands = true; } },
+                { name: "Mucus Coating", desc: "Armor +10%. Slippery mucus.", apply: () => { player.armor += 0.1; player.mucusCoating = true; } },
+                { name: "Aposematic Coloring", desc: "Damage over time. Warning colors.", apply: () => { player.damage += 1; player.aposematicColoring = true; } }
             ],
-            mechanical: [
-                { name: "Steel Plating", desc: "Armor +30%. Metal plates.", apply: () => { player.armor += 0.3; player.metalPlating = true; } },
-                { name: "Laser Eye", desc: "Shoots piercing lasers.", apply: () => { player.piercing = true; player.laserEye = true; } },
-                { name: "Jet Thrusters", desc: "Dash is massive. Adds thrusters.", apply: () => { player.springJoints = true; player.thrusters = true; } },
-                { name: "Clockwork Heart", desc: "Max Stamina +200. Exposed gears.", apply: () => { player.maxStamina += 200; player.gearHeart = true; } },
-                { name: "Synthetic Nerves", desc: "Abilities recharge fast.", apply: () => { player.fourArmed = true; player.wireNerves = true; } },
-                { name: "Robotic Joints", desc: "Speed +2. Mechanical limbs.", apply: () => { player.speed += 2; player.roboticJoints = true; } }
+            echinoderm: [
+                { name: "Calcareous Ossicles", desc: "Armor +30%. Bony plates.", apply: () => { player.armor += 0.3; player.calcareousOssicles = true; } },
+                { name: "Tube Feet", desc: "Dash deals heavy damage.", apply: () => { player.scuttleDamage = true; player.tubeFeet = true; } },
+                { name: "Water Vascular System", desc: "Dash is massive. Hydraulic pressure.", apply: () => { player.springJoints = true; player.waterVascular = true; } },
+                { name: "Pedicellariae", desc: "Max Stamina +200. Tiny pincers.", apply: () => { player.maxStamina += 200; player.pedicellariae = true; } },
+                { name: "Radial Symmetry", desc: "Abilities recharge fast.", apply: () => { player.fourArmed = true; player.radialSymmetry = true; } },
+                { name: "Mutable Collagen", desc: "Speed +2. Flexible tissue.", apply: () => { player.speed += 2; player.mutableCollagen = true; } }
             ],
-            astral: [
-                { name: "Stardust Trail", desc: "Leaves glowing trail.", apply: () => { player.speed += 1; player.stardustTrail = true; } },
-                { name: "Nebula Aura", desc: "Dodge chance +20%.", apply: () => { player.blockChance += 0.2; player.nebulaAura = true; } },
-                { name: "Solar Flare", desc: "Shockwave massive. Sun aura.", apply: () => { player.solarFlare = true; } },
-                { name: "Comet Tail", desc: "Dash deals heavy damage.", apply: () => { player.scuttleDamage = true; player.cometTail = true; } },
-                { name: "Astral Projection", desc: "Spawns 2 clones. Ghostly aura.", apply: () => { player.clones += 2; player.astralProjection = true; } }
+            mollusk: [
+                { name: "Mantle Cavity", desc: "Speed +1. Pumps water.", apply: () => { player.speed += 1; player.mantleCavity = true; } },
+                { name: "Radula", desc: "Shoots piercing venom.", apply: () => { player.piercing = true; player.radula = true; } },
+                { name: "Ink Sac", desc: "Shock damage +5. Sprays ink.", apply: () => { player.damage += 2; player.inkSac = true; } },
+                { name: "Chromatophores", desc: "Dodge chance +20%. Camouflage.", apply: () => { player.blockChance += 0.2; player.chromatophores = true; } },
+                { name: "Jet Propulsion", desc: "Spawns 2 clones. Swift jetting.", apply: () => { player.clones += 2; player.jetPropulsion = true; } }
             ]
         };
 
@@ -727,7 +727,7 @@
                     { name: "Crushing Jaws", family: "Carnivore", desc: "Bone-crushing teeth. +Base Damage. Killing enemies grants a brief speed burst.", color: "#ff3333", apply: () => { player.damage += 2.0; player.mouth = "jaws"; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Jaws Chomp"; hint.style.display = 'inline'; } },
                     { name: "Piercing Beak", family: "Avian", desc: "A sharp beak that cracks shells. Your attacks ignore armor, dealing bonus damage to armored foes.", color: "#ffcc00", apply: () => { player.armorPiercing = true; player.mouth = "beak"; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Beak Peck"; hint.style.display = 'inline'; } },
                     { name: "Filter Baleen", family: "Filter Feeder", desc: "Massive bristles that passively vacuum nearby food chunks and golden cells towards you.", color: "#88ccff", apply: () => { player.grabRange += 200; player.mouth = "baleen"; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Water Jet"; hint.style.display = 'inline'; } },
-                    { name: "Singularity Maw", family: "Cosmic", desc: "A void mouth that vacuums everything.", color: "#8800ff", apply: () => { player.grabRange += 300; player.mouth = "blackhole"; player.blackHoleMaw = true; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Void Blast"; hint.style.display = 'inline'; } },
+                    { name: "Tubular Siphon", family: "Invertebrate", desc: "A muscular siphon that creates a powerful vacuum to inhale prey.", color: "#8800ff", apply: () => { player.grabRange += 300; player.mouth = "siphon"; player.siphonMaw = true; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Void Blast"; hint.style.display = 'inline'; } },
                     { name: "Parasitic Leech", family: "Parasite", desc: "A terrifying sucker mouth. Massive boost to passive Lifesteal and HP Regeneration.", color: "#aa22ff", apply: () => { player.lifesteal += 1.5; player.regen += 0.05; player.mouth = "leech"; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Siphon Dart"; hint.style.display = 'inline'; } }
                 ];
                 
@@ -761,7 +761,7 @@
                 document.getElementById('overlayTitle').style.color = "#ffcc00";
                 document.getElementById('overlaySub').innerText = "Choose a phylogenetic path! Your species develops a random trait based on your choice.";
                 
-                let allFamilies = ["virus", "insect", "reptile", "mammal", "crustacean", "piscean", "fungal", "elemental", "mechanical", "astral"];
+                let allFamilies = ["virus", "insect", "reptile", "mammal", "crustacean", "piscean", "fungal", "amphibian", "echinoderm", "mollusk"];
                 let chosenFamilies = allFamilies.sort(() => 0.5 - Math.random()).slice(0, 3);
                 
                 chosenFamilies.forEach(familyKey => {
@@ -776,9 +776,9 @@
                     else if(familyKey === 'crustacean') {fName="Crustacean"; fColor="#ff5533"}
                     else if(familyKey === 'piscean') {fName="Piscean"; fColor="#33aaff"}
                     else if(familyKey === 'fungal') {fName="Fungal"; fColor="#88aa66"}
-                    else if(familyKey === 'elemental') {fName="Elemental"; fColor="#ffaa00"}
-                    else if(familyKey === 'mechanical') {fName="Mechanical"; fColor="#aaaaaa"}
-                    else if(familyKey === 'astral') {fName="Astral"; fColor="#aaaaff"}
+                    else if(familyKey === 'amphibian') {fName="Amphibian"; fColor="#ffaa00"}
+                    else if(familyKey === 'echinoderm') {fName="Echinoderm"; fColor="#aaaaaa"}
+                    else if(familyKey === 'mollusk') {fName="Mollusk"; fColor="#aaaaff"}
 
                     picks.push({ ...mut, family: fName, color: fColor, applyTrait: () => { player.color = fColor; player[familyKey+"Traits"]++; mut.apply(); } });
                 });
@@ -1029,8 +1029,8 @@
             if (player.flamingTrail && player.isDashing > 0) {
                 particles.push({x: player.x, y: player.y, vx: 0, vy: 0, life: 1, color: "#ff4400", size: 4/cameraZoom});
             }
-            if (player.stardustTrail && moved) {
-                if(Math.random() < 0.3) particles.push({x: player.x, y: player.y, vx: (Math.random()-0.5), vy: (Math.random()-0.5), life: 1.5, color: "#ffffff", size: 2/cameraZoom});
+            if (player.jetPropulsion && player.isDashing > 0) {
+                if(Math.random() < 0.3) particles.push({x: player.x, y: player.y, vx: (Math.random()-0.5), vy: (Math.random()-0.5), life: 1.5, color: "#aaaaff", size: 3/cameraZoom});
             }
 
             let maxTail = player.appendage === "slithery" ? (player.elongation ? 50 : 25) : 12;
@@ -1162,12 +1162,12 @@
                         });
                     }
                 }
-                else if (player.mouth === "blackhole") {
+                else if (player.mouth === "siphon") {
                     player.shootCooldown = 60;
                     projectiles.push({
                         x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
                         vx: Math.cos(angle) * (6 + player.speed) * speedScale, vy: Math.sin(angle) * (6 + player.speed) * speedScale,
-                        life: 120, size: Math.max(10, player.size * (player.bhEvent ? 0.8 : 0.4)), color: "#8800ff", pierced: [], isVoid: true, isHook: player.bhHawk
+                        life: 120, size: Math.max(10, player.size * (player.tsHyper ? 0.8 : 0.4)), color: "#8800ff", pierced: [], isVoid: true, isHook: player.tsVortex
                     });
                 }
                 else if (player.mouth === "leech") {
@@ -2729,145 +2729,141 @@ if (player.doubleTail) {
                 }
             }
 
-            // Elemental
-            if (player.flameBody) {
-                ctx.fillStyle = "rgba(255, 100, 0, 0.6)";
+            // Amphibian
+            if (player.toxicSecretion) {
+                ctx.fillStyle = "rgba(0, 255, 0, 0.6)";
                 for(let i=0; i<8; i++) {
                     let a = (i/8)*Math.PI*2 + time;
-                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a-0.2)*r*0.9, torsoOffsetY + Math.sin(a-0.2)*r*0.9);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.6, torsoOffsetY + Math.sin(a)*r*1.6);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.2)*r*0.9, torsoOffsetY + Math.sin(a+0.2)*r*0.9); ctx.fill();
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*r*0.8, torsoOffsetY + Math.sin(a)*r*0.8, r*0.2, 0, Math.PI*2); ctx.fill();
                 }
             }
-            if (player.waterAura) {
-                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.3, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.3);
-                grad.addColorStop(0, "rgba(0, 100, 255, 0.5)"); grad.addColorStop(1, "rgba(0, 100, 255, 0)");
+            if (player.permeableSkin) {
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.1, 0, Math.PI*2);
+                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.1);
+                grad.addColorStop(0, "rgba(0, 150, 255, 0.5)"); grad.addColorStop(1, "rgba(0, 150, 255, 0)");
                 ctx.fillStyle = grad; ctx.fill();
             }
-            if (player.earthSkin) {
-                ctx.fillStyle = "#554433"; ctx.strokeStyle = "#332211"; ctx.lineWidth = 2/cameraZoom;
-                for(let i=0; i<8; i++) {
-                    let a = (i/8)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a-0.3)*r*0.8, torsoOffsetY + Math.sin(a-0.3)*r*0.8);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.0, torsoOffsetY + Math.sin(a)*r*1.0);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.3)*r*0.8, torsoOffsetY + Math.sin(a+0.3)*r*0.8); ctx.fill(); ctx.stroke();
-                }
+            if (player.vocalSac) {
+                ctx.fillStyle = "rgba(200, 255, 100, 0.5)";
+                let sacSize = r*0.5 + Math.sin(time*5)*r*0.2;
+                ctx.beginPath(); ctx.arc(headOffsetX, headOffsetY + r*0.6, sacSize, 0, Math.PI*2); ctx.fill();
             }
-            if (player.airCurrents) {
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"; ctx.lineWidth = 2/cameraZoom;
-                for(let i=0; i<3; i++) {
-                    let a = time*2 + (i/3)*Math.PI*2;
-                    ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*(1.2 + i*0.2), a, a + Math.PI); ctx.stroke();
-                }
-            }
-            if (player.lightningRod) {
-                ctx.strokeStyle = "#ffff00"; ctx.lineWidth = 2/cameraZoom;
+            if (player.webbedDigits) {
+                ctx.fillStyle = player.color; ctx.globalAlpha = 0.5;
                 for(let i=0; i<4; i++) {
-                    let a = Math.random()*Math.PI*2;
+                    let a = (i/4)*Math.PI*2 + Math.PI/4;
                     ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r, torsoOffsetY + Math.sin(a)*r);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.3 + (Math.random()-0.5)*r*0.5, torsoOffsetY + Math.sin(a)*r*1.3 + (Math.random()-0.5)*r*0.5);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.8, torsoOffsetY + Math.sin(a)*r*1.8); ctx.stroke();
+                    ctx.lineTo(torsoOffsetX + Math.cos(a-0.2)*r*1.5, torsoOffsetY + Math.sin(a-0.2)*r*1.5);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.2)*r*1.5, torsoOffsetY + Math.sin(a+0.2)*r*1.5); ctx.fill();
+                }
+                ctx.globalAlpha = 1.0;
+            }
+            if (player.nictitatingMembrane) {
+                ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+                ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY - r*0.3, r*0.2, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY + r*0.3, r*0.2, 0, Math.PI*2); ctx.fill();
+            }
+            if (player.poisonGlands) {
+                ctx.fillStyle = "#8800ff";
+                for(let i=0; i<5; i++) {
+                    let a = (i/5)*Math.PI*2;
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*r*0.9, torsoOffsetY + Math.sin(a)*r*0.9, r*0.15, 0, Math.PI*2); ctx.fill();
                 }
             }
-            if (player.obsidianShards) {
-                ctx.fillStyle = "#111111"; ctx.strokeStyle = "#333333"; ctx.lineWidth = 1/cameraZoom;
-                for(let i=0; i<6; i++) {
-                    let a = (i/6)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a-0.1)*r, torsoOffsetY + Math.sin(a-0.1)*r);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.8, torsoOffsetY + Math.sin(a)*r*1.8);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.1)*r, torsoOffsetY + Math.sin(a+0.1)*r); ctx.fill(); ctx.stroke();
+            if (player.mucusCoating) {
+                ctx.strokeStyle = "rgba(200, 255, 200, 0.6)"; ctx.lineWidth = 3/cameraZoom;
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.05, 0, Math.PI*2); ctx.stroke();
+            }
+            if (player.aposematicColoring) {
+                ctx.strokeStyle = "#ff0000"; ctx.lineWidth = 2/cameraZoom;
+                for(let i=0; i<3; i++) {
+                    ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*(0.4 + i*0.2), 0, Math.PI*2); ctx.stroke();
                 }
-            }
-            if (player.frostArmor) {
-                ctx.fillStyle = "rgba(200, 255, 255, 0.4)"; ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1/cameraZoom;
-                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.1, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-            }
-            if (player.magmaAura) {
-                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.4, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.4);
-                grad.addColorStop(0, "rgba(255, 50, 0, 0.5)"); grad.addColorStop(1, "rgba(255, 50, 0, 0)");
-                ctx.fillStyle = grad; ctx.fill();
             }
 
-            // Mechanical
-            if (player.metalPlating) {
-                ctx.fillStyle = "#888888"; ctx.strokeStyle = "#222222"; ctx.lineWidth = 2/cameraZoom;
-                ctx.beginPath(); ctx.moveTo(torsoOffsetX - r*0.6, torsoOffsetY - r*0.6); ctx.lineTo(torsoOffsetX + r*0.6, torsoOffsetY - r*0.6); ctx.lineTo(torsoOffsetX + r*0.6, torsoOffsetY + r*0.6); ctx.lineTo(torsoOffsetX - r*0.6, torsoOffsetY + r*0.6); ctx.closePath(); ctx.fill(); ctx.stroke();
-            }
-            if (player.laserEye) {
-                ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY, r*0.3, 0, Math.PI*2); ctx.fillStyle = "#222"; ctx.fill();
-                ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY, r*0.15, 0, Math.PI*2); ctx.fillStyle = "#ff0000"; ctx.shadowBlur = 10; ctx.shadowColor = "#ff0000"; ctx.fill(); ctx.shadowBlur = 0;
-            }
-            if (player.thrusters) {
-                ctx.fillStyle = "#555"; ctx.beginPath(); ctx.moveTo(torsoOffsetX - r*0.8, torsoOffsetY - r*0.3); ctx.lineTo(torsoOffsetX - r*1.2, torsoOffsetY - r*0.4); ctx.lineTo(torsoOffsetX - r*1.2, torsoOffsetY + r*0.4); ctx.lineTo(torsoOffsetX - r*0.8, torsoOffsetY + r*0.3); ctx.fill();
-                if (player.isDashing > 0) {
-                    ctx.fillStyle = "#00ffff"; ctx.beginPath(); ctx.moveTo(torsoOffsetX - r*1.2, torsoOffsetY - r*0.3); ctx.lineTo(torsoOffsetX - r*2.0, torsoOffsetY); ctx.lineTo(torsoOffsetX - r*1.2, torsoOffsetY + r*0.3); ctx.fill();
-                }
-            }
-            if (player.gearHeart) {
-                ctx.strokeStyle = "#aa8800"; ctx.lineWidth = 3/cameraZoom;
-                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*0.3, 0, Math.PI*2); ctx.stroke();
-                for(let i=0; i<6; i++) {
-                    let a = (i/6)*Math.PI*2 + time;
-                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r*0.3, torsoOffsetY + Math.sin(a)*r*0.3); ctx.lineTo(torsoOffsetX + Math.cos(a)*r*0.4, torsoOffsetY + Math.sin(a)*r*0.4); ctx.stroke();
-                }
-            }
-            if (player.wireNerves) {
-                ctx.strokeStyle = "#00ffff"; ctx.lineWidth = 1/cameraZoom;
-                for(let i=0; i<8; i++) {
-                    let a = (i/8)*Math.PI*2;
-                    ctx.beginPath(); ctx.moveTo(torsoOffsetX, torsoOffsetY); ctx.lineTo(torsoOffsetX + Math.cos(a)*r*0.9, torsoOffsetY + Math.sin(a)*r*0.9); ctx.stroke();
-                }
-            }
-            if (player.roboticJoints) {
-                ctx.fillStyle = "#333";
-                ctx.beginPath(); ctx.arc(torsoOffsetX + r*0.8, torsoOffsetY + r*0.8, r*0.15, 0, Math.PI*2); ctx.fill();
-                ctx.beginPath(); ctx.arc(torsoOffsetX + r*0.8, torsoOffsetY - r*0.8, r*0.15, 0, Math.PI*2); ctx.fill();
-            }
-
-            // Astral
-            if (player.stardustTrail) {
-                // Drawn via global particles, but we can add a visual body effect
-                ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            // Echinoderm
+            if (player.calcareousOssicles) {
+                ctx.fillStyle = "#ddddcc"; ctx.strokeStyle = "#888877"; ctx.lineWidth = 1/cameraZoom;
                 for(let i=0; i<10; i++) {
-                    let a = Math.random()*Math.PI*2;
-                    let dist = r + Math.random()*r*0.5;
-                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*dist, torsoOffsetY + Math.sin(a)*dist, 1.5/cameraZoom, 0, Math.PI*2); ctx.fill();
+                    let a = (i/10)*Math.PI*2;
+                    ctx.beginPath(); ctx.arc(torsoOffsetX + Math.cos(a)*r*0.8, torsoOffsetY + Math.sin(a)*r*0.8, r*0.2, 0, Math.PI*2); ctx.fill(); ctx.stroke();
                 }
             }
-            if (player.nebulaAura) {
-                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.5, 0, Math.PI*2);
-                let grad = ctx.createRadialGradient(torsoOffsetX, torsoOffsetY, r, torsoOffsetX, torsoOffsetY, r*1.5);
-                grad.addColorStop(0, "rgba(200, 0, 255, 0.4)"); grad.addColorStop(1, "rgba(0, 0, 255, 0)");
-                ctx.fillStyle = grad; ctx.fill();
-            }
-            if (player.solarFlare) {
-                ctx.fillStyle = "rgba(255, 200, 0, 0.5)";
+            if (player.tubeFeet) {
+                ctx.strokeStyle = "#ffaaaa"; ctx.lineWidth = 2/cameraZoom;
                 for(let i=0; i<12; i++) {
-                    let a = (i/12)*Math.PI*2 + time*2;
-                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a-0.1)*r, torsoOffsetY + Math.sin(a-0.1)*r);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.4 + Math.sin(time*10+i)*r*0.2, torsoOffsetY + Math.sin(a)*r*1.4 + Math.sin(time*10+i)*r*0.2);
-                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.1)*r, torsoOffsetY + Math.sin(a+0.1)*r); ctx.fill();
+                    let a = (i/12)*Math.PI*2;
+                    let ext = r*1.2 + Math.sin(time*10 + i)*r*0.1;
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r, torsoOffsetY + Math.sin(a)*r);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a)*ext, torsoOffsetY + Math.sin(a)*ext); ctx.stroke();
                 }
             }
-            if (player.cometTail) {
-                let grad = ctx.createLinearGradient(torsoOffsetX, torsoOffsetY, torsoOffsetX - r*2, torsoOffsetY);
-                grad.addColorStop(0, "rgba(0, 255, 255, 0.8)"); grad.addColorStop(1, "rgba(0, 255, 255, 0)");
-                ctx.beginPath(); ctx.moveTo(torsoOffsetX, torsoOffsetY - r*0.5); ctx.lineTo(torsoOffsetX - r*2, torsoOffsetY); ctx.lineTo(torsoOffsetX, torsoOffsetY + r*0.5); ctx.fillStyle = grad; ctx.fill();
+            if (player.waterVascular) {
+                ctx.strokeStyle = "rgba(0, 200, 255, 0.5)"; ctx.lineWidth = 2/cameraZoom;
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*0.6, 0, Math.PI*2); ctx.stroke();
+                for(let i=0; i<5; i++) {
+                    let a = (i/5)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX, torsoOffsetY); ctx.lineTo(torsoOffsetX + Math.cos(a)*r, torsoOffsetY + Math.sin(a)*r); ctx.stroke();
+                }
             }
-            if (player.astralProjection) {
-                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*1.2, 0, Math.PI*2);
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.5)"; ctx.lineWidth = 2/cameraZoom; ctx.stroke();
+            if (player.pedicellariae) {
+                ctx.fillStyle = "#aa5555";
+                for(let i=0; i<8; i++) {
+                    let a = (i/8)*Math.PI*2 + time*0.5;
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX + Math.cos(a)*r*1.05, torsoOffsetY + Math.sin(a)*r*1.05);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a-0.1)*r*1.2, torsoOffsetY + Math.sin(a-0.1)*r*1.2);
+                    ctx.lineTo(torsoOffsetX + Math.cos(a+0.1)*r*1.2, torsoOffsetY + Math.sin(a+0.1)*r*1.2); ctx.fill();
+                }
+            }
+            if (player.radialSymmetry) {
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.3)"; ctx.lineWidth = 1/cameraZoom;
+                for(let i=0; i<5; i++) {
+                    let a = (i/5)*Math.PI*2;
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX, torsoOffsetY); ctx.lineTo(torsoOffsetX + Math.cos(a)*r*1.5, torsoOffsetY + Math.sin(a)*r*1.5); ctx.stroke();
+                }
+            }
+            if (player.mutableCollagen) {
+                ctx.fillStyle = "rgba(200, 150, 150, 0.4)";
+                let deform = Math.sin(time*2)*r*0.1;
+                ctx.beginPath(); ctx.ellipse(torsoOffsetX, torsoOffsetY, r + deform, r - deform, aimAngle, 0, Math.PI*2); ctx.fill();
             }
 
-            // Mouths (Black Hole)
-            if (player.mouth === "blackhole") {
+            // Mollusk
+            if (player.mantleCavity) {
+                ctx.fillStyle = "rgba(100, 50, 50, 0.5)";
+                ctx.beginPath(); ctx.arc(torsoOffsetX - r*0.5, torsoOffsetY, r*0.6, 0, Math.PI*2); ctx.fill();
+            }
+            if (player.radula) {
+                ctx.fillStyle = "#fff";
+                ctx.beginPath(); ctx.arc(headOffsetX + r*0.8, headOffsetY, r*0.15, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#000"; ctx.fillRect(headOffsetX + r*0.7, headOffsetY - r*0.05, r*0.2, r*0.1);
+            }
+            if (player.inkSac) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                ctx.beginPath(); ctx.arc(torsoOffsetX - r*0.3, torsoOffsetY + r*0.3, r*0.3, 0, Math.PI*2); ctx.fill();
+            }
+            if (player.chromatophores) {
+                let shift = Math.sin(time*5)*100;
+                ctx.fillStyle = `rgba(${100+shift}, ${150-shift}, ${200}, 0.5)`;
+                ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r*0.9, 0, Math.PI*2); ctx.fill();
+            }
+            if (player.jetPropulsion) {
+                if (player.isDashing > 0) {
+                    ctx.fillStyle = "rgba(200, 200, 255, 0.8)";
+                    ctx.beginPath(); ctx.moveTo(torsoOffsetX - r, torsoOffsetY - r*0.3); ctx.lineTo(torsoOffsetX - r*2.0, torsoOffsetY); ctx.lineTo(torsoOffsetX - r, torsoOffsetY + r*0.3); ctx.fill();
+                }
+            }
+
+            // Mouths (Siphon)
+            if (player.mouth === "siphon") {
                 let mX = headOffsetX + r * (player.appendage ? 1.1 : 0.8);
-                ctx.beginPath(); ctx.arc(mX, headOffsetY, r*0.5, 0, Math.PI*2);
-                ctx.fillStyle = "#000000"; ctx.fill();
-                ctx.strokeStyle = "#aa00ff"; ctx.lineWidth = 4/cameraZoom; ctx.stroke();
-                ctx.shadowBlur = 15; ctx.shadowColor = "#aa00ff"; ctx.stroke(); ctx.shadowBlur = 0;
+                ctx.beginPath();
+                ctx.moveTo(headOffsetX, headOffsetY - r*0.2);
+                ctx.lineTo(mX + r*0.6, headOffsetY - r*0.1);
+                ctx.lineTo(mX + r*0.6, headOffsetY + r*0.1);
+                ctx.lineTo(headOffsetX, headOffsetY + r*0.2);
+                ctx.fillStyle = "#8800ff"; ctx.fill();
+                ctx.strokeStyle = "#5500aa"; ctx.lineWidth = 2/cameraZoom; ctx.stroke();
             }
 
             // Organelles
