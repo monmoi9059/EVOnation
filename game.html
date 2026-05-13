@@ -373,6 +373,17 @@
 
             wingGust: false, roostTimer: 0, haymaker: false, fourArmed: false, seismicStomp: false, spikedGreaves: false, constrict: false, elongation: false,
             
+            // Mouth Upgrades
+            jawsSerrated: false, jawsFrenzy: false,
+            beakDrill: false, beakHook: false,
+            baleenNet: false, baleenBlast: false,
+            bhEvent: false, bhHawk: false,
+            leechSwarm: false, leechTox: false,
+            // Appendage Upgrades
+            tentWhip: false, tentTox: false,
+            spidWebBig: false, spidLeap: false,
+            finSonar: false, finHydro: false,
+
             // New Limb Upgrades
             razorFeathers: false, vacuumPalms: false, springJoints: false, rattleTail: false, razorDorsal: false,
 
@@ -510,7 +521,27 @@
             { id: "s_rattle", name: "Rattle Mace", desc: "[Slithery] Your tail tip grows a heavy mace that crushes enemies it touches.", req: () => player.appendage === "slithery" && !player.rattleTail, apply: () => player.rattleTail = true },
 
             { id: "f_stream", name: "Torpedo Torso", desc: "[Fins] Double frenzy timer and gain massive speed.", req: () => player.appendage === "fins", apply: () => { player.speed += 2.0; } },
-            { id: "f_blade", name: "Razor Dorsal", desc: "[Fins] Dashing violently slices enemies you pass through.", req: () => player.appendage === "fins" && !player.razorDorsal, apply: () => { player.razorDorsal = true; player.scuttleDamage = true; } }
+            { id: "f_blade", name: "Razor Dorsal", desc: "[Fins] Dashing violently slices enemies you pass through.", req: () => player.appendage === "fins" && !player.razorDorsal, apply: () => { player.razorDorsal = true; player.scuttleDamage = true; } },
+
+            // Mouth Upgrades
+            { id: "j_serrated", name: "Serrated Teeth", desc: "[Jaws] Increases bite damage.", req: () => player.mouth === "jaws" && !player.jawsSerrated, apply: () => player.jawsSerrated = true },
+            { id: "j_frenzy", name: "Blood Frenzy", desc: "[Jaws] Killing enemies instantly resets your bite cooldown.", req: () => player.mouth === "jaws" && !player.jawsFrenzy, apply: () => player.jawsFrenzy = true },
+            { id: "b_drill", name: "Diamond Drill", desc: "[Beak] Projectiles move faster and pierce through multiple targets.", req: () => player.mouth === "beak" && !player.beakDrill, apply: () => player.beakDrill = true },
+            { id: "b_hook", name: "Hooked Beak", desc: "[Beak] Projectiles pull enemies toward you.", req: () => player.mouth === "beak" && !player.beakHook, apply: () => player.beakHook = true },
+            { id: "bl_net", name: "Wide Net", desc: "[Baleen] Fire 5 jets instead of 3.", req: () => player.mouth === "baleen" && !player.baleenNet, apply: () => player.baleenNet = true },
+            { id: "bl_blast", name: "Pressure Blast", desc: "[Baleen] Jets now stun enemies.", req: () => player.mouth === "baleen" && !player.baleenBlast, apply: () => player.baleenBlast = true },
+            { id: "bh_event", name: "Event Horizon", desc: "[Singularity] Projectiles are massive.", req: () => player.mouth === "blackhole" && !player.bhEvent, apply: () => player.bhEvent = true },
+            { id: "bh_hawk", name: "Hawking Radiation", desc: "[Singularity] Projectiles pull enemies towards the center.", req: () => player.mouth === "blackhole" && !player.bhHawk, apply: () => player.bhHawk = true },
+            { id: "l_swarm", name: "Parasitic Swarm", desc: "[Leech] Fire 3 darts in a spread.", req: () => player.mouth === "leech" && !player.leechSwarm, apply: () => player.leechSwarm = true },
+            { id: "l_tox", name: "Neurotoxin", desc: "[Leech] Darts stun enemies.", req: () => player.mouth === "leech" && !player.leechTox, apply: () => player.leechTox = true },
+
+            // Appendage Upgrades
+            { id: "t_whip", name: "Barbed Whip", desc: "[Tentacles] Shockwave fires 5 ink blobs instead of 3.", req: () => player.appendage === "tentacles" && !player.tentWhip, apply: () => player.tentWhip = true },
+            { id: "t_tox", name: "Toxic Ink", desc: "[Tentacles] Ink does more damage.", req: () => player.appendage === "tentacles" && !player.tentTox, apply: () => player.tentTox = true },
+            { id: "sp_web", name: "Giant Web", desc: "[Spider] Web projectile is massive.", req: () => player.appendage === "spiderlegs" && !player.spidWebBig, apply: () => player.spidWebBig = true },
+            { id: "sp_leap", name: "Hunting Leap", desc: "[Spider] Dash distance is dramatically increased.", req: () => player.appendage === "spiderlegs" && !player.spidLeap, apply: () => player.spidLeap = true },
+            { id: "f_sonar", name: "Echolocation", desc: "[Fins] Massive vision increase.", req: () => player.appendage === "fins" && !player.finSonar, apply: () => { player.visionMod *= 0.7; player.finSonar = true; } },
+            { id: "f_hydro", name: "Hydrodynamic", desc: "[Fins] Dash costs zero stamina.", req: () => player.appendage === "fins" && !player.finHydro, apply: () => player.finHydro = true }
         ];
 
         const phylogeneticMutations = {
@@ -965,8 +996,8 @@
             }
 
             if (player.dashUnlocked && (keys[' '] || keys['shift'] || gpDash) && (player.stamina > 2 || isFrenzied) && moved) {
-                player.speedBoost = player.springJoints ? 8 : 4; 
-                if (!isFrenzied) player.stamina -= 1.5; 
+                player.speedBoost = player.spidLeap ? 12 : (player.springJoints ? 8 : 4);
+                if (!isFrenzied && !player.finHydro) player.stamina -= 1.5;
                 
                 if (player.isDashing <= 0 && player.seismicStomp) {
                     shockwaves.push({ x: player.x, y: player.y, radius: player.size, maxRadius: player.size * 3.5, life: 0.8 });
@@ -1096,7 +1127,7 @@
                             if (angleDiff < 1.0) {
                                 let defenseMod = e.type === 'armored' ? 0.5 : 1.0;
                                 if (player.armorPiercing) defenseMod = e.type === 'armored' ? 1.5 : 1.0;
-                                e.size -= player.damage * 6 * defenseMod;
+                                e.size -= player.damage * (player.jawsSerrated ? 9 : 6) * defenseMod;
                                 spawnParticles(e.x, e.y, "#ff3333", 10);
                                 if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal * 3);
                                 hitAny = true;
@@ -1104,6 +1135,7 @@
                                     player.dna += e.isAlpha ? 9 : 3;
                                     e.markedForDeletion = true;
                                     player.jawBoost = 60;
+                                    if (player.jawsFrenzy) player.shootCooldown = 0;
                                 }
                             }
                         }
@@ -1114,18 +1146,19 @@
                     player.shootCooldown = 20;
                     projectiles.push({
                         x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
-                        vx: Math.cos(angle) * (20 + player.speed) * speedScale, vy: Math.sin(angle) * (20 + player.speed) * speedScale,
+                        vx: Math.cos(angle) * ((player.beakDrill ? 30 : 20) + player.speed) * speedScale, vy: Math.sin(angle) * ((player.beakDrill ? 30 : 20) + player.speed) * speedScale,
                         life: 30, size: Math.max(4, player.size * 0.2), color: "#ffcc00", pierced: []
                     });
                 }
                 else if (player.mouth === "baleen") {
                     player.shootCooldown = 8;
-                    for (let i = -1; i <= 1; i++) {
+                    let limit = player.baleenNet ? 2 : 1;
+                    for (let i = -limit; i <= limit; i++) {
                         let offsetAngle = angle + (i * 0.2);
                         projectiles.push({
                             x: player.x + Math.cos(offsetAngle) * player.size, y: player.y + Math.sin(offsetAngle) * player.size,
                             vx: Math.cos(offsetAngle) * (10 + player.speed) * speedScale, vy: Math.sin(offsetAngle) * (10 + player.speed) * speedScale,
-                            life: 40, size: Math.max(2, player.size * 0.1), color: "#88ccff", damageMult: 0.4
+                            life: 40, size: Math.max(2, player.size * 0.1), color: "#88ccff", damageMult: 0.4, isInk: player.baleenBlast
                         });
                     }
                 }
@@ -1134,16 +1167,20 @@
                     projectiles.push({
                         x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
                         vx: Math.cos(angle) * (6 + player.speed) * speedScale, vy: Math.sin(angle) * (6 + player.speed) * speedScale,
-                        life: 120, size: Math.max(10, player.size * 0.4), color: "#8800ff", pierced: [], isVoid: true
+                        life: 120, size: Math.max(10, player.size * (player.bhEvent ? 0.8 : 0.4)), color: "#8800ff", pierced: [], isVoid: true, isHook: player.bhHawk
                     });
                 }
                 else if (player.mouth === "leech") {
                     player.shootCooldown = 20;
-                    projectiles.push({
-                        x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
-                        vx: Math.cos(angle) * (16 + player.speed) * speedScale, vy: Math.sin(angle) * (16 + player.speed) * speedScale,
-                        life: 50, size: Math.max(3, player.size * 0.15), color: "#aa22ff", isLeech: true
-                    });
+                    let limit = player.leechSwarm ? 1 : 0;
+                    for (let i = -limit; i <= limit; i++) {
+                        let offsetAngle = angle + (i * 0.2);
+                        projectiles.push({
+                            x: player.x + Math.cos(offsetAngle) * player.size, y: player.y + Math.sin(offsetAngle) * player.size,
+                            vx: Math.cos(offsetAngle) * (16 + player.speed) * speedScale, vy: Math.sin(offsetAngle) * (16 + player.speed) * speedScale,
+                            life: 50, size: Math.max(3, player.size * 0.15), color: "#aa22ff", isLeech: true, isInk: player.leechTox
+                        });
+                    }
                 }
                 else {
                     player.shootCooldown = 15;
@@ -1286,12 +1323,13 @@
                     if (player.stamina >= 20) {
                         player.stamina -= 20;
                         player.shockCooldown = 45;
-                        for (let i = -1; i <= 1; i++) {
+                        let limit = player.tentWhip ? 2 : 1;
+                        for (let i = -limit; i <= limit; i++) {
                             let offsetAngle = angle + (i * 0.15);
                             projectiles.push({
                                 x: player.x + Math.cos(offsetAngle) * player.size, y: player.y + Math.sin(offsetAngle) * player.size,
                                 vx: Math.cos(offsetAngle) * (12 + player.speed) * speedScale, vy: Math.sin(offsetAngle) * (12 + player.speed) * speedScale,
-                                life: 30, size: Math.max(6, player.size * 0.3), color: "#220044", isInk: true
+                                life: 30, size: Math.max(6, player.size * 0.3), color: "#220044", isInk: true, damageMult: player.tentTox ? 2.0 : 1.0
                             });
                         }
                     }
@@ -1303,7 +1341,7 @@
                         projectiles.push({
                             x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
                             vx: Math.cos(angle) * (15 + player.speed) * speedScale, vy: Math.sin(angle) * (15 + player.speed) * speedScale,
-                            life: 60, size: Math.max(8, player.size * 0.4), color: "#dddddd", isWeb: true
+                            life: 60, size: Math.max(8, player.size * (player.spidWebBig ? 0.8 : 0.4)), color: "#dddddd", isWeb: true
                         });
                     }
                 }
@@ -1385,6 +1423,11 @@
                             }
                         } else {
                             e.vx += p.vx * 0.05; e.vy += p.vy * 0.05; 
+                            if (p.isHook || (p.color === "#ffcc00" && player.beakHook)) {
+                                let vAngle = Math.atan2(player.y - e.y, player.x - e.x);
+                                e.vx += Math.cos(vAngle) * 2.0;
+                                e.vy += Math.sin(vAngle) * 2.0;
+                            }
                         }
                         
                         if (player.bouncing) {
