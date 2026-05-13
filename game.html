@@ -1878,9 +1878,10 @@
                     ctx.fill();
                 } else if (b.type === 'spark') {
                     ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
+                    ctx.fillStyle = "rgba(0, 255, 204, 0.4)";
+                    ctx.beginPath(); ctx.arc(b.x, b.y, b.size * 2, 0, Math.PI*2); ctx.fill();
                     ctx.fillStyle = "rgba(100, 255, 200, 0.8)";
-                    ctx.shadowBlur = 10; ctx.shadowColor = "#00ffcc";
-                    ctx.fill(); ctx.shadowBlur = 0;
+                    ctx.beginPath(); ctx.arc(b.x, b.y, b.size, 0, Math.PI*2); ctx.fill();
                 } else {
                     ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
                     let bubGrad = ctx.createRadialGradient(b.x - b.size*0.3, b.y - b.size*0.3, b.size*0.1, b.x, b.y, b.size);
@@ -1972,8 +1973,10 @@
                     ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.lineTo(lureX, lureY);
                     ctx.strokeStyle = adjustColor(eColor, 30); ctx.lineWidth = 2/cameraZoom; ctx.stroke();
                     ctx.beginPath(); ctx.arc(lureX, lureY, e.size * 0.25, 0, Math.PI*2);
-                    ctx.fillStyle = e.isAlpha ? "#ff3355" : "#00ffff"; 
-                    ctx.shadowBlur = 10; ctx.shadowColor = ctx.fillStyle; ctx.fill(); ctx.shadowBlur = 0;
+                    ctx.fillStyle = e.isAlpha ? "rgba(255, 51, 85, 0.4)" : "rgba(0, 255, 255, 0.4)";
+                    ctx.beginPath(); ctx.arc(lureX, lureY, e.size * 0.4, 0, Math.PI*2); ctx.fill();
+                    ctx.fillStyle = e.isAlpha ? "#ff3355" : "#00ffff";
+                    ctx.beginPath(); ctx.arc(lureX, lureY, e.size * 0.25, 0, Math.PI*2); ctx.fill();
                 }
             });
 
@@ -2086,7 +2089,8 @@ if (player.doubleTail) {
                         ctx.strokeStyle = "#ffffff";
                         ctx.lineWidth = 4 / cameraZoom;
                         ctx.stroke();
-                        ctx.shadowBlur = 10; ctx.shadowColor = "#ffffff"; ctx.stroke(); ctx.shadowBlur = 0;
+                        ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"; ctx.lineWidth = 8 / cameraZoom; ctx.stroke();
+                        ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 4 / cameraZoom; ctx.stroke();
                     }
                 };
 
@@ -2183,7 +2187,8 @@ if (player.doubleTail) {
 
                     if (player.springJoints) {
                         ctx.beginPath(); ctx.arc(kneeX, kneeY, player.size*0.3, 0, Math.PI*2);
-                        ctx.fillStyle = "#00ffff"; ctx.shadowBlur = 10; ctx.shadowColor = "#00ffff"; ctx.fill(); ctx.shadowBlur = 0;
+                        ctx.fillStyle = "rgba(0, 255, 255, 0.4)"; ctx.beginPath(); ctx.arc(kneeX, kneeY, player.size*0.45, 0, Math.PI*2); ctx.fill();
+                        ctx.fillStyle = "#00ffff"; ctx.beginPath(); ctx.arc(kneeX, kneeY, player.size*0.3, 0, Math.PI*2); ctx.fill();
                     }
 
                     ctx.beginPath();
@@ -2221,9 +2226,8 @@ if (player.doubleTail) {
                     ctx.fill();
 
                     if (player.razorDorsal) {
-                        ctx.shadowBlur = 15; ctx.shadowColor = "#ffffff";
+                        ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"; ctx.lineWidth = 7/cameraZoom; ctx.stroke();
                         ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 3/cameraZoom; ctx.stroke();
-                        ctx.shadowBlur = 0;
                     } else {
                         ctx.strokeStyle = "rgba(255,255,255,0.3)";
                         ctx.lineWidth = 2/cameraZoom; ctx.stroke();
@@ -2515,7 +2519,8 @@ if (player.doubleTail) {
 
             if (player.glowingCore) {
                 ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.5, 0, Math.PI*2);
-                ctx.fillStyle = "#ffffff"; ctx.shadowBlur = 20; ctx.shadowColor = "#ffffff"; ctx.fill(); ctx.shadowBlur = 0;
+                ctx.fillStyle = "rgba(255, 255, 255, 0.3)"; ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.8, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.5, 0, Math.PI*2); ctx.fill();
             }
             if (player.plasmaMembrane) {
                 ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 1.3, 0, Math.PI*2);
@@ -2601,7 +2606,9 @@ if (player.doubleTail) {
             if (player.gemHeart) {
                 ctx.fillStyle = "#ff0055";
                 ctx.beginPath(); ctx.moveTo(torsoOffsetX, torsoOffsetY + r*0.3); ctx.lineTo(torsoOffsetX + r*0.4, torsoOffsetY - r*0.1); ctx.lineTo(torsoOffsetX, torsoOffsetY - r*0.4); ctx.lineTo(torsoOffsetX - r*0.4, torsoOffsetY - r*0.1); ctx.closePath();
-                ctx.shadowBlur = 10; ctx.shadowColor = "#ff0055"; ctx.fill(); ctx.shadowBlur = 0;
+                ctx.fillStyle = "rgba(255, 0, 85, 0.4)";
+                ctx.fill();
+                ctx.save(); ctx.scale(0.8, 0.8); ctx.translate(torsoOffsetX * 0.25, torsoOffsetY * 0.25); ctx.fillStyle = "#ff0055"; ctx.fill(); ctx.restore();
             }
 
             // Phylogenetics
@@ -2663,7 +2670,8 @@ if (player.doubleTail) {
             if (player.glowingLure) {
                 ctx.strokeStyle = player.color; ctx.lineWidth = 3/cameraZoom;
                 ctx.beginPath(); ctx.moveTo(headOffsetX + r*0.8, headOffsetY); ctx.quadraticCurveTo(headOffsetX + r*1.5, headOffsetY - r*1.0, headOffsetX + r*2.0, headOffsetY); ctx.stroke();
-                ctx.beginPath(); ctx.arc(headOffsetX + r*2.0, headOffsetY, r*0.2, 0, Math.PI*2); ctx.fillStyle = "#00ffff"; ctx.shadowBlur = 15; ctx.shadowColor = "#00ffff"; ctx.fill(); ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.arc(headOffsetX + r*2.0, headOffsetY, r*0.4, 0, Math.PI*2); ctx.fillStyle = "rgba(0, 255, 255, 0.4)"; ctx.fill();
+                ctx.beginPath(); ctx.arc(headOffsetX + r*2.0, headOffsetY, r*0.2, 0, Math.PI*2); ctx.fillStyle = "#00ffff"; ctx.fill();
             }
             if (player.sailFin) {
                 ctx.fillStyle = player.color; ctx.strokeStyle = "#111"; ctx.lineWidth = 2/cameraZoom;
@@ -2797,7 +2805,8 @@ if (player.doubleTail) {
             }
             if (player.laserEye) {
                 ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY, r*0.3, 0, Math.PI*2); ctx.fillStyle = "#222"; ctx.fill();
-                ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY, r*0.15, 0, Math.PI*2); ctx.fillStyle = "#ff0000"; ctx.shadowBlur = 10; ctx.shadowColor = "#ff0000"; ctx.fill(); ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY, r*0.25, 0, Math.PI*2); ctx.fillStyle = "rgba(255, 0, 0, 0.4)"; ctx.fill();
+                ctx.beginPath(); ctx.arc(headOffsetX + r*0.5, headOffsetY, r*0.15, 0, Math.PI*2); ctx.fillStyle = "#ff0000"; ctx.fill();
             }
             if (player.thrusters) {
                 ctx.fillStyle = "#555"; ctx.beginPath(); ctx.moveTo(torsoOffsetX - r*0.8, torsoOffsetY - r*0.3); ctx.lineTo(torsoOffsetX - r*1.2, torsoOffsetY - r*0.4); ctx.lineTo(torsoOffsetX - r*1.2, torsoOffsetY + r*0.4); ctx.lineTo(torsoOffsetX - r*0.8, torsoOffsetY + r*0.3); ctx.fill();
@@ -2867,7 +2876,8 @@ if (player.doubleTail) {
                 ctx.beginPath(); ctx.arc(mX, headOffsetY, r*0.5, 0, Math.PI*2);
                 ctx.fillStyle = "#000000"; ctx.fill();
                 ctx.strokeStyle = "#aa00ff"; ctx.lineWidth = 4/cameraZoom; ctx.stroke();
-                ctx.shadowBlur = 15; ctx.shadowColor = "#aa00ff"; ctx.stroke(); ctx.shadowBlur = 0;
+                ctx.strokeStyle = "rgba(170, 0, 255, 0.4)"; ctx.lineWidth = 10/cameraZoom; ctx.stroke();
+                ctx.strokeStyle = "#aa00ff"; ctx.lineWidth = 4/cameraZoom; ctx.stroke();
             }
 
             // Organelles
@@ -2891,7 +2901,8 @@ if (player.doubleTail) {
                     ctx.beginPath(); ctx.ellipse(torsoOffsetX, torsoOffsetY, r * 0.2, r * 0.06, 0, 0, Math.PI * 2);
                     ctx.fillStyle = "#000"; ctx.fill();
                 } else if (player.virusTraits > 0) {
-                    ctx.fillStyle = "#aa00ff"; ctx.shadowBlur = 20; ctx.shadowColor = "#aa00ff"; ctx.fill(); ctx.shadowBlur = 0;
+                    ctx.fillStyle = "rgba(170, 0, 255, 0.4)"; ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.5, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = "#aa00ff"; ctx.beginPath(); ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.35, 0, Math.PI * 2); ctx.fill();
                 } else {
                     ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fill();
                 }
@@ -3029,10 +3040,7 @@ if (player.doubleTail) {
                 oGrad.addColorStop(0.3, "#ff00cc");
                 oGrad.addColorStop(1, "#660066");
                 ctx.fillStyle = oGrad;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = "#ff00cc";
                 ctx.fill();
-                ctx.shadowBlur = 0;
             }
 
             // Projectiles
@@ -3044,10 +3052,7 @@ if (player.doubleTail) {
                 pGrad.addColorStop(0.4, p.color);
                 pGrad.addColorStop(1, adjustColor(p.color, -50));
                 ctx.fillStyle = pGrad;
-                ctx.shadowBlur = 15;
-                ctx.shadowColor = p.color;
                 ctx.fill();
-                ctx.shadowBlur = 0;
             });
 
             // Shockwaves
@@ -3137,10 +3142,10 @@ if (player.doubleTail) {
                 ctx.font = "bold " + Math.floor(ft.size) + "px 'Courier New'";
                 ctx.globalAlpha = ft.life;
                 ctx.fillStyle = ft.color;
-                ctx.shadowBlur = 4;
-                ctx.shadowColor = "#000";
+                ctx.fillStyle = "rgba(0,0,0,0.8)";
+                ctx.fillText(ft.text, ft.x + 2, ft.y + 2);
+                ctx.fillStyle = ft.color;
                 ctx.fillText(ft.text, ft.x, ft.y);
-                ctx.shadowBlur = 0;
             });
             ctx.globalAlpha = 1.0;
 
