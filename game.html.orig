@@ -5,22 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evolution Roguelike - Expanded</title>
     <style>
-        body { 
-            margin: 0; 
-            overflow: hidden; 
-            background: #020208; 
-            color: #fff; 
-            font-family: 'Courier New', Courier, monospace; 
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #020208;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
             user-select: none;
         }
-        canvas { 
-            display: block; 
+        canvas {
+            display: block;
         }
-        #ui { 
-            position: absolute; 
-            top: 15px; 
-            left: 15px; 
-            z-index: 10; 
+        #ui {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
             pointer-events: none;
             background: rgba(0, 0, 0, 0.6);
             padding: 15px;
@@ -30,18 +30,18 @@
         }
         h2 { margin: 0 0 10px 0; font-size: 20px; color: #00ffcc; text-transform: uppercase; }
         p { margin: 5px 0; font-size: 14px; font-weight: bold; }
-        
+
         #overlay {
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85); 
-            display: none; 
+            background: rgba(0,0,0,0.85);
+            display: none;
             flex-direction: column;
-            align-items: center; 
-            justify-content: center; 
+            align-items: center;
+            justify-content: center;
             z-index: 20;
         }
         h1 { color: #00ffcc; letter-spacing: 3px; text-shadow: 0 0 10px #00ffcc; }
@@ -54,13 +54,13 @@
             max-width: 900px;
         }
         .btn {
-            background: #112; 
-            color: #00ffcc; 
-            border: 2px solid #00ffcc; 
+            background: #112;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
             padding: 20px;
             border-radius: 8px;
-            cursor: pointer; 
-            font-size: 16px; 
+            cursor: pointer;
+            font-size: 16px;
             font-family: inherit;
             width: 220px;
             text-align: center;
@@ -70,20 +70,20 @@
             flex-direction: column;
         }
         .btn:hover, .btn.selected {
-            background: #00ffcc; 
-            color: #000; 
+            background: #00ffcc;
+            color: #000;
             transform: translateY(-5px);
             box-shadow: 0 10px 15px rgba(0,255,200,0.4);
         }
         .desc { font-size: 12px; margin-top: 10px; opacity: 0.9; flex-grow: 1;}
-        
+
         /* Progress Bars */
         .bar-bg { width: 220px; height: 12px; background: #222; margin-top: 3px; border-radius: 6px; overflow: hidden; border: 1px solid #444;}
         .hp-fill { height: 100%; background: linear-gradient(90deg, #aa0000, #ff4444); width: 100%; transition: width 0.2s; }
         .dna-fill { height: 100%; background: linear-gradient(90deg, #660066, #a832a8); width: 0%; transition: width 0.2s; }
         .stam-fill { height: 100%; background: linear-gradient(90deg, #aa6600, #ffaa00); width: 100%; transition: width 0.1s; }
         .frenzy-fill { height: 100%; background: linear-gradient(90deg, #ffaa00, #ffeeaa); width: 0%; transition: width 0.1s; box-shadow: 0 0 10px #ffaa00; }
-        
+
         #controls {
             position: absolute;
             bottom: 15px;
@@ -100,7 +100,7 @@
         <h2><span id="stageName">Unicellular</span><br><span style="font-size:12px; color:#aaa;" id="envName">Primordial Soup</span> (Lvl <span id="lvl">1</span>)</h2>
         <p style="color: #ffaa99">HP: <span id="hp">10</span> / <span id="maxHp">10</span></p>
         <div class="bar-bg"><div id="hpBar" class="hp-fill"></div></div>
-        
+
         <p style="margin-top: 10px; color: #88ff88">Mass: <span id="mass">0</span></p>
 
         <p style="margin-top: 10px; color: #ffdd99">Stamina: <span id="stam">100</span></p>
@@ -108,7 +108,7 @@
 
         <p style="margin-top: 10px; color: #eebbff">DNA: <span id="dna">0</span> / <span id="nextDna">10</span> <span id="comboText" style="color: #ffff00; font-weight: bold; margin-left: 10px; display: none;">x2 COMBO!</span></p>
         <div class="bar-bg"><div id="dnaBar" class="dna-fill"></div></div>
-        
+
         <p style="margin-top: 10px; color: #ffd700;" id="frenzyLabel">FRENZY METER</p>
         <div class="bar-bg"><div id="frenzyBar" class="frenzy-fill"></div></div>
     </div>
@@ -132,7 +132,7 @@
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
+
         function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -141,7 +141,7 @@
         resize();
 
         // Game State
-        let state = "playing"; 
+        let state = "playing";
         let entities = [];
         let particles = [];
         let floatingTexts = [];
@@ -153,7 +153,7 @@
 
         // Helper to lighten/darken hex colors for 3D shading
         function adjustColor(color, percent) {
-            if (!color || !color.startsWith('#')) return color; 
+            if (!color || !color.startsWith('#')) return color;
             let num = parseInt(color.replace("#",""), 16),
             amt = Math.round(2.55 * percent),
             R = (num >> 16) + amt,
@@ -288,11 +288,11 @@
             }
             ctx.closePath();
 
-            let safeColor = baseColor.startsWith("hsl") ? "#00aaaa" : baseColor; 
-            if (isAlpha) safeColor = "#ff2255"; 
+            let safeColor = baseColor.startsWith("hsl") ? "#00aaaa" : baseColor;
+            if (isAlpha) safeColor = "#ff2255";
             let lightColor = adjustColor(safeColor, 40);
             let darkColor = adjustColor(safeColor, -50);
-            
+
             let grad = ctx.createRadialGradient(x - r*0.3, y - r*0.3, r*0.1, x, y, r);
             grad.addColorStop(0, lightColor); grad.addColorStop(0.4, safeColor); grad.addColorStop(1, darkColor);
             ctx.fillStyle = grad; ctx.fill();
@@ -311,15 +311,15 @@
                 ctx.fillStyle = "#880000";
                 let pLookX = Math.cos(aimAngle) * (eyeR - pupilR);
                 let pLookY = Math.sin(aimAngle) * (eyeR - pupilR);
-                ctx.beginPath(); 
-                ctx.arc(x + eyeOffsetX - spread + pLookX, y + eyeOffsetY + pLookY, pupilR, 0, Math.PI*2); 
-                ctx.arc(x + eyeOffsetX + spread + pLookX, y + eyeOffsetY + pLookY, pupilR, 0, Math.PI*2); 
+                ctx.beginPath();
+                ctx.arc(x + eyeOffsetX - spread + pLookX, y + eyeOffsetY + pLookY, pupilR, 0, Math.PI*2);
+                ctx.arc(x + eyeOffsetX + spread + pLookX, y + eyeOffsetY + pLookY, pupilR, 0, Math.PI*2);
                 ctx.fill();
 
                 ctx.lineWidth = eyeR * 0.4; ctx.strokeStyle = "#330000"; ctx.lineCap = "round";
                 ctx.beginPath(); ctx.moveTo(x + eyeOffsetX - spread - eyeR, y + eyeOffsetY - eyeR*0.8); ctx.lineTo(x + eyeOffsetX - spread + eyeR, y + eyeOffsetY - eyeR*0.2); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(x + eyeOffsetX + spread + eyeR, y + eyeOffsetY - eyeR*0.8); ctx.lineTo(x + eyeOffsetX + spread - eyeR, y + eyeOffsetY - eyeR*0.2); ctx.stroke();
-                
+
                 ctx.fillStyle = "#ffffff";
                 ctx.beginPath(); ctx.arc(x + eyeOffsetX - spread + pLookX - pupilR*0.3, y + eyeOffsetY + pLookY - pupilR*0.3, pupilR*0.3, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(x + eyeOffsetX + spread + pLookX - pupilR*0.3, y + eyeOffsetY + pLookY - pupilR*0.3, pupilR*0.3, 0, Math.PI*2); ctx.fill();
@@ -351,27 +351,27 @@
         // Player Object
         let player = {
             x: window.innerWidth / 2, y: window.innerHeight / 2,
-            size: 14, mass: 0, speed: 3.5, speedBoost: 0, 
+            size: 14, mass: 0, speed: 3.5, speedBoost: 0,
             hp: 15, maxHp: 15,
             stamina: 100, maxStamina: 100,
             dna: 0, nextDna: 10, level: 1, regen: 0, damage: 1,
             stage: "Unicellular", color: "#00ffcc", tail: [],
-            
+
             dashUnlocked: false, toxinImmune: false, spikes: 0, photosynthesis: 0,
             canShoot: false, canShock: false, shootCooldown: 0, shockCooldown: 0, orbitalCount: 0, lifesteal: 0,
-            
+
             armor: 0, visionMod: 1.0, clones: 0, scavenger: false,
 
             cilia: 0, mito: 0, chloro: 0, virusTraits: 0, insectTraits: 0, reptileTraits: 0, mammalTraits: 0, crabTraits: 0, pisceanTraits: 0, fungalTraits: 0, elementalTraits: 0, mechanicalTraits: 0, astralTraits: 0,
 
             damageFlash: 0, poisonFlash: 0, invulnTimer: 0,
-            
+
             pincers: false, pincerCooldown: 0, blockChance: 0, scuttleDamage: false, isDashing: 0, piercing: false, bouncing: false,
 
             appendage: null, grabRange: 0,
 
             wingGust: false, roostTimer: 0, haymaker: false, fourArmed: false, seismicStomp: false, spikedGreaves: false, constrict: false, elongation: false,
-            
+
             // New Limb Upgrades
             razorFeathers: false, vacuumPalms: false, springJoints: false, rattleTail: false, razorDorsal: false,
 
@@ -405,13 +405,13 @@
         window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
         window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
         window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-        window.addEventListener('mousedown', e => { 
-            if(e.button === 0) mouse.isDown = true; 
-            if(e.button === 2) mouse.rightDown = true; 
+        window.addEventListener('mousedown', e => {
+            if(e.button === 0) mouse.isDown = true;
+            if(e.button === 2) mouse.rightDown = true;
         });
-        window.addEventListener('mouseup', e => { 
-            if(e.button === 0) mouse.isDown = false; 
-            if(e.button === 2) mouse.rightDown = false; 
+        window.addEventListener('mouseup', e => {
+            if(e.button === 0) mouse.isDown = false;
+            if(e.button === 2) mouse.rightDown = false;
         });
         window.addEventListener('contextmenu', e => e.preventDefault());
 
@@ -427,12 +427,12 @@
         function updateEnvironment(newEnv) {
             environment = newEnv;
             document.getElementById('envName').innerText = environment;
-            
+
             let pType = 'bubble';
             if (newEnv === "The Canopy") pType = 'cloud';
             else if (newEnv === "The Surface") pType = 'leaf';
             else if (newEnv === "The Abyss") pType = 'spark';
-            
+
             ambientParticles.forEach(p => {
                 p.type = pType;
                 if (pType === 'cloud') { p.size = Math.random() * 60 + 20; p.speed = Math.random() * 0.5 + 0.5; }
@@ -487,12 +487,12 @@
             { id: "vis", name: "Compound Eyes", desc: "Zooms the camera out further, letting you see threats earlier.", apply: () => player.visionMod *= 0.85 },
             { id: "clone", name: "Mitosis", desc: "Spawns a clone that follows you and fires venom when you do.", req: () => player.canShoot, apply: () => player.clones += 1 },
             { id: "scav", name: "Scavenger", desc: "Enemies drop extra food chunks when killed by your attacks.", apply: () => player.scavenger = true },
-            
+
             { id: "w_gale", name: "Gale Force Flap", desc: "[Wings] Dashing creates a windbox that violently pushes enemies away.", req: () => player.appendage === "wings" && !player.wingGust, apply: () => player.wingGust = true },
             { id: "w_holo", name: "Hollow Bones", desc: "[Wings] Greatly increases Speed and Dodge chance, but halves your Mass.", req: () => player.appendage === "wings", apply: () => { player.speed += 2.0; player.blockChance += 0.10; player.mass = Math.floor(player.mass / 2); } },
             { id: "w_roost", name: "Roosting", desc: "[Wings] Standing still for 1 second quadruples your passive HP regeneration.", req: () => player.appendage === "wings", apply: () => player.regen += 0.05 },
             { id: "w_feathers", name: "Razor Feathers", desc: "[Wings] Shooting venom also fires two diagonal razor feathers.", req: () => player.appendage === "wings" && player.canShoot && !player.razorFeathers, apply: () => player.razorFeathers = true },
-            
+
             { id: "a_hay", name: "Haymaker Fists", desc: "[Arms] Your base melee and Pincer damage now heavily scales with your Mass.", req: () => player.appendage === "arms" && !player.haymaker, apply: () => player.haymaker = true },
             { id: "a_four", name: "Four-Armed Brawler", desc: "[Arms] Your Venom and Pincer abilities recharge twice as fast.", req: () => player.appendage === "arms" && !player.fourArmed, apply: () => player.fourArmed = true },
             { id: "a_grab", name: "Grappling Reach", desc: "[Arms] Massively extends the range at which you can grab food and DNA.", req: () => player.appendage === "arms", apply: () => player.grabRange += 250 },
@@ -599,14 +599,14 @@
         function spawnEntity(isInitial = false) {
             let maxEntities = 80 + Math.floor(player.mass * 0.15);
             if (entities.length > Math.min(250, maxEntities)) return;
-            
+
             let rand = Math.random();
             let type = "drifter"; // default
             let isFood = false;
             let minSize, maxSize;
-            
-            let sizeScale = Math.max(1, player.size / 12); 
-            
+
+            let sizeScale = Math.max(1, player.size / 12);
+
             if (rand < 0.25) {
                 type = "food";
                 isFood = true;
@@ -615,25 +615,25 @@
                 type = "poison";
                 minSize = 5 * sizeScale; maxSize = 12 * sizeScale;
             } else if (rand < 0.48) {
-                type = "predator"; 
+                type = "predator";
                 minSize = player.size * 0.6; maxSize = player.size * 1.8;
             } else if (rand < 0.58) {
-                type = "dasher"; 
+                type = "dasher";
                 minSize = player.size * 0.4; maxSize = player.size * 1.4;
             } else if (rand < 0.70) {
-                type = "armored"; 
+                type = "armored";
                 minSize = player.size * 0.9; maxSize = player.size * 2.2;
             } else if (rand < 0.73) {
-                type = "golden"; 
+                type = "golden";
                 isFood = true;
                 minSize = 8 * sizeScale; maxSize = 12 * sizeScale;
             } else {
-                type = "drifter"; 
+                type = "drifter";
                 minSize = player.size * 0.3; maxSize = player.size * 1.6;
             }
-            
+
             let size = minSize + Math.random() * (maxSize - minSize);
-            
+
             let isAlpha = player.level >= 10 && Math.random() < (player.level * 0.005);
             if (isAlpha && type !== "food" && type !== "golden" && type !== "poison") {
                 size *= 1.3;
@@ -677,10 +677,10 @@
         function evolve() {
             state = "evolving";
             document.getElementById('overlay').style.display = 'flex';
-            
+
             let choicesDiv = document.getElementById('choices');
             choicesDiv.innerHTML = '';
-            
+
             let isMouthMilestone = (player.level + 1 === 5 && !player.mouth);
             let isAppendageMilestone = (player.level + 1 === 15 && !player.appendage);
             let isMilestone = ((player.level + 1) % 10 === 0 && !isAppendageMilestone && !isMouthMilestone);
@@ -690,7 +690,7 @@
                 document.getElementById('overlayTitle').innerText = "DIETARY MILESTONE";
                 document.getElementById('overlayTitle').style.color = "#ff5588";
                 document.getElementById('overlaySub').innerText = "Choose your feeding apparatus! This defines how you consume prey.";
-                
+
                 let mouthChoices = [
                     { name: "Crushing Jaws", family: "Carnivore", desc: "Bone-crushing teeth. +Base Damage. Killing enemies grants a brief speed burst.", color: "#ff3333", apply: () => { player.damage += 2.0; player.mouth = "jaws"; } },
                     { name: "Piercing Beak", family: "Avian", desc: "A sharp beak that cracks shells. Your attacks ignore armor, dealing bonus damage to armored foes.", color: "#ffcc00", apply: () => { player.armorPiercing = true; player.mouth = "beak"; } },
@@ -698,17 +698,17 @@
                     { name: "Singularity Maw", family: "Cosmic", desc: "A void mouth that vacuums everything.", color: "#8800ff", apply: () => { player.grabRange += 300; player.mouth = "blackhole"; player.blackHoleMaw = true; } },
                     { name: "Parasitic Leech", family: "Parasite", desc: "A terrifying sucker mouth. Massive boost to passive Lifesteal and HP Regeneration.", color: "#aa22ff", apply: () => { player.lifesteal += 1.5; player.regen += 0.05; player.mouth = "leech"; } }
                 ];
-                
+
                 mouthChoices.forEach(mut => {
                     picks.push({ ...mut, applyTrait: () => { mut.apply(); } });
                 });
-                isMilestone = true; 
+                isMilestone = true;
 
             } else if (isAppendageMilestone) {
                 document.getElementById('overlayTitle').innerText = "STRUCTURAL MILESTONE";
                 document.getElementById('overlayTitle').style.color = "#00ffff";
                 document.getElementById('overlaySub').innerText = "Choose your locomotion and structural anatomy! Changes your environment.";
-                
+
                 let appendageChoices = [
                     { name: "Avian Wings", family: "Wings", desc: "Take to the skies. +Huge Speed, +15% Dodge/Deflect.", color: "#88ccff", apply: () => { player.speed += 2.5; player.blockChance += 0.15; player.appendage = "wings"; updateEnvironment("The Canopy"); } },
                     { name: "Brawler Arms", family: "Arms", desc: "Develop strong limbs. +Huge Damage, increases resource grab range.", color: "#ff8855", apply: () => { player.damage += 3.0; player.grabRange += 100; player.appendage = "arms"; updateEnvironment("The Shallows"); } },
@@ -718,24 +718,24 @@
                     { name: "Spider Legs", family: "Arachnid", desc: "Huge dodge chance. +Speed.", color: "#333333", apply: () => { player.speed += 2.0; player.blockChance += 0.25; player.appendage = "spiderlegs"; updateEnvironment("The Canopy"); } },
                     { name: "Aquatic Fins", family: "Fins", desc: "Masters of the water. +Massive Speed, +Frenzy gain.", color: "#33bbff", apply: () => { player.speed += 4.0; player.appendage = "fins"; updateEnvironment("The Open Ocean"); } }
                 ];
-                
+
                 appendageChoices.forEach(mut => {
                     picks.push({ ...mut, applyTrait: () => { mut.apply(); } });
                 });
-                isMilestone = true; 
+                isMilestone = true;
 
             } else if (isMilestone) {
                 document.getElementById('overlayTitle').innerText = "EVOLUTIONARY MILESTONE";
                 document.getElementById('overlayTitle').style.color = "#ffcc00";
                 document.getElementById('overlaySub').innerText = "Choose a phylogenetic path! Your species develops a random trait based on your choice.";
-                
+
                 let allFamilies = ["virus", "insect", "reptile", "mammal", "crustacean", "piscean", "fungal", "elemental", "mechanical", "astral"];
                 let chosenFamilies = allFamilies.sort(() => 0.5 - Math.random()).slice(0, 3);
-                
+
                 chosenFamilies.forEach(familyKey => {
                     let pool = phylogeneticMutations[familyKey];
                     let mut = pool[Math.floor(Math.random() * pool.length)];
-                    
+
                     let fName, fColor;
                     if(familyKey === 'virus') {fName="Viral"; fColor="#9933ff"}
                     else if(familyKey === 'insect') {fName="Insectoid"; fColor="#ddaa00"}
@@ -759,16 +759,16 @@
                 let shuffled = [...availableMuts].sort(() => 0.5 - Math.random());
                 picks = shuffled.slice(0, 3);
             }
-            
+
             function finishEvolve() {
                 player.level++;
                 player.dna = 0;
                 player.nextDna = Math.floor(player.nextDna * 1.6);
-                player.hp = player.maxHp; 
-                
+                player.hp = player.maxHp;
+
                 let stageNames = [
-                    "Unicellular", "Multicellular", "Complex Organism", 
-                    "Apex Predator", "Leviathan", "Eldritch Entity", 
+                    "Unicellular", "Multicellular", "Complex Organism",
+                    "Apex Predator", "Leviathan", "Eldritch Entity",
                     "Cosmic Terror", "Galactic Devourer", "Universal Mind"
                 ];
                 let stageIdx = 0;
@@ -778,7 +778,7 @@
                 }
                 if (stageIdx >= stageNames.length) stageIdx = stageNames.length - 1;
                 player.stage = stageNames[stageIdx];
-                
+
                 document.getElementById('overlay').style.display = 'none';
                 state = "playing";
             }
@@ -786,9 +786,9 @@
             picks.forEach(mut => {
                 let btn = document.createElement('div');
                 btn.className = 'btn';
-                
+
                 if (isMilestone) {
-                    btn.style.borderColor = mut.color; 
+                    btn.style.borderColor = mut.color;
                     btn.innerHTML = `<strong style="color:${mut.color}">${mut.family} Branch:</strong><br/><br/><strong>${mut.name}</strong><div class="desc">${mut.desc}</div>`;
                     btn.onclick = () => {
                         mut.applyTrait();
@@ -811,7 +811,7 @@
             document.getElementById('overlayTitle').innerText = "EXTINCTION";
             document.getElementById('overlayTitle').style.color = "#ff4444";
             document.getElementById('overlaySub').innerText = `You reached Level ${player.level} (${player.stage}) with Mass ${Math.floor(player.mass)}.`;
-            
+
             let choicesDiv = document.getElementById('choices');
             choicesDiv.innerHTML = '<div class="btn" onclick="location.reload()">Reincarnate (Restart)</div>';
         }
@@ -885,16 +885,16 @@
             let isFrenzied = player.frenzyTimer > 0;
             if (isFrenzied) {
                 player.frenzyTimer--;
-                player.frenzy = (player.frenzyTimer / 300) * 100; 
+                player.frenzy = (player.frenzyTimer / 300) * 100;
                 if (player.frenzyTimer % 10 === 0) spawnParticles(player.x, player.y, "#ffd700", 2);
             } else {
-                if (player.frenzy > 0) player.frenzy -= 0.05; 
+                if (player.frenzy > 0) player.frenzy -= 0.05;
             }
 
             player.size = 14 + Math.sqrt(player.mass) * 2.2;
-            if (isFrenzied) player.size *= 1.5; 
-            
-            cameraZoom = (30 / (16 + player.size)) * player.visionMod; 
+            if (isFrenzied) player.size *= 1.5;
+
+            cameraZoom = (30 / (16 + player.size)) * player.visionMod;
 
             mouse.worldX = (mouse.x - canvas.width / 2) / cameraZoom + player.x;
             mouse.worldY = (mouse.y - canvas.height / 2) / cameraZoom + player.y;
@@ -930,10 +930,9 @@
 
             // Player Movement
             let moved = false;
-            let speedScale = Math.max(1, player.size / 14);
-            let currentSpeed = (player.speed + player.speedBoost) * speedScale;
-            if (isFrenzied) currentSpeed *= 1.8; 
-            
+            let currentSpeed = player.speed + player.speedBoost;
+            if (isFrenzied) currentSpeed *= 1.8;
+
             if (player.jawBoost > 0) {
                 player.jawBoost--;
                 currentSpeed *= 1.4;
@@ -953,20 +952,20 @@
 
             if (!moved) {
                 player.roostTimer++;
-                if (player.roostTimer > 30) player.hp = Math.min(player.maxHp, player.hp + player.regen * 3); 
+                if (player.roostTimer > 30) player.hp = Math.min(player.maxHp, player.hp + player.regen * 3);
             } else {
                 player.roostTimer = 0;
             }
 
             if (player.isDashing > 0) {
                 player.isDashing--;
-                player.invulnTimer = 5; 
+                player.invulnTimer = 5;
             }
 
             if (player.dashUnlocked && (keys[' '] || keys['shift'] || gpDash) && (player.stamina > 2 || isFrenzied) && moved) {
-                player.speedBoost = player.springJoints ? 8 : 4; 
-                if (!isFrenzied) player.stamina -= 1.5; 
-                
+                player.speedBoost = player.springJoints ? 8 : 4;
+                if (!isFrenzied) player.stamina -= 1.5;
+
                 if (player.isDashing <= 0 && player.seismicStomp) {
                     shockwaves.push({ x: player.x, y: player.y, radius: player.size, maxRadius: player.size * 3.5, life: 0.8 });
                     entities.forEach(e => {
@@ -978,13 +977,13 @@
                     });
                 }
 
-                if (player.scuttleDamage) player.isDashing = player.springJoints ? 8 : 5; 
-                else player.isDashing = player.springJoints ? 4 : 2; 
+                if (player.scuttleDamage) player.isDashing = player.springJoints ? 8 : 5;
+                else player.isDashing = player.springJoints ? 4 : 2;
 
                 if(Math.random() < 0.3) spawnParticles(player.x, player.y, "rgba(255,255,255,0.3)", 1);
             } else {
-                player.speedBoost *= 0.8; 
-                player.stamina = Math.min(player.maxStamina, player.stamina + 0.5); 
+                player.speedBoost *= 0.8;
+                player.stamina = Math.min(player.maxStamina, player.stamina + 0.5);
             }
 
 
@@ -1014,7 +1013,7 @@
             let distToSpawn = Math.sqrt(Math.pow(player.x - spawnZone.x, 2) + Math.pow(player.y - spawnZone.y, 2));
             player.isSafe = distToSpawn < spawnZone.radius;
             if (player.isSafe && player.hp < player.maxHp) {
-                player.hp = Math.min(player.maxHp, player.hp + 0.05); 
+                player.hp = Math.min(player.maxHp, player.hp + 0.05);
             }
 
             if (player.fourArmed) {
@@ -1050,10 +1049,10 @@
                         let eAngle = Math.atan2(dy, dx);
                         let angleDiff = Math.abs(aimAngle - eAngle);
                         if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
-                        if (angleDiff < 1.2) { 
+                        if (angleDiff < 1.2) {
                             let defenseMod = e.type === 'armored' ? 0.5 : 1.0;
                             if (player.armorPiercing) defenseMod = e.type === 'armored' ? 1.5 : 1.0;
-                            
+
                             let pincerDmg = (player.damage * 4 + (player.haymaker ? player.mass * 0.08 : 0)) * defenseMod;
                             e.size -= pincerDmg;
                             spawnParticles(e.x, e.y, "#ff5533", 8);
@@ -1063,13 +1062,13 @@
                                 player.dna += 3;
                                 e.markedForDeletion = true;
                                 if(player.scavenger) entities.push({ x: e.x, y: e.y, size: 5, type: "food", isFood: true, color: "#55ff55", vx: 0, vy: 0, wobble: 0, maxSpeed: 1 });
-                                if(player.mouth === "jaws") player.jawBoost = 60; 
+                                if(player.mouth === "jaws") player.jawBoost = 60;
                             }
                         }
                     }
                 }
                 if (snapped) {
-                    player.pincerCooldown = 50; 
+                    player.pincerCooldown = 50;
                     spawnText(player.x + Math.cos(aimAngle)*player.size, player.y + Math.sin(aimAngle)*player.size, "SNAP!", "#ff5533");
                 }
             }
@@ -1080,27 +1079,27 @@
                 player.shootCooldown = 15;
                 let angle = mouse.isGamepadAiming ? mouse.gamepadAimAngle : Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
                 projectiles.push({
-                    x: player.x + Math.cos(angle) * player.size, 
+                    x: player.x + Math.cos(angle) * player.size,
                     y: player.y + Math.sin(angle) * player.size,
-                    vx: Math.cos(angle) * (12 + player.speed) * speedScale,
-                    vy: Math.sin(angle) * (12 + player.speed) * speedScale,
+                    vx: Math.cos(angle) * (12 + player.speed),
+                    vy: Math.sin(angle) * (12 + player.speed),
                     life: 60, size: Math.max(3, player.size * 0.15), color: "#00ffcc",
-                    pierced: [] 
+                    pierced: []
                 });
 
                 if (player.razorFeathers) {
                     [-0.3, 0.3].forEach(offset => {
                         projectiles.push({
-                            x: player.x + Math.cos(angle + offset) * player.size, 
+                            x: player.x + Math.cos(angle + offset) * player.size,
                             y: player.y + Math.sin(angle + offset) * player.size,
-                            vx: Math.cos(angle + offset) * (15 + player.speed) * speedScale,
-                            vy: Math.sin(angle + offset) * (15 + player.speed) * speedScale,
+                            vx: Math.cos(angle + offset) * (15 + player.speed),
+                            vy: Math.sin(angle + offset) * (15 + player.speed),
                             life: 40, size: Math.max(3, player.size * 0.1), color: "#ffffff",
-                            pierced: [] 
+                            pierced: []
                         });
                     });
                 }
-                
+
                 for(let c = 0; c < player.clones; c++) {
                     let cloneAngle = time * 2 + (c / player.clones) * Math.PI * 2;
                     let cx = player.x + Math.cos(cloneAngle) * (player.size + 40);
@@ -1108,8 +1107,8 @@
                     let cAimAngle = Math.atan2(mouse.worldY - cy, mouse.worldX - cx);
                     projectiles.push({
                         x: cx, y: cy,
-                        vx: Math.cos(cAimAngle) * (12 + player.speed) * speedScale,
-                        vy: Math.sin(cAimAngle) * (12 + player.speed) * speedScale,
+                        vx: Math.cos(cAimAngle) * (12 + player.speed),
+                        vy: Math.sin(cAimAngle) * (12 + player.speed),
                         life: 60, size: Math.max(3, player.size * 0.1), color: "#aaffcc"
                     });
                 }
@@ -1121,11 +1120,11 @@
                 player.shockCooldown = 80;
                 let radius = player.size * 6;
                 shockwaves.push({ x: player.x, y: player.y, radius: player.size, maxRadius: radius, life: 1.0 });
-                
+
                 entities.forEach(e => {
                     let dx = e.x - player.x, dy = e.y - player.y;
                     if (Math.sqrt(dx*dx + dy*dy) < radius && (e.type === 'predator' || e.type === 'drifter')) {
-                        e.stun = 150; 
+                        e.stun = 150;
                         let shockDmg = player.damage * 4 * (e.isAlpha ? 0.5 : 1);
                         e.size -= shockDmg;
                         if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal * 3);
@@ -1144,7 +1143,7 @@
                 let p = projectiles[i];
                 p.x += p.vx; p.y += p.vy;
                 p.life--;
-                
+
                 let hit = false;
                 for (let j = entities.length - 1; j >= 0; j--) {
                     let e = entities[j];
@@ -1155,12 +1154,12 @@
                     if (Math.sqrt(dx*dx + dy*dy) < e.size + p.size) {
                         let defenseMod = e.type === 'armored' ? 0.5 : 1.0;
                         if (player.armorPiercing) defenseMod = e.type === 'armored' ? 1.5 : 1.0;
-                        if (e.isAlpha) defenseMod *= 0.6; 
-                        
+                        if (e.isAlpha) defenseMod *= 0.6;
+
                         e.size -= player.damage * 2 * defenseMod;
                         spawnParticles(e.x, e.y, e.color, 4);
                         if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal);
-                        
+
                         if (e.size < 5 && !e.markedForDeletion) {
                             player.dna += (e.isAlpha ? 6 : 2) * (1 + Math.floor(player.combo/5));
                             spawnText(e.x, e.y, `+${e.isAlpha?6:2} DNA`, "#00ffcc");
@@ -1170,9 +1169,9 @@
                                 for(let k=0; k<2; k++) entities.push({ x: e.x + (Math.random()-0.5)*20, y: e.y + (Math.random()-0.5)*20, size: 5, type: "food", isFood: true, color: "#55ff55", vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2, wobble: Math.random()*Math.PI*2, maxSpeed: 1 });
                             }
                         } else {
-                            e.vx += p.vx * 0.05; e.vy += p.vy * 0.05; 
+                            e.vx += p.vx * 0.05; e.vy += p.vy * 0.05;
                         }
-                        
+
                         if (player.bouncing) {
                             let closest = null, cDist = 9999;
                             entities.forEach(other => {
@@ -1189,7 +1188,7 @@
                                 p.life += 10;
                             }
                         }
-                        
+
                         if (player.piercing) {
                             p.pierced.push(e);
                         } else if (!player.bouncing) {
@@ -1211,16 +1210,16 @@
                 let angle = time * 3 + (o / player.orbitalCount) * Math.PI * 2;
                 let ox = player.x + Math.cos(angle) * (player.size + 25 + player.size*0.2);
                 let oy = player.y + Math.sin(angle) * (player.size + 25 + player.size*0.2);
-                
+
                 for (let j = entities.length - 1; j >= 0; j--) {
                     let e = entities[j];
                     if (e.type === 'food' || e.type === 'poison') continue;
                     let dx = ox - e.x, dy = oy - e.y;
-                    if (Math.sqrt(dx*dx + dy*dy) < e.size + 8) { 
+                    if (Math.sqrt(dx*dx + dy*dy) < e.size + 8) {
                         let defenseMod = e.type === 'armored' ? 0.5 : 1.0;
                         if (player.armorPiercing) defenseMod = e.type === 'armored' ? 1.5 : 1.0;
                         if (e.isAlpha) defenseMod *= 0.6;
-                        
+
                         e.size -= player.damage * 0.2 * defenseMod;
                         if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal * 0.1);
                         if (Math.random() < 0.1) spawnParticles(e.x, e.y, "#ff00cc", 1);
@@ -1241,19 +1240,19 @@
             let viewRadius = (Math.max(canvas.width, canvas.height) / 2) / cameraZoom + 200;
             ambientParticles.forEach(b => {
                 if (b.type === 'cloud' || environment === "The Open Ocean") {
-                    b.x -= b.speed * 4; 
+                    b.x -= b.speed * 4;
                     if (b.x < player.x - viewRadius) b.x += viewRadius * 2;
                 } else if (b.type === 'spark') {
                     b.y -= b.speed;
-                    b.x += Math.sin(time + b.wobbleOffset) * 0.2; 
+                    b.x += Math.sin(time + b.wobbleOffset) * 0.2;
                 } else if (b.type === 'leaf') {
                     b.y += b.speed;
-                    b.x += Math.sin(time + b.wobbleOffset) * 2; 
+                    b.x += Math.sin(time + b.wobbleOffset) * 2;
                 } else {
                     b.y -= b.speed;
-                    b.x += Math.sin(time + b.wobbleOffset) * 0.5; 
+                    b.x += Math.sin(time + b.wobbleOffset) * 0.5;
                 }
-                
+
                 let dx = b.x - player.x;
                 let dy = b.y - player.y;
                 if (dx > viewRadius) b.x -= viewRadius * 2;
@@ -1265,7 +1264,7 @@
             for (let i = entities.length - 1; i >= 0; i--) {
                 let e = entities[i];
                 e.stun = e.stun || 0;
-                
+
                 if (player.mouth === "baleen" && (e.type === "food" || e.type === "golden")) {
                     let eDist = Math.sqrt(Math.pow(e.x - player.x, 2) + Math.pow(e.y - player.y, 2));
                     if (eDist < player.size * 6 + player.grabRange / cameraZoom) {
@@ -1274,7 +1273,7 @@
                         e.vy += Math.sin(vAngle) * 0.8;
                     }
                 }
-                
+
                 if (player.vacuumPalms && e.type !== "poison") {
                     let eDist = Math.sqrt(Math.pow(e.x - player.x, 2) + Math.pow(e.y - player.y, 2));
                     if (eDist < player.size * 5 + player.grabRange / cameraZoom && e.size < player.size * 1.2) {
@@ -1292,15 +1291,15 @@
                     let dx = player.x - e.x;
                     let dy = player.y - e.y;
                     let dist = Math.sqrt(dx*dx + dy*dy);
-                    
-                    if (dist < 600 / cameraZoom) { 
+
+                    if (dist < 600 / cameraZoom) {
                         let angle = Math.atan2(dy, dx);
-                        let dir = (player.size < e.size * 0.9 && !isFrenzied && e.type !== 'golden') ? 1 : -1; 
+                        let dir = (player.size < e.size * 0.9 && !isFrenzied && e.type !== 'golden') ? 1 : -1;
                         e.vx += Math.cos(angle) * 0.05 * dir;
                         e.vy += Math.sin(angle) * 0.05 * dir;
-                        
+
                         let capSpeed = e.type === 'dasher' ? e.maxSpeed * 1.5 : (e.type === 'golden' ? e.maxSpeed * 2.5 : e.maxSpeed);
-                        
+
                         if (e.type === 'dasher' && Math.random() < 0.01 && dir === 1) {
                             e.vx *= 4; e.vy *= 4;
                             spawnParticles(e.x, e.y, e.color, 3);
@@ -1314,7 +1313,7 @@
                     }
                 }
 
-                e.x += e.vx; 
+                e.x += e.vx;
                 e.y += e.vy + Math.sin(e.wobble) * 0.5;
                 e.wobble += 0.1;
 
@@ -1340,7 +1339,7 @@
                 if (player.constrict && e.type !== 'food' && e.type !== 'golden') {
                     let dx = e.x - player.x, dy = e.y - player.y;
                     if (Math.sqrt(dx*dx + dy*dy) < player.size * 2.2) {
-                        e.size -= player.damage * 0.05 * (e.isAlpha ? 0.6 : 1.0); 
+                        e.size -= player.damage * 0.05 * (e.isAlpha ? 0.6 : 1.0);
                         spawnParticles(e.x, e.y, e.color, 1);
                         if (e.size < 5) {
                             e.markedForDeletion = true;
@@ -1358,19 +1357,19 @@
                 }
 
                 let grabBonus = (e.type === "food" || e.type === "golden") ? (player.grabRange / cameraZoom) : 0;
-                
+
                 if (distToPlayer < player.size + e.size * 0.8 + grabBonus) {
-                    
+
                     const processEat = (dnaAmt, frenzyAmt) => {
-                        let mult = 1 + Math.floor(player.combo / 5); 
+                        let mult = 1 + Math.floor(player.combo / 5);
                         player.dna += dnaAmt * mult;
                         player.combo++;
-                        player.comboTimer = 180; 
-                        if (player.mouth === "jaws") player.jawBoost = 60; 
+                        player.comboTimer = 180;
+                        if (player.mouth === "jaws") player.jawBoost = 60;
                         if (!isFrenzied) {
                             player.frenzy += frenzyAmt * (player.appendage === "fins" ? 1.5 : 1);
                             if (player.frenzy >= 100) {
-                                player.frenzyTimer = player.appendage === "fins" ? 600 : 300; 
+                                player.frenzyTimer = player.appendage === "fins" ? 600 : 300;
                                 player.frenzy = 100;
                                 spawnText(player.x, player.y - 40, "FRENZY!!", "#ffd700");
                             }
@@ -1381,56 +1380,56 @@
                         let isGold = e.type === "golden";
                         let dnaReward = isGold ? 20 : 1;
                         let frenzyReward = isGold ? 50 : 2;
-                        
+
                         processEat(dnaReward, frenzyReward);
-                        player.mass += isGold ? 15 : 2; 
+                        player.mass += isGold ? 15 : 2;
                         player.hp = Math.min(player.maxHp, player.hp + (isGold ? 5 : 1));
                         spawnText(e.x, e.y, `+${dnaReward} DNA`, isGold ? "#ffd700" : "#55ff55");
                         spawnParticles(e.x, e.y, e.color, isGold ? 15 : 5);
                         entities.splice(i, 1);
-                    } 
+                    }
                     else if (e.type === "poison") {
                         if (player.toxinImmune || isFrenzied) {
                             processEat(5, 5);
-                            player.mass += 5; 
+                            player.mass += 5;
                             spawnText(e.x, e.y, "+5 DNA", "#eebbff");
                             spawnParticles(e.x, e.y, e.color, 8);
                             entities.splice(i, 1);
                         } else if (player.invulnTimer <= 0) {
                             player.hp -= 2;
-                            player.invulnTimer = 30; 
+                            player.invulnTimer = 30;
                             spawnText(e.x, e.y, "-2 HP", "#ff4444");
                             player.poisonFlash = 1.0;
-                            player.combo = 0; 
-                            e.vx *= -1.5; e.vy *= -1.5; 
+                            player.combo = 0;
+                            e.vx *= -1.5; e.vy *= -1.5;
                             if (player.hp <= 0) die();
                         }
                     }
                     else {
-                        if (player.size >= e.size * 0.9 || isFrenzied) { 
+                        if (player.size >= e.size * 0.9 || isFrenzied) {
                             let dnaGain = Math.floor(e.size / 1.5) * (e.isAlpha ? 3 : 1);
                             processEat(dnaGain, e.size * 0.5);
-                            player.mass += e.size * 0.6; 
-                            player.hp = Math.min(player.maxHp, player.hp + 3 + player.lifesteal * 4); 
+                            player.mass += e.size * 0.6;
+                            player.hp = Math.min(player.maxHp, player.hp + 3 + player.lifesteal * 4);
                             spawnText(e.x, e.y, `+${dnaGain} DNA`, "#00ffcc");
                             spawnParticles(e.x, e.y, e.color, 15);
                             entities.splice(i, 1);
-                        } else if (!player.isSafe) { 
+                        } else if (!player.isSafe) {
                             let defenseMod = e.type === 'armored' ? 0.5 : 1.0;
                             if (player.armorPiercing) defenseMod = e.type === 'armored' ? 1.5 : 1.0;
                             if (e.isAlpha) defenseMod *= 0.6;
-                            
+
                             let nibbleDmg = player.damage * 0.2 * defenseMod + (player.haymaker ? player.mass * 0.005 : 0);
                             e.size -= nibbleDmg;
-                            spawnParticles(e.x, e.y, e.color, 1); 
+                            spawnParticles(e.x, e.y, e.color, 1);
                             if (Math.random() < 0.05) spawnText(e.x, e.y, "Nibble!", "#ffffff");
-                            
+
                             if (player.lifesteal > 0 && Math.random() < 0.1) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal);
-                            
+
                             if (e.size < 5) {
                                 e.markedForDeletion = true;
                                 processEat(e.isAlpha ? 6 : 2, 3);
-                                player.mass += 3; 
+                                player.mass += 3;
                                 if (player.scavenger) {
                                     for(let k=0; k<2; k++) entities.push({ x: e.x + (Math.random()-0.5)*20, y: e.y + (Math.random()-0.5)*20, size: 5, type: "food", isFood: true, color: "#55ff55", vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2, wobble: Math.random()*Math.PI*2, maxSpeed: 1 });
                                 }
@@ -1449,17 +1448,17 @@
                             if (player.invulnTimer <= 0) {
                                 if (Math.random() < player.blockChance) {
                                     spawnText(player.x, player.y - player.size - 10, "BLOCKED", "#aaaaaa");
-                                    player.invulnTimer = 20; 
+                                    player.invulnTimer = 20;
                                 } else {
                                     let dmg = Math.max(1, (e.size * 0.15) / player.damage);
-                                    if (e.isAlpha) dmg *= 2.0; 
-                                    dmg = dmg * (1 - Math.min(player.armor, 0.8)); 
-                                    
+                                    if (e.isAlpha) dmg *= 2.0;
+                                    dmg = dmg * (1 - Math.min(player.armor, 0.8));
+
                                     player.hp -= dmg;
-                                    player.invulnTimer = 30; 
-                                    player.combo = 0; 
+                                    player.invulnTimer = 30;
+                                    player.combo = 0;
                                     spawnText(player.x, player.y - player.size - 10, `-${dmg.toFixed(1)} HP`, "#ff0000");
-                                    
+
                                     if (player.spikes > 0) {
                                         e.size -= player.spikes * 3;
                                         spawnText(e.x, e.y + e.size + 10, `Reflect!`, "#ffff00");
@@ -1472,7 +1471,7 @@
                             }
                         } else {
                             spawnText(player.x, player.y - player.size - 10, `SAFE`, "#00ffcc");
-                            player.x -= e.vx * 1.5; player.y -= e.vy * 1.5; 
+                            player.x -= e.vx * 1.5; player.y -= e.vy * 1.5;
                         }
                     }
                 }
@@ -1498,14 +1497,14 @@
             document.getElementById('hp').innerText = Math.floor(player.hp);
             document.getElementById('maxHp').innerText = player.maxHp;
             document.getElementById('hpBar').style.width = `${(player.hp / player.maxHp) * 100}%`;
-            
+
             document.getElementById('mass').innerText = Math.floor(player.mass);
             document.getElementById('stam').innerText = Math.floor(player.stamina);
             document.getElementById('stamBar').style.width = `${(player.stamina / player.maxStamina) * 100}%`;
             document.getElementById('dna').innerText = Math.floor(player.dna);
             document.getElementById('nextDna').innerText = player.nextDna;
             document.getElementById('dnaBar').style.width = `${(player.dna / player.nextDna) * 100}%`;
-            
+
             let comboUI = document.getElementById('comboText');
             if (player.combo > 1) {
                 comboUI.style.display = 'inline';
@@ -1569,7 +1568,7 @@
             } else if (environment === "The Open Ocean") {
                 bgGrad.addColorStop(0, "#052040"); bgGrad.addColorStop(1, "#01081a");
             } else {
-                bgGrad.addColorStop(0, "#051020"); bgGrad.addColorStop(1, "#010208"); 
+                bgGrad.addColorStop(0, "#051020"); bgGrad.addColorStop(1, "#010208");
             }
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1586,17 +1585,17 @@
             szGrad.addColorStop(1, "rgba(0, 255, 200, 0)");
             ctx.fillStyle = szGrad;
             ctx.fill();
-            
+
             ctx.strokeStyle = "rgba(0, 255, 200, 0.4)";
             ctx.lineWidth = 4 / cameraZoom;
             ctx.setLineDash([15 / cameraZoom, 20 / cameraZoom]);
             ctx.stroke();
-            ctx.setLineDash([]); 
+            ctx.setLineDash([]);
 
             if (player.constrict) {
                 ctx.beginPath();
                 ctx.arc(player.x, player.y, player.size * 2.2, 0, Math.PI * 2);
-                ctx.fillStyle = "rgba(85, 204, 136, 0.1)"; 
+                ctx.fillStyle = "rgba(85, 204, 136, 0.1)";
                 ctx.fill();
                 ctx.strokeStyle = "rgba(85, 204, 136, 0.3)";
                 ctx.lineWidth = 1 / cameraZoom;
@@ -1640,7 +1639,7 @@
 
             entities.forEach(e => {
                 let eColor = e.color;
-                if(eColor.startsWith("hsl")) eColor = "#33bbcc"; 
+                if(eColor.startsWith("hsl")) eColor = "#33bbcc";
 
                 if (e.type === "golden") {
                     for(let i=0; i<3; i++) {
@@ -1659,23 +1658,23 @@
                     ctx.strokeStyle = adjustColor(eColor, -40);
                     ctx.lineWidth = 2 / cameraZoom;
 
-                    if (envToUse === "The Canopy") { 
+                    if (envToUse === "The Canopy") {
                         let flap = Math.sin(time * 20 + e.x) * 0.5;
                         let wSize = e.size * 1.5;
                         ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.quadraticCurveTo(e.x + Math.cos(aimAngle - 1.0 - flap)*wSize, e.y + Math.sin(aimAngle - 1.0 - flap)*wSize, e.x + Math.cos(aimAngle - 1.5 - flap)*wSize, e.y + Math.sin(aimAngle - 1.5 - flap)*wSize); ctx.fill(); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.quadraticCurveTo(e.x + Math.cos(aimAngle + 1.0 + flap)*wSize, e.y + Math.sin(aimAngle + 1.0 + flap)*wSize, e.x + Math.cos(aimAngle + 1.5 + flap)*wSize, e.y + Math.sin(aimAngle + 1.5 + flap)*wSize); ctx.fill(); ctx.stroke();
-                    } else if (envToUse === "The Surface") { 
+                    } else if (envToUse === "The Surface") {
                         let walk = Math.sin(time * 20 + e.x) * 0.5;
                         ctx.lineWidth = e.size * 0.3;
                         ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.lineTo(e.x + Math.cos(aimAngle - 1.2 + walk)*(e.size*1.5), e.y + Math.sin(aimAngle - 1.2 + walk)*(e.size*1.5)); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.lineTo(e.x + Math.cos(aimAngle + 1.2 - walk)*(e.size*1.5), e.y + Math.sin(aimAngle + 1.2 - walk)*(e.size*1.5)); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.lineTo(e.x + Math.cos(aimAngle - 2.0 - walk)*(e.size*1.5), e.y + Math.sin(aimAngle - 2.0 - walk)*(e.size*1.5)); ctx.stroke();
                         ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.lineTo(e.x + Math.cos(aimAngle + 2.0 + walk)*(e.size*1.5), e.y + Math.sin(aimAngle + 2.0 + walk)*(e.size*1.5)); ctx.stroke();
-                    } else if (envToUse === "The Shallows") { 
+                    } else if (envToUse === "The Shallows") {
                         let cSize = e.size + 5;
                         ctx.beginPath(); ctx.arc(e.x + Math.cos(aimAngle - 0.6)*cSize, e.y + Math.sin(aimAngle - 0.6)*cSize, e.size*0.4, 0, Math.PI*2); ctx.fill(); ctx.stroke();
                         ctx.beginPath(); ctx.arc(e.x + Math.cos(aimAngle + 0.6)*cSize, e.y + Math.sin(aimAngle + 0.6)*cSize, e.size*0.4, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-                    } else if (envToUse === "The Open Ocean") { 
+                    } else if (envToUse === "The Open Ocean") {
                         ctx.beginPath();
                         ctx.moveTo(e.x + Math.cos(aimAngle - Math.PI/2)*e.size*0.5, e.y + Math.sin(aimAngle - Math.PI/2)*e.size*0.5);
                         ctx.lineTo(e.x + Math.cos(aimAngle - Math.PI/2)*e.size*1.5, e.y + Math.sin(aimAngle - Math.PI/2)*e.size*1.5);
@@ -1687,7 +1686,7 @@
                         ctx.lineTo(e.x + Math.cos(aimAngle + Math.PI*0.8)*e.size, e.y + Math.sin(aimAngle + Math.PI*0.8)*e.size);
                         ctx.fill(); ctx.stroke();
                     }
-                    
+
                     if (envToUse === "The Abyss") {
                         ctx.beginPath();
                         ctx.moveTo(e.x, e.y);
@@ -1715,7 +1714,7 @@
                     ctx.beginPath(); ctx.moveTo(e.x, e.y); ctx.lineTo(lureX, lureY);
                     ctx.strokeStyle = adjustColor(eColor, 30); ctx.lineWidth = 2/cameraZoom; ctx.stroke();
                     ctx.beginPath(); ctx.arc(lureX, lureY, e.size * 0.25, 0, Math.PI*2);
-                    ctx.fillStyle = e.isAlpha ? "#ff3355" : "#00ffff"; 
+                    ctx.fillStyle = e.isAlpha ? "#ff3355" : "#00ffff";
                     ctx.shadowBlur = 10; ctx.shadowColor = ctx.fillStyle; ctx.fill(); ctx.shadowBlur = 0;
                 }
             });
@@ -1737,8 +1736,8 @@
                 for(let i=player.tail.length-1; i>=0; i--) {
                     let tx = player.tail[i].x + Math.cos(aimAngle) * torsoOffsetX_app;
                     let ty = player.tail[i].y + Math.sin(aimAngle) * torsoOffsetX_app;
-                    let tSize = player.size * (1 - (i / player.tail.length)); 
-                    
+                    let tSize = player.size * (1 - (i / player.tail.length));
+
                     if (player.appendage === "slithery") {
                         let prevX = i === 0 ? tCX : (player.tail[i-1].x + Math.cos(aimAngle) * torsoOffsetX_app);
                         let prevY = i === 0 ? tCY : (player.tail[i-1].y + Math.sin(aimAngle) * torsoOffsetX_app);
@@ -1798,12 +1797,12 @@ if (player.doubleTail) {
             if (player.appendage === "wings") {
                 let flap = Math.sin(time * 12) * 0.5;
                 let wSize = player.size * 2.8;
-                
+
                 const drawWing = (sideMult) => {
                     let wAngle = aimAngle + (Math.PI/2 + 0.3) * sideMult;
                     let pivotX = tCX + Math.cos(wAngle) * player.size * 0.5;
                     let pivotY = tCY + Math.sin(wAngle) * player.size * 0.5;
-                    
+
                     let targetX = pivotX + Math.cos(wAngle - flap * sideMult * 0.5) * wSize;
                     let targetY = pivotY + Math.sin(wAngle - flap * sideMult * 0.5) * wSize;
 
@@ -1811,13 +1810,13 @@ if (player.doubleTail) {
                     ctx.moveTo(pivotX, pivotY);
                     ctx.quadraticCurveTo(pivotX + Math.cos(wAngle - 1.0*sideMult)*wSize*1.2, pivotY + Math.sin(wAngle - 1.0*sideMult)*wSize*1.2, targetX, targetY);
                     ctx.quadraticCurveTo(pivotX + Math.cos(wAngle + 0.5*sideMult)*wSize*0.5, pivotY + Math.sin(wAngle + 0.5*sideMult)*wSize*0.5, pivotX, pivotY);
-                    
+
                     let wGrad = ctx.createLinearGradient(pivotX, pivotY, targetX, targetY);
                     wGrad.addColorStop(0, adjustColor(player.color, -20));
                     wGrad.addColorStop(1, adjustColor(player.color, 40));
                     ctx.fillStyle = wGrad;
                     ctx.fill();
-                    
+
                     ctx.strokeStyle = adjustColor(player.color, -50);
                     ctx.lineWidth = 3 / cameraZoom;
                     ctx.stroke();
@@ -1833,22 +1832,22 @@ if (player.doubleTail) {
                     }
                 };
 
-                drawWing(1); 
-                drawWing(-1); 
+                drawWing(1);
+                drawWing(-1);
             }
 
             if (player.appendage === "arms") {
-                let reach = Math.sin(time * 5) * (player.size * 0.3) + (player.isDashing > 0 ? player.size : 0); 
+                let reach = Math.sin(time * 5) * (player.size * 0.3) + (player.isDashing > 0 ? player.size : 0);
                 let aSize = player.size * 2.2;
-                
+
                 const drawArm = (sideMult) => {
                     let aAngle = aimAngle + 0.6 * sideMult;
                     let pt = getPlayerAttachPoint(player, (Math.PI/2 + 0.2) * sideMult + w * 0.5, player.size * -0.2);
                     let shoulderX = pt.x; let shoulderY = pt.y;
-                    
+
                     let fistX = shoulderX + Math.cos(aimAngle + 0.2 * sideMult) * aSize;
                     let fistY = shoulderY + Math.sin(aimAngle + 0.2 * sideMult) * aSize;
-                    
+
                     let elbowX = (shoulderX + fistX)/2 + Math.cos(aimAngle + Math.PI/2 * sideMult) * player.size;
                     let elbowY = (shoulderY + fistY)/2 + Math.sin(aimAngle + Math.PI/2 * sideMult) * player.size;
 
@@ -1866,8 +1865,8 @@ if (player.doubleTail) {
                     ctx.beginPath(); ctx.moveTo(shoulderX, shoulderY); ctx.lineTo(elbowX, elbowY); ctx.lineTo(fistX, fistY); ctx.stroke();
 
                     let fGrad = ctx.createRadialGradient(fistX - player.size*0.1, fistY - player.size*0.1, 0, fistX, fistY, player.size*0.6);
-                    fGrad.addColorStop(0, adjustColor(player.color, 40)); 
-                    fGrad.addColorStop(1, player.haymaker ? "#ff4400" : adjustColor(player.color, -40)); 
+                    fGrad.addColorStop(0, adjustColor(player.color, 40));
+                    fGrad.addColorStop(1, player.haymaker ? "#ff4400" : adjustColor(player.color, -40));
                     ctx.fillStyle = fGrad;
                     ctx.beginPath(); ctx.arc(fistX, fistY, player.size*0.55, 0, Math.PI*2); ctx.fill();
 
@@ -1891,21 +1890,21 @@ if (player.doubleTail) {
                     }
                 };
 
-                drawArm(1); 
-                drawArm(-1); 
+                drawArm(1);
+                drawArm(-1);
             }
 
             if (player.appendage === "legs") {
                 ctx.lineCap = "round"; ctx.lineJoin = "round";
                 let walkTime = time * 15;
-                
+
                 const drawLeg = (sideMult, pairOffset) => {
                     let w = Math.sin(walkTime + pairOffset * Math.PI) * 0.8 * sideMult;
                     let lAngle = aimAngle + (Math.PI/2 + 0.4) * sideMult + w;
-                    
+
                     let pt = getPlayerAttachPoint(player, (Math.PI/2 + 0.4) * sideMult + w, player.size * -0.3); // 0.7 is -0.3 offset
                     let hipX = pt.x; let hipY = pt.y;
-                    
+
                     let footX = hipX + Math.cos(lAngle) * player.size * 2.5;
                     let footY = hipY + Math.sin(lAngle) * player.size * 2.5;
 
@@ -1935,10 +1934,10 @@ if (player.doubleTail) {
                     ctx.strokeStyle = "#ffffff"; ctx.lineWidth = player.size*0.15; ctx.stroke();
                 };
 
-                drawLeg(1, 0); 
-                drawLeg(-1, 0); 
-                drawLeg(1, 1); 
-                drawLeg(-1, 1); 
+                drawLeg(1, 0);
+                drawLeg(-1, 0);
+                drawLeg(1, 1);
+                drawLeg(-1, 1);
             }
 
             if (player.appendage === "fins") {
@@ -1948,7 +1947,7 @@ if (player.doubleTail) {
                     let base1Y = tCY + Math.sin(aimAngle - 0.5 * sideMult) * player.size * 0.8;
                     let base2X = tCX + Math.cos(aimAngle + 0.8 * sideMult) * player.size * 0.8;
                     let base2Y = tCY + Math.sin(aimAngle + 0.8 * sideMult) * player.size * 0.8;
-                    
+
                     let tipX = tCX + Math.cos(fAngle - 0.4*sideMult) * player.size * 3.0;
                     let tipY = tCY + Math.sin(fAngle - 0.4*sideMult) * player.size * 3.0;
 
@@ -1956,7 +1955,7 @@ if (player.doubleTail) {
                     ctx.moveTo(base1X, base1Y);
                     ctx.quadraticCurveTo(tipX + Math.cos(aimAngle)*player.size, tipY + Math.sin(aimAngle)*player.size, tipX, tipY);
                     ctx.quadraticCurveTo(tCX + Math.cos(fAngle + 0.5*sideMult)*player.size*2.0, tCY + Math.sin(fAngle + 0.5*sideMult)*player.size*2.0, base2X, base2Y);
-                    
+
                     let finGrad = ctx.createLinearGradient(tCX, tCY, tipX, tipY);
                     finGrad.addColorStop(0, adjustColor(player.color, -20));
                     finGrad.addColorStop(1, player.razorDorsal ? "#ffffff" : adjustColor(player.color, 40));
@@ -1979,18 +1978,18 @@ if (player.doubleTail) {
                     }
                 };
 
-                drawFin(1); 
-                drawFin(-1); 
+                drawFin(1);
+                drawFin(-1);
             }
 
             if (player.crabTraits > 0) {
                 ctx.lineCap = "round";
                 ctx.lineJoin = "round";
-                for(let i=0; i<3; i++) { 
+                for(let i=0; i<3; i++) {
                     let offset = 1.0 + i*0.5;
                     let lSize = player.size + 20;
-                    
-                    ctx.strokeStyle = "rgba(0,0,0,0.5)"; 
+
+                    ctx.strokeStyle = "rgba(0,0,0,0.5)";
                     ctx.lineWidth = 8 / cameraZoom;
                     ctx.beginPath();
                     ctx.moveTo(tCX, tCY);
@@ -1999,7 +1998,7 @@ if (player.doubleTail) {
                     ctx.lineTo(tCX + Math.cos(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5), tCY + Math.sin(aimAngle - offset)*(lSize + Math.sin(time*10+Math.PI)*5));
                     ctx.stroke();
 
-                    ctx.strokeStyle = adjustColor(player.color, 20); 
+                    ctx.strokeStyle = adjustColor(player.color, 20);
                     ctx.lineWidth = 6 / cameraZoom;
                     ctx.beginPath();
                     ctx.moveTo(tCX, tCY);
@@ -2011,7 +2010,7 @@ if (player.doubleTail) {
             }
 
             if (player.pincers) {
-                let snapAnim = player.pincerCooldown > 40 ? 0.4 : 0; 
+                let snapAnim = player.pincerCooldown > 40 ? 0.4 : 0;
                 let cSize = player.size + 15;
                 let cWidth = 20 / cameraZoom;
 
@@ -2030,7 +2029,7 @@ if (player.doubleTail) {
                 ctx.strokeStyle = "#ffaaaa";
                 ctx.lineWidth = 2 / cameraZoom;
                 ctx.stroke();
-                
+
                 ctx.beginPath();
                 ctx.arc(tCX + Math.cos(aimAngle + 0.5)*cSize, tCY + Math.sin(aimAngle + 0.5)*cSize, cWidth, aimAngle - 0.5 - snapAnim, aimAngle + 1.5 + snapAnim);
                 ctx.fill();
@@ -2115,7 +2114,7 @@ if (player.doubleTail) {
 
             let wobble = Math.sin(time * 5) * (player.size * 0.08);
             let r = player.size;
-            
+
             let torsoOffsetX = stageIdx >= 2 ? -r * 0.4 : 0;
             let torsoOffsetY = 0;
             let headOffsetX = stageIdx >= 2 ? r * 0.8 : 0;
@@ -2125,7 +2124,7 @@ if (player.doubleTail) {
                 ctx.beginPath();
                 let ciliaCount = 12 + player.cilia * 6;
                 for(let i=0; i<ciliaCount; i++) {
-                    let a = (i / ciliaCount) * Math.PI * 2 + time * 0.5 - aimAngle; 
+                    let a = (i / ciliaCount) * Math.PI * 2 + time * 0.5 - aimAngle;
                     let len = 4 + player.cilia * 1.5;
                     ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
                     ctx.quadraticCurveTo(Math.cos(a+0.2)*(r+len*0.5), Math.sin(a+0.2)*(r+len*0.5), Math.cos(a)*(r+len), Math.sin(a)*(r+len));
@@ -2170,7 +2169,7 @@ if (player.doubleTail) {
                 ctx.strokeStyle = player.insectTraits > 0 ? "rgba(220, 170, 50, 0.6)" : "rgba(100, 150, 100, 0.6)";
                 if (player.insectTraits > 0) ctx.setLineDash([15 / cameraZoom, 8 / cameraZoom]);
                 ctx.stroke(); ctx.setLineDash([]);
-                
+
                 if (player.insectTraits > 0) {
                     let front = player.appendage ? 1.4 : 1.0;
                     ctx.beginPath();
@@ -2223,9 +2222,9 @@ if (player.doubleTail) {
             ctx.fillStyle = player.predatorTraits > 0 ? "#ffdddd" : "#ffffff";
             ctx.beginPath(); ctx.arc(eyeX, headOffsetY - eyeYOffset, eyeR, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(eyeX, headOffsetY + eyeYOffset, eyeR, 0, Math.PI*2); ctx.fill();
-            
+
             ctx.fillStyle = player.reptileTraits > 0 ? "#ffaa00" : (player.predatorTraits > 0 ? "#880000" : "#111111");
-            ctx.beginPath(); 
+            ctx.beginPath();
             if (player.reptileTraits > 0) {
                 ctx.ellipse(eyeX + pupilR*0.5, headOffsetY - eyeYOffset, pupilR*0.5, pupilR*1.2, 0, 0, Math.PI*2);
                 ctx.ellipse(eyeX + pupilR*0.5, headOffsetY + eyeYOffset, pupilR*0.5, pupilR*1.2, 0, 0, Math.PI*2);
@@ -2642,7 +2641,7 @@ if (player.doubleTail) {
                 ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 2 / cameraZoom; ctx.setLineDash([5 / cameraZoom, 5 / cameraZoom]);
                 ctx.stroke(); ctx.setLineDash([]);
             } else {
-                let nucleiCount = Math.min(player.level, 7); 
+                let nucleiCount = Math.min(player.level, 7);
                 ctx.fillStyle = "rgba(255,255,255,0.9)";
                 ctx.beginPath();
                 if (nucleiCount === 1) { ctx.arc(torsoOffsetX, torsoOffsetY, r * 0.4, 0, Math.PI * 2); }
@@ -2757,7 +2756,7 @@ if (player.doubleTail) {
                 let angle = time * 3 + (o / player.orbitalCount) * Math.PI * 2;
                 let ox = player.x + Math.cos(angle) * (player.size + 25 + player.size*0.2);
                 let oy = player.y + Math.sin(angle) * (player.size + 25 + player.size*0.2);
-                
+
                 ctx.beginPath();
                 ctx.moveTo(player.x, player.y);
                 ctx.lineTo(ox, oy);
@@ -2834,7 +2833,7 @@ if (player.doubleTail) {
             ctx.globalAlpha = 1.0;
 
             ctx.restore();
-            
+
             // Screen Flashes
             if (player.frenzyTimer > 0) {
                 let frenzyGrad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, canvas.height*0.2, canvas.width/2, canvas.height/2, canvas.height);
@@ -2842,7 +2841,7 @@ if (player.doubleTail) {
                 frenzyGrad.addColorStop(1, "rgba(255, 100, 0, 0.4)");
                 ctx.fillStyle = frenzyGrad;
                 ctx.fillRect(0,0,canvas.width, canvas.height);
-                
+
                 ctx.strokeStyle = "rgba(255, 215, 0, 0.3)";
                 ctx.lineWidth = 2;
                 ctx.beginPath();
@@ -2866,7 +2865,7 @@ if (player.doubleTail) {
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 player.poisonFlash -= 0.05;
             }
-            
+
             let vignetteGrad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, canvas.height*0.4, canvas.width/2, canvas.height/2, canvas.height);
             vignetteGrad.addColorStop(0, "rgba(0,0,0,0)");
             vignetteGrad.addColorStop(1, "rgba(0,0,0,0.6)");
