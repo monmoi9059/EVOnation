@@ -1532,7 +1532,7 @@
         }
 
 
-        function getPlayerAttachPoint(p, angleOffset, radiusOffset) {
+        function getPlayerAttachPoint(p, aimAngle, angleOffset, radiusOffset) {
             let r = p.size;
             let attachAngle = aimAngle + angleOffset;
             let baseX = Math.cos(attachAngle) * r;
@@ -1843,7 +1843,7 @@ if (player.doubleTail) {
                 
                 const drawArm = (sideMult) => {
                     let aAngle = aimAngle + 0.6 * sideMult;
-                    let pt = getPlayerAttachPoint(player, (Math.PI/2 + 0.2) * sideMult + w * 0.5, player.size * -0.2);
+                    let pt = getPlayerAttachPoint(player, aimAngle, (Math.PI/2 + 0.2) * sideMult + w * 0.5, player.size * -0.2);
                     let shoulderX = pt.x; let shoulderY = pt.y;
                     
                     let fistX = shoulderX + Math.cos(aimAngle + 0.2 * sideMult) * aSize;
@@ -1903,7 +1903,7 @@ if (player.doubleTail) {
                     let w = Math.sin(walkTime + pairOffset * Math.PI) * 0.8 * sideMult;
                     let lAngle = aimAngle + (Math.PI/2 + 0.4) * sideMult + w;
                     
-                    let pt = getPlayerAttachPoint(player, (Math.PI/2 + 0.4) * sideMult + w, player.size * -0.3); // 0.7 is -0.3 offset
+                    let pt = getPlayerAttachPoint(player, aimAngle, (Math.PI/2 + 0.4) * sideMult + w, player.size * -0.3); // 0.7 is -0.3 offset
                     let hipX = pt.x; let hipY = pt.y;
                     
                     let footX = hipX + Math.cos(lAngle) * player.size * 2.5;
