@@ -931,7 +931,7 @@
 
             // Player Movement
             let moved = false;
-            let speedScale = Math.max(1, Math.pow(player.size / 14, 0.5));
+            let speedScale = (16 + player.size) / 30; // Scales linearly with the camera zoom out
             let currentSpeed = (player.speed + player.speedBoost) * speedScale;
             if (isFrenzied) currentSpeed *= 1.8; 
             
