@@ -1,0 +1,44 @@
+--- game.html
++++ game.html
+@@ -931,7 +931,7 @@
+
+             // Player Movement
+             let moved = false;
+-            let currentSpeed = (player.speed + player.speedBoost) * (player.size / 14);
++            let currentSpeed = player.speed + player.speedBoost;
+             if (isFrenzied) currentSpeed *= 1.8;
+
+             if (player.jawBoost > 0) {
+@@ -1081,8 +1081,8 @@
+                 projectiles.push({
+                     x: player.x + Math.cos(angle) * player.size,
+                     y: player.y + Math.sin(angle) * player.size,
+-                    vx: Math.cos(angle) * (12 + player.speed) * (player.size / 14),
+-                    vy: Math.sin(angle) * (12 + player.speed) * (player.size / 14),
++                    vx: Math.cos(angle) * (12 + player.speed),
++                    vy: Math.sin(angle) * (12 + player.speed),
+                     life: 60, size: Math.max(3, player.size * 0.15), color: "#00ffcc",
+                     pierced: []
+                 });
+@@ -1092,8 +1092,8 @@
+                         projectiles.push({
+                             x: player.x + Math.cos(angle + offset) * player.size,
+                             y: player.y + Math.sin(angle + offset) * player.size,
+-                            vx: Math.cos(angle + offset) * (15 + player.speed) * (player.size / 14),
+-                            vy: Math.sin(angle + offset) * (15 + player.speed) * (player.size / 14),
++                            vx: Math.cos(angle + offset) * (15 + player.speed),
++                            vy: Math.sin(angle + offset) * (15 + player.speed),
+                             life: 40, size: Math.max(3, player.size * 0.1), color: "#ffffff",
+                             pierced: []
+                         });
+@@ -1107,8 +1107,8 @@
+                     let cAimAngle = Math.atan2(mouse.worldY - cy, mouse.worldX - cx);
+                     projectiles.push({
+                         x: cx, y: cy,
+-                        vx: Math.cos(cAimAngle) * (12 + player.speed) * (player.size / 14),
+-                        vy: Math.sin(cAimAngle) * (12 + player.speed) * (player.size / 14),
++                        vx: Math.cos(cAimAngle) * (12 + player.speed),
++                        vy: Math.sin(cAimAngle) * (12 + player.speed),
+                         life: 60, size: Math.max(3, player.size * 0.1), color: "#aaffcc"
+                     });
+                 }
