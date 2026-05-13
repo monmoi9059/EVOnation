@@ -629,8 +629,8 @@
         }
 
         function spawnEntity(isInitial = false) {
-            let maxEntities = 80 + Math.floor(player.mass * 0.15);
-            if (entities.length > Math.min(250, maxEntities)) return;
+            let maxEntities = 150 + Math.floor(player.mass * 0.25);
+            if (entities.length > Math.min(400, maxEntities)) return;
             
             let rand = Math.random();
             let type = "drifter"; // default
@@ -795,7 +795,7 @@
             function finishEvolve() {
                 player.level++;
                 player.dna = 0;
-                player.nextDna = Math.floor(player.nextDna * 1.6);
+                player.nextDna = Math.floor(player.nextDna * 1.3);
                 player.hp = player.maxHp; 
                 
                 let stageNames = [
@@ -1750,7 +1750,7 @@
             }
 
             if (player.dna >= player.nextDna) evolve();
-            if (Math.random() < 0.2) spawnEntity();
+            if (Math.random() < 0.4) spawnEntity();
 
             document.getElementById('hp').innerText = Math.floor(player.hp);
             document.getElementById('maxHp').innerText = player.maxHp;
