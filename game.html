@@ -147,6 +147,7 @@
         let floatingTexts = [];
         let projectiles = [];
         let shockwaves = [];
+        let effects = [];
         let time = 0;
         let cameraZoom = 1;
         let animationId;
@@ -692,11 +693,11 @@
                 document.getElementById('overlaySub').innerText = "Choose your feeding apparatus! This defines how you consume prey.";
                 
                 let mouthChoices = [
-                    { name: "Crushing Jaws", family: "Carnivore", desc: "Bone-crushing teeth. +Base Damage. Killing enemies grants a brief speed burst.", color: "#ff3333", apply: () => { player.damage += 2.0; player.mouth = "jaws"; } },
-                    { name: "Piercing Beak", family: "Avian", desc: "A sharp beak that cracks shells. Your attacks ignore armor, dealing bonus damage to armored foes.", color: "#ffcc00", apply: () => { player.armorPiercing = true; player.mouth = "beak"; } },
-                    { name: "Filter Baleen", family: "Filter Feeder", desc: "Massive bristles that passively vacuum nearby food chunks and golden cells towards you.", color: "#88ccff", apply: () => { player.grabRange += 200; player.mouth = "baleen"; } },
-                    { name: "Singularity Maw", family: "Cosmic", desc: "A void mouth that vacuums everything.", color: "#8800ff", apply: () => { player.grabRange += 300; player.mouth = "blackhole"; player.blackHoleMaw = true; } },
-                    { name: "Parasitic Leech", family: "Parasite", desc: "A terrifying sucker mouth. Massive boost to passive Lifesteal and HP Regeneration.", color: "#aa22ff", apply: () => { player.lifesteal += 1.5; player.regen += 0.05; player.mouth = "leech"; } }
+                    { name: "Crushing Jaws", family: "Carnivore", desc: "Bone-crushing teeth. +Base Damage. Killing enemies grants a brief speed burst.", color: "#ff3333", apply: () => { player.damage += 2.0; player.mouth = "jaws"; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Jaws Chomp"; hint.style.display = 'inline'; } },
+                    { name: "Piercing Beak", family: "Avian", desc: "A sharp beak that cracks shells. Your attacks ignore armor, dealing bonus damage to armored foes.", color: "#ffcc00", apply: () => { player.armorPiercing = true; player.mouth = "beak"; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Beak Peck"; hint.style.display = 'inline'; } },
+                    { name: "Filter Baleen", family: "Filter Feeder", desc: "Massive bristles that passively vacuum nearby food chunks and golden cells towards you.", color: "#88ccff", apply: () => { player.grabRange += 200; player.mouth = "baleen"; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Water Jet"; hint.style.display = 'inline'; } },
+                    { name: "Singularity Maw", family: "Cosmic", desc: "A void mouth that vacuums everything.", color: "#8800ff", apply: () => { player.grabRange += 300; player.mouth = "blackhole"; player.blackHoleMaw = true; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Void Blast"; hint.style.display = 'inline'; } },
+                    { name: "Parasitic Leech", family: "Parasite", desc: "A terrifying sucker mouth. Massive boost to passive Lifesteal and HP Regeneration.", color: "#aa22ff", apply: () => { player.lifesteal += 1.5; player.regen += 0.05; player.mouth = "leech"; player.canShoot = true; let hint = document.getElementById('shootHint'); hint.innerHTML = "<br>LEFT CLICK (RB/R2) for Siphon Dart"; hint.style.display = 'inline'; } }
                 ];
                 
                 mouthChoices.forEach(mut => {
@@ -710,13 +711,13 @@
                 document.getElementById('overlaySub').innerText = "Choose your locomotion and structural anatomy! Changes your environment.";
                 
                 let appendageChoices = [
-                    { name: "Avian Wings", family: "Wings", desc: "Take to the skies. +Huge Speed, +15% Dodge/Deflect.", color: "#88ccff", apply: () => { player.speed += 2.5; player.blockChance += 0.15; player.appendage = "wings"; updateEnvironment("The Canopy"); } },
-                    { name: "Brawler Arms", family: "Arms", desc: "Develop strong limbs. +Huge Damage, increases resource grab range.", color: "#ff8855", apply: () => { player.damage += 3.0; player.grabRange += 100; player.appendage = "arms"; updateEnvironment("The Shallows"); } },
-                    { name: "Muscular Legs", family: "Legs", desc: "Built for endurance. +Huge Stamina, unlocks/upgrades Dash.", color: "#bb8855", apply: () => { player.maxStamina += 150; player.stamina += 150; if(!player.dashUnlocked){player.dashUnlocked=true; document.getElementById('dashHint').style.display='inline';} player.appendage = "legs"; updateEnvironment("The Surface"); } },
-                    { name: "Serpentine Body", family: "Slithery", desc: "Sinuous and regenerative. +Regen, +Lifesteal.", color: "#55cc88", apply: () => { player.regen += 0.1; player.lifesteal += 0.5; player.appendage = "slithery"; updateEnvironment("The Abyss"); } },
-                    { name: "Eldritch Tentacles", family: "Tentacles", desc: "Grabs food from massive distance. +Lifesteal.", color: "#aa00ff", apply: () => { player.grabRange += 200; player.lifesteal += 1.0; player.appendage = "tentacles"; updateEnvironment("The Abyss"); } },
-                    { name: "Spider Legs", family: "Arachnid", desc: "Huge dodge chance. +Speed.", color: "#333333", apply: () => { player.speed += 2.0; player.blockChance += 0.25; player.appendage = "spiderlegs"; updateEnvironment("The Canopy"); } },
-                    { name: "Aquatic Fins", family: "Fins", desc: "Masters of the water. +Massive Speed, +Frenzy gain.", color: "#33bbff", apply: () => { player.speed += 4.0; player.appendage = "fins"; updateEnvironment("The Open Ocean"); } }
+                    { name: "Avian Wings", family: "Wings", desc: "Take to the skies. +Huge Speed, +15% Dodge/Deflect.", color: "#88ccff", apply: () => { player.speed += 2.5; player.blockChance += 0.15; player.appendage = "wings"; updateEnvironment("The Canopy"); player.canShock = true; let hint = document.getElementById('shockHint'); hint.innerHTML = "<br>RIGHT CLICK (LB/L2) for Feather Fan"; hint.style.display = 'inline'; } },
+                    { name: "Brawler Arms", family: "Arms", desc: "Develop strong limbs. +Huge Damage, increases resource grab range.", color: "#ff8855", apply: () => { player.damage += 3.0; player.grabRange += 100; player.appendage = "arms"; updateEnvironment("The Shallows"); player.canShock = true; let hint = document.getElementById('shockHint'); hint.innerHTML = "<br>RIGHT CLICK (LB/L2) for Arm Slam"; hint.style.display = 'inline'; } },
+                    { name: "Muscular Legs", family: "Legs", desc: "Built for endurance. +Huge Stamina, unlocks/upgrades Dash.", color: "#bb8855", apply: () => { player.maxStamina += 150; player.stamina += 150; if(!player.dashUnlocked){player.dashUnlocked=true; document.getElementById('dashHint').style.display='inline';} player.appendage = "legs"; updateEnvironment("The Surface"); player.canShock = true; let hint = document.getElementById('shockHint'); hint.innerHTML = "<br>RIGHT CLICK (LB/L2) for Power Kick"; hint.style.display = 'inline'; } },
+                    { name: "Serpentine Body", family: "Slithery", desc: "Sinuous and regenerative. +Regen, +Lifesteal.", color: "#55cc88", apply: () => { player.regen += 0.1; player.lifesteal += 0.5; player.appendage = "slithery"; updateEnvironment("The Abyss"); player.canShock = true; let hint = document.getElementById('shockHint'); hint.innerHTML = "<br>RIGHT CLICK (LB/L2) for Tail Whip"; hint.style.display = 'inline'; } },
+                    { name: "Eldritch Tentacles", family: "Tentacles", desc: "Grabs food from massive distance. +Lifesteal.", color: "#aa00ff", apply: () => { player.grabRange += 200; player.lifesteal += 1.0; player.appendage = "tentacles"; updateEnvironment("The Abyss"); player.canShock = true; let hint = document.getElementById('shockHint'); hint.innerHTML = "<br>RIGHT CLICK (LB/L2) for Ink Spray"; hint.style.display = 'inline'; } },
+                    { name: "Spider Legs", family: "Arachnid", desc: "Huge dodge chance. +Speed.", color: "#333333", apply: () => { player.speed += 2.0; player.blockChance += 0.25; player.appendage = "spiderlegs"; updateEnvironment("The Canopy"); player.canShock = true; let hint = document.getElementById('shockHint'); hint.innerHTML = "<br>RIGHT CLICK (LB/L2) for Web Bola"; hint.style.display = 'inline'; } },
+                    { name: "Aquatic Fins", family: "Fins", desc: "Masters of the water. +Massive Speed, +Frenzy gain.", color: "#33bbff", apply: () => { player.speed += 4.0; player.appendage = "fins"; updateEnvironment("The Open Ocean"); player.canShock = true; let hint = document.getElementById('shockHint'); hint.innerHTML = "<br>RIGHT CLICK (LB/L2) for Bubble Blast"; hint.style.display = 'inline'; } }
                 ];
                 
                 appendageChoices.forEach(mut => {
@@ -1077,28 +1078,96 @@
 
             if (player.canShoot && (mouse.isDown || gpShoot) && player.shootCooldown <= 0 && (player.stamina >= 4 || isFrenzied)) {
                 if (!isFrenzied) player.stamina -= 4;
-                player.shootCooldown = 15;
                 let angle = mouse.isGamepadAiming ? mouse.gamepadAimAngle : Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
-                projectiles.push({
-                    x: player.x + Math.cos(angle) * player.size, 
-                    y: player.y + Math.sin(angle) * player.size,
-                    vx: Math.cos(angle) * (12 + player.speed) * speedScale,
-                    vy: Math.sin(angle) * (12 + player.speed) * speedScale,
-                    life: 60, size: Math.max(3, player.size * 0.15), color: "#00ffcc",
-                    pierced: [] 
-                });
 
-                if (player.razorFeathers) {
-                    [-0.3, 0.3].forEach(offset => {
-                        projectiles.push({
-                            x: player.x + Math.cos(angle + offset) * player.size, 
-                            y: player.y + Math.sin(angle + offset) * player.size,
-                            vx: Math.cos(angle + offset) * (15 + player.speed) * speedScale,
-                            vy: Math.sin(angle + offset) * (15 + player.speed) * speedScale,
-                            life: 40, size: Math.max(3, player.size * 0.1), color: "#ffffff",
-                            pierced: [] 
-                        });
+                if (player.mouth === "jaws") {
+                    player.shootCooldown = 25;
+                    effects.push({ type: "chomp", x: player.x, y: player.y, angle: angle, life: 1.0, size: player.size * 4 });
+
+                    let hitAny = false;
+                    for (let j = entities.length - 1; j >= 0; j--) {
+                        let e = entities[j];
+                        if (e.type === 'food' || e.type === 'poison' || e.type === 'golden') continue;
+                        let dx = e.x - player.x, dy = e.y - player.y;
+                        if (Math.sqrt(dx*dx + dy*dy) < player.size * 4 + e.size) {
+                            let eAngle = Math.atan2(dy, dx);
+                            let angleDiff = Math.abs(angle - eAngle);
+                            if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
+                            if (angleDiff < 1.0) {
+                                let defenseMod = e.type === 'armored' ? 0.5 : 1.0;
+                                if (player.armorPiercing) defenseMod = e.type === 'armored' ? 1.5 : 1.0;
+                                e.size -= player.damage * 6 * defenseMod;
+                                spawnParticles(e.x, e.y, "#ff3333", 10);
+                                if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal * 3);
+                                hitAny = true;
+                                if (e.size < 5 && !e.markedForDeletion) {
+                                    player.dna += e.isAlpha ? 9 : 3;
+                                    e.markedForDeletion = true;
+                                    player.jawBoost = 60;
+                                }
+                            }
+                        }
+                    }
+                    if (hitAny) spawnText(player.x + Math.cos(angle)*player.size*2, player.y + Math.sin(angle)*player.size*2, "CHOMP!", "#ff3333");
+                }
+                else if (player.mouth === "beak") {
+                    player.shootCooldown = 20;
+                    projectiles.push({
+                        x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
+                        vx: Math.cos(angle) * (20 + player.speed) * speedScale, vy: Math.sin(angle) * (20 + player.speed) * speedScale,
+                        life: 30, size: Math.max(4, player.size * 0.2), color: "#ffcc00", pierced: []
                     });
+                }
+                else if (player.mouth === "baleen") {
+                    player.shootCooldown = 8;
+                    for (let i = -1; i <= 1; i++) {
+                        let offsetAngle = angle + (i * 0.2);
+                        projectiles.push({
+                            x: player.x + Math.cos(offsetAngle) * player.size, y: player.y + Math.sin(offsetAngle) * player.size,
+                            vx: Math.cos(offsetAngle) * (10 + player.speed) * speedScale, vy: Math.sin(offsetAngle) * (10 + player.speed) * speedScale,
+                            life: 40, size: Math.max(2, player.size * 0.1), color: "#88ccff", damageMult: 0.4
+                        });
+                    }
+                }
+                else if (player.mouth === "blackhole") {
+                    player.shootCooldown = 60;
+                    projectiles.push({
+                        x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
+                        vx: Math.cos(angle) * (6 + player.speed) * speedScale, vy: Math.sin(angle) * (6 + player.speed) * speedScale,
+                        life: 120, size: Math.max(10, player.size * 0.4), color: "#8800ff", pierced: [], isVoid: true
+                    });
+                }
+                else if (player.mouth === "leech") {
+                    player.shootCooldown = 20;
+                    projectiles.push({
+                        x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
+                        vx: Math.cos(angle) * (16 + player.speed) * speedScale, vy: Math.sin(angle) * (16 + player.speed) * speedScale,
+                        life: 50, size: Math.max(3, player.size * 0.15), color: "#aa22ff", isLeech: true
+                    });
+                }
+                else {
+                    player.shootCooldown = 15;
+                    projectiles.push({
+                        x: player.x + Math.cos(angle) * player.size,
+                        y: player.y + Math.sin(angle) * player.size,
+                        vx: Math.cos(angle) * (12 + player.speed) * speedScale,
+                        vy: Math.sin(angle) * (12 + player.speed) * speedScale,
+                        life: 60, size: Math.max(3, player.size * 0.15), color: "#00ffcc",
+                        pierced: []
+                    });
+
+                    if (player.razorFeathers) {
+                        [-0.3, 0.3].forEach(offset => {
+                            projectiles.push({
+                                x: player.x + Math.cos(angle + offset) * player.size,
+                                y: player.y + Math.sin(angle + offset) * player.size,
+                                vx: Math.cos(angle + offset) * (15 + player.speed) * speedScale,
+                                vy: Math.sin(angle + offset) * (15 + player.speed) * speedScale,
+                                life: 40, size: Math.max(3, player.size * 0.1), color: "#ffffff",
+                                pierced: []
+                            });
+                        });
+                    }
                 }
                 
                 for(let c = 0; c < player.clones; c++) {
@@ -1116,27 +1185,163 @@
             }
             if (player.shootCooldown > 0) player.shootCooldown--;
 
-            if (player.canShock && (mouse.rightDown || gpShock) && player.shockCooldown <= 0 && player.stamina >= 35) {
-                player.stamina -= 35;
-                player.shockCooldown = 80;
-                let radius = player.size * 6;
-                shockwaves.push({ x: player.x, y: player.y, radius: player.size, maxRadius: radius, life: 1.0 });
-                
-                entities.forEach(e => {
-                    let dx = e.x - player.x, dy = e.y - player.y;
-                    if (Math.sqrt(dx*dx + dy*dy) < radius && (e.type === 'predator' || e.type === 'drifter')) {
-                        e.stun = 150; 
-                        let shockDmg = player.damage * 4 * (e.isAlpha ? 0.5 : 1);
-                        e.size -= shockDmg;
-                        if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal * 3);
-                        spawnParticles(e.x, e.y, "#ffff00", 8);
-                        if (e.size < 5 && !e.markedForDeletion) {
-                            player.dna += e.isAlpha ? 9 : 3;
-                            e.markedForDeletion = true;
-                            if(player.mouth === "jaws") player.jawBoost = 60;
+            if (player.canShock && (mouse.rightDown || gpShock) && player.shockCooldown <= 0) {
+                let angle = mouse.isGamepadAiming ? mouse.gamepadAimAngle : Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
+                let hitAny = false;
+
+                if (player.appendage === "arms") {
+                    if (player.stamina >= 20) {
+                        player.stamina -= 20;
+                        player.shockCooldown = 50;
+
+                        let slamDist = player.size * 5;
+                        if (!mouse.isGamepadAiming) {
+                            slamDist = Math.min(Math.sqrt(Math.pow(mouse.worldX - player.x, 2) + Math.pow(mouse.worldY - player.y, 2)), player.size * 5);
+                        }
+                        let slamX = player.x + Math.cos(angle) * slamDist;
+                        let slamY = player.y + Math.sin(angle) * slamDist;
+                        let slamRadius = player.size * 3.5;
+
+                        effects.push({ type: "slam", x: slamX, y: slamY, radius: slamRadius, life: 1.0 });
+
+                        entities.forEach(e => {
+                            let dx = e.x - slamX, dy = e.y - slamY;
+                            if (Math.sqrt(dx*dx + dy*dy) < slamRadius + e.size && e.type !== 'food' && e.type !== 'golden') {
+                                e.size -= player.damage * 5 * (e.isAlpha ? 0.6 : 1.0);
+                                spawnParticles(e.x, e.y, "#ffaa55", 8);
+                                if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal * 2);
+                                hitAny = true;
+                                if (e.size < 5 && !e.markedForDeletion) { player.dna += e.isAlpha ? 9 : 3; e.markedForDeletion = true; }
+                            }
+                        });
+                        if (hitAny) spawnText(slamX, slamY, "SLAM!", "#ffaa55");
+                    }
+                }
+                else if (player.appendage === "legs") {
+                    if (player.stamina >= 15) {
+                        player.stamina -= 15;
+                        player.shockCooldown = 40;
+
+                        effects.push({ type: "kick", x: player.x, y: player.y, angle: angle, life: 1.0, size: player.size * 3 });
+
+                        entities.forEach(e => {
+                            let dx = e.x - player.x, dy = e.y - player.y;
+                            if (Math.sqrt(dx*dx + dy*dy) < player.size * 4 + e.size && e.type !== 'food' && e.type !== 'golden') {
+                                let eAngle = Math.atan2(dy, dx);
+                                let angleDiff = Math.abs(angle - eAngle);
+                                if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
+                                if (angleDiff < 0.8) {
+                                    e.size -= player.damage * 4 * (e.isAlpha ? 0.6 : 1.0);
+                                    e.vx += Math.cos(angle) * 10;
+                                    e.vy += Math.sin(angle) * 10;
+                                    spawnParticles(e.x, e.y, "#ffffff", 8);
+                                    if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal);
+                                    hitAny = true;
+                                    if (e.size < 5 && !e.markedForDeletion) { player.dna += e.isAlpha ? 9 : 3; e.markedForDeletion = true; }
+                                }
+                            }
+                        });
+                        if (hitAny) spawnText(player.x + Math.cos(angle)*player.size*2, player.y + Math.sin(angle)*player.size*2, "KICK!", "#ffffff");
+                    }
+                }
+                else if (player.appendage === "slithery") {
+                    if (player.stamina >= 10) {
+                        player.stamina -= 10;
+                        player.shockCooldown = 30;
+
+                        effects.push({ type: "tailwhip", x: player.x, y: player.y, angle: angle, life: 1.0, size: player.size * 5 });
+
+                        entities.forEach(e => {
+                            let dx = e.x - player.x, dy = e.y - player.y;
+                            if (Math.sqrt(dx*dx + dy*dy) < player.size * 5 + e.size && e.type !== 'food' && e.type !== 'golden') {
+                                let eAngle = Math.atan2(dy, dx);
+                                let angleDiff = Math.abs(angle - eAngle);
+                                if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
+                                if (angleDiff < 1.5) {
+                                    e.size -= player.damage * 3 * (e.isAlpha ? 0.6 : 1.0);
+                                    spawnParticles(e.x, e.y, "#55cc88", 5);
+                                    if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal);
+                                    hitAny = true;
+                                    if (e.size < 5 && !e.markedForDeletion) { player.dna += e.isAlpha ? 9 : 3; e.markedForDeletion = true; }
+                                }
+                            }
+                        });
+                    }
+                }
+                else if (player.appendage === "wings") {
+                    if (player.stamina >= 15) {
+                        player.stamina -= 15;
+                        player.shockCooldown = 35;
+                        for (let i = -2; i <= 2; i++) {
+                            let offsetAngle = angle + (i * 0.25);
+                            projectiles.push({
+                                x: player.x + Math.cos(offsetAngle) * player.size, y: player.y + Math.sin(offsetAngle) * player.size,
+                                vx: Math.cos(offsetAngle) * (18 + player.speed) * speedScale, vy: Math.sin(offsetAngle) * (18 + player.speed) * speedScale,
+                                life: 40, size: Math.max(3, player.size * 0.15), color: "#ffffff", pierced: []
+                            });
                         }
                     }
-                });
+                }
+                else if (player.appendage === "tentacles") {
+                    if (player.stamina >= 20) {
+                        player.stamina -= 20;
+                        player.shockCooldown = 45;
+                        for (let i = -1; i <= 1; i++) {
+                            let offsetAngle = angle + (i * 0.15);
+                            projectiles.push({
+                                x: player.x + Math.cos(offsetAngle) * player.size, y: player.y + Math.sin(offsetAngle) * player.size,
+                                vx: Math.cos(offsetAngle) * (12 + player.speed) * speedScale, vy: Math.sin(offsetAngle) * (12 + player.speed) * speedScale,
+                                life: 30, size: Math.max(6, player.size * 0.3), color: "#220044", isInk: true
+                            });
+                        }
+                    }
+                }
+                else if (player.appendage === "spiderlegs") {
+                    if (player.stamina >= 25) {
+                        player.stamina -= 25;
+                        player.shockCooldown = 50;
+                        projectiles.push({
+                            x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
+                            vx: Math.cos(angle) * (15 + player.speed) * speedScale, vy: Math.sin(angle) * (15 + player.speed) * speedScale,
+                            life: 60, size: Math.max(8, player.size * 0.4), color: "#dddddd", isWeb: true
+                        });
+                    }
+                }
+                else if (player.appendage === "fins") {
+                    if (player.stamina >= 5) {
+                        player.stamina -= 5;
+                        player.shockCooldown = 8;
+                        projectiles.push({
+                            x: player.x + Math.cos(angle) * player.size, y: player.y + Math.sin(angle) * player.size,
+                            vx: Math.cos(angle) * (14 + player.speed) * speedScale + (Math.random()-0.5)*2, vy: Math.sin(angle) * (14 + player.speed) * speedScale + (Math.random()-0.5)*2,
+                            life: 25, size: Math.max(5, player.size * 0.2), color: "#aaddff", damageMult: 0.5
+                        });
+                    }
+                }
+                else {
+                    // Default Shockwave
+                    if (player.stamina >= 35) {
+                        player.stamina -= 35;
+                        player.shockCooldown = 80;
+                        let radius = player.size * 6;
+                        shockwaves.push({ x: player.x, y: player.y, radius: player.size, maxRadius: radius, life: 1.0 });
+
+                        entities.forEach(e => {
+                            let dx = e.x - player.x, dy = e.y - player.y;
+                            if (Math.sqrt(dx*dx + dy*dy) < radius && (e.type === 'predator' || e.type === 'drifter')) {
+                                e.stun = 150;
+                                let shockDmg = player.damage * 4 * (e.isAlpha ? 0.5 : 1);
+                                e.size -= shockDmg;
+                                if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal * 3);
+                                spawnParticles(e.x, e.y, "#ffff00", 8);
+                                if (e.size < 5 && !e.markedForDeletion) {
+                                    player.dna += e.isAlpha ? 9 : 3;
+                                    e.markedForDeletion = true;
+                                }
+                            }
+                        });
+                    }
+                }
             }
             if (player.shockCooldown > 0) player.shockCooldown--;
 
@@ -1154,12 +1359,21 @@
                     let dx = p.x - e.x, dy = p.y - e.y;
                     if (Math.sqrt(dx*dx + dy*dy) < e.size + p.size) {
                         let defenseMod = e.type === 'armored' ? 0.5 : 1.0;
-                        if (player.armorPiercing) defenseMod = e.type === 'armored' ? 1.5 : 1.0;
+                        if (player.armorPiercing || p.color === "#ffcc00") defenseMod = e.type === 'armored' ? 1.5 : 1.0; // Beak pierces
                         if (e.isAlpha) defenseMod *= 0.6; 
                         
-                        e.size -= player.damage * 2 * defenseMod;
+                        let pDamage = player.damage * 2 * defenseMod * (p.damageMult || 1.0);
+                        if (p.isVoid) pDamage *= 2.5;
+                        e.size -= pDamage;
+
+                        if (p.isLeech || player.lifesteal > 0) {
+                            player.hp = Math.min(player.maxHp, player.hp + (p.isLeech ? 3 : player.lifesteal));
+                        }
+
+                        if (p.isInk) e.stun = 60;
+                        if (p.isWeb) e.stun = 200;
+
                         spawnParticles(e.x, e.y, e.color, 4);
-                        if(player.lifesteal > 0) player.hp = Math.min(player.maxHp, player.hp + player.lifesteal);
                         
                         if (e.size < 5 && !e.markedForDeletion) {
                             player.dna += (e.isAlpha ? 6 : 2) * (1 + Math.floor(player.combo/5));
@@ -2806,6 +3020,60 @@ if (player.doubleTail) {
                 ctx.lineWidth = 4 / cameraZoom;
                 ctx.stroke();
             });
+
+            // Melee Attack Effects
+            for (let i = effects.length - 1; i >= 0; i--) {
+                let ef = effects[i];
+                ctx.globalAlpha = ef.life;
+
+                if (ef.type === "chomp") {
+                    ctx.fillStyle = "rgba(255, 50, 50, 0.4)";
+                    ctx.beginPath();
+                    ctx.moveTo(ef.x, ef.y);
+                    ctx.arc(ef.x, ef.y, ef.size, ef.angle - 0.5, ef.angle + 0.5);
+                    ctx.fill();
+                    ctx.strokeStyle = "rgba(255, 50, 50, 0.8)";
+                    ctx.lineWidth = 4 / cameraZoom;
+                    ctx.stroke();
+                    ef.size += 5;
+                }
+                else if (ef.type === "slam") {
+                    ctx.fillStyle = "rgba(255, 170, 85, 0.3)";
+                    ctx.beginPath();
+                    ctx.arc(ef.x, ef.y, ef.radius, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.strokeStyle = "rgba(255, 170, 85, 0.8)";
+                    ctx.lineWidth = 6 / cameraZoom;
+                    ctx.stroke();
+                    ef.radius += 2;
+                }
+                else if (ef.type === "kick") {
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+                    ctx.beginPath();
+                    ctx.moveTo(ef.x, ef.y);
+                    ctx.arc(ef.x, ef.y, ef.size, ef.angle - 0.4, ef.angle + 0.4);
+                    ctx.fill();
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.8)";
+                    ctx.lineWidth = 5 / cameraZoom;
+                    ctx.stroke();
+                    ef.size += 8;
+                }
+                else if (ef.type === "tailwhip") {
+                    ctx.fillStyle = "rgba(85, 204, 136, 0.2)";
+                    ctx.beginPath();
+                    ctx.moveTo(ef.x, ef.y);
+                    ctx.arc(ef.x, ef.y, ef.size, ef.angle - 0.8, ef.angle + 0.8);
+                    ctx.fill();
+                    ctx.strokeStyle = "rgba(85, 204, 136, 0.7)";
+                    ctx.lineWidth = 6 / cameraZoom;
+                    ctx.stroke();
+                    ef.size += 4;
+                }
+
+                ef.life -= 0.05;
+                if (ef.life <= 0) effects.splice(i, 1);
+            }
+            ctx.globalAlpha = 1.0;
 
             // Particles
             particles.forEach(p => {
